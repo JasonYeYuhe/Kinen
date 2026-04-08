@@ -1,0 +1,79 @@
+import SwiftUI
+import SwiftData
+
+struct JournalListScreen: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \JournalEntry.createdAt, order: .reverse) private var entries: [JournalEntry]
+    @Binding var selectedEntry: JournalEntry?
+    @State private var showingEditor = false
+    @State private var searchText = ""
+
+    private var filteredEntries: [JournalEntry] {
+        if searchText.isEmpty { return entries }
+        return entries.filter {
+            $0.content.localizedCaseInsensitiveContains(searchText) ||
+            ($0.title?.localizedCaseInsensitiveContains(searchText) ?? false)
+        }
+    }
+
+    var body: some View {
+        List(selection: $selectedEntry) {
+            ForEach(groupedByDate, id: \.key) { date, dayEntries in
+                Section(header: Text(date, style: .date)) {
+                    ForEach(dayEntries) { entry in
+                        NavigationLink(value: entry) {
+                            EntryRow(entry: entry)
+                        }
+                        .tag(entry)
+                    }
+                    .onDelete { offsets in
+                        deleteEntries(dayEntries: dayEntries, at: offsets)
+                    }
+                }
+            }
+        }
+        .searchable(text: $searchText, prompt: "Search entries...")
+        .navigationTitle("Journal")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: { showingEditor = true }) {
+                    Label("New Entry", systemImage: "square.and.pencil")
+                }
+                .keyboardShortcut("n", modifiers: .command)
+            }
+        }
+        .sheet(isPresented: $showingEditor) {
+            EntryEditorSheet(entry: nil)
+        }
+        .navigationDestination(for: JournalEntry.self) { entry in
+            EntryDetailScreen(entry: entry)
+        }
+        .overlay {
+            if entries.isEmpty {
+                ContentUnavailableView {
+                    Label("No Entries Yet", systemImage: "book.closed")
+                } description: {
+                    Text("Tap + to write your first journal entry")
+                } actions: {
+                    Button("Write Now") { showingEditor = true }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.purple)
+                }
+            }
+        }
+    }
+
+    private var groupedByDate: [(key: Date, value: [JournalEntry])] {
+        let calendar = Calendar.current
+        let grouped = Dictionary(grouping: filteredEntries) { entry in
+            calendar.startOfDay(for: entry.createdAt)
+        }
+        return grouped.sorted { $0.key > $1.key }
+    }
+
+    private func deleteEntries(dayEntries: [JournalEntry], at offsets: IndexSet) {
+        for index in offsets {
+            modelContext.delete(dayEntries[index])
+        }
+    }
+}
