@@ -3,9 +3,15 @@ import SwiftData
 
 @main
 struct KinenApp: App {
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if hasSeenOnboarding {
+                ContentView()
+            } else {
+                OnboardingView()
+            }
         }
         .modelContainer(for: [JournalEntry.self, Tag.self, EntryInsight.self, WritingSession.self])
 

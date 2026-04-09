@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinen - Private AI Journal</title>
+    <meta name="description" content="Kinen is a privacy-first AI journal with on-device mood analysis, CBT reflections, and pattern discovery. Your thoughts never leave your device.">
+    <meta name="theme-color" content="#8B5CF6">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #8B5CF6;
+            --purple-dark: #7C3AED;
+            --purple-light: #C4B5FD;
+            --bg: #0F0F0F;
+            --bg-card: #1A1A1A;
+            --text: #FAFAFA;
+            --text-muted: #A1A1AA;
+            --green: #10B981;
+            --red: #EF4444;
+            --orange: #F59E0B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+        /* Nav */
+        nav {
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(15,15,15,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        nav .container { display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--purple); }
+        .logo span { color: var(--text-muted); font-weight: 400; font-size: 0.9rem; margin-left: 8px; }
+        .nav-links { display: flex; gap: 28px; align-items: center; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+
+        /* Hero */
+        .hero {
+            padding: 160px 0 80px;
+            text-align: center;
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(139,92,246,0.15); color: var(--purple-light);
+            padding: 6px 16px; border-radius: 999px; font-size: 0.85rem;
+            margin-bottom: 24px; border: 1px solid rgba(139,92,246,0.2);
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--purple), #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+        .hero-cta {
+            display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+        }
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: var(--purple);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--purple-dark); transform: translateY(-1px); }
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-secondary:hover { border-color: var(--purple); }
+
+        /* Privacy Banner */
+        .privacy-banner {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(139,92,246,0.1));
+            border: 1px solid rgba(16,185,129,0.2);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin: 40px 0 80px;
+        }
+        .privacy-banner h3 { font-size: 1.3rem; margin-bottom: 8px; }
+        .privacy-banner p { color: var(--text-muted); }
+        .privacy-icons {
+            display: flex; justify-content: center; gap: 32px; margin-top: 20px; flex-wrap: wrap;
+        }
+        .privacy-icon {
+            display: flex; align-items: center; gap: 8px; font-size: 0.9rem;
+        }
+        .privacy-icon .dot {
+            width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+        }
+
+        /* Features */
+        .features { padding: 80px 0; }
+        .section-title {
+            text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: 12px;
+        }
+        .section-subtitle {
+            text-align: center; color: var(--text-muted); margin-bottom: 48px; font-size: 1.05rem;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 28px;
+            transition: border-color 0.2s;
+        }
+        .feature-card:hover { border-color: var(--purple); }
+        .feature-card .icon {
+            width: 44px; height: 44px;
+            background: rgba(139,92,246,0.15);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+        }
+        .feature-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .feature-card p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* Comparison */
+        .comparison { padding: 80px 0; }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .comparison-table th { color: var(--text-muted); font-weight: 500; font-size: 0.85rem; }
+        .comparison-table td:first-child { font-weight: 600; }
+        .comparison-table tr:first-child td { color: var(--purple); font-weight: 700; }
+        .check { color: var(--green); }
+        .cross { color: var(--red); }
+        .cloud { color: var(--orange); }
+
+        /* Pricing */
+        .pricing { padding: 80px 0; }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .price-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+        }
+        .price-card.featured {
+            border-color: var(--purple);
+            position: relative;
+        }
+        .price-card.featured::before {
+            content: "Most Popular";
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--purple); color: white;
+            padding: 4px 16px; border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+        }
+        .price-card h3 { font-size: 1.2rem; margin-bottom: 8px; }
+        .price-amount { font-size: 2.5rem; font-weight: 800; margin: 12px 0; }
+        .price-amount span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+        .price-features { list-style: none; text-align: left; margin: 20px 0; }
+        .price-features li {
+            padding: 8px 0; color: var(--text-muted); font-size: 0.9rem;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .price-features li::before { content: "\2713"; color: var(--green); font-weight: 700; }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        footer a { color: var(--purple-light); text-decoration: none; }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .features-grid { grid-template-columns: 1fr; }
+            .comparison-table { font-size: 0.8rem; }
+            .comparison-table th, .comparison-table td { padding: 10px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="container">
+        <div class="logo">Kinen <span>記念</span></div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#compare">Compare</a>
+            <a href="#pricing">Pricing</a>
+            <a href="https://github.com/JasonYeYuhe/Kinen" class="btn btn-secondary" style="padding: 8px 20px; font-size: 0.85rem;">GitHub</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="container">
+        <div class="badge">
+            <span style="color: var(--green);">&#9679;</span>
+            100% On-Device AI &mdash; Zero Cloud
+        </div>
+        <h1>Your private AI journal.<br><span class="gradient">Understands you.</span></h1>
+        <p>Mood analysis, CBT reflections, and pattern discovery &mdash; all powered by on-device AI. Your words never leave your Mac or iPhone.</p>
+        <div class="hero-cta">
+            <a href="#pricing" class="btn btn-primary">Download for Mac &amp; iOS</a>
+            <a href="https://github.com/JasonYeYuhe/Kinen" class="btn btn-secondary">View Source</a>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="privacy-banner">
+        <h3>Built for people who value their privacy.</h3>
+        <p>Unlike Rosebud and Reflectly, Kinen never sends your journal to the cloud. Not even for AI.</p>
+        <div class="privacy-icons">
+            <div class="privacy-icon"><div class="dot"></div> No servers</div>
+            <div class="privacy-icon"><div class="dot"></div> No accounts</div>
+            <div class="privacy-icon"><div class="dot"></div> No tracking</div>
+            <div class="privacy-icon"><div class="dot"></div> No AI training</div>
+            <div class="privacy-icon"><div class="dot"></div> Face ID lock</div>
+        </div>
+    </div>
+</div>
+
+<section class="features" id="features">
+    <div class="container">
+        <h2 class="section-title">AI that stays on your device.</h2>
+        <p class="section-subtitle">Every feature runs locally. No internet needed. No API keys. No data leaks.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon">&#129504;</div>
+                <h3>CBT Cognitive Reflection</h3>
+                <p>Detects 8 cognitive distortion patterns (catastrophizing, all-or-nothing thinking, etc.) and suggests evidence-based reframing.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128200;</div>
+                <h3>Mood Trends &amp; Charts</h3>
+                <p>Swift Charts-powered mood visualization over 7, 30, or 90 days. See how your emotions evolve over time.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#127908;</div>
+                <h3>Voice Journaling</h3>
+                <p>Speak your thoughts. On-device speech-to-text transcribes in real time &mdash; no audio ever leaves your device.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128218;</div>
+                <h3>8 Guided Templates</h3>
+                <p>Daily review, gratitude, morning pages, CBT three-column, dream journal, goals, weekly review, and free write.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128161;</div>
+                <h3>AI Journaling Loop</h3>
+                <p>5-step cycle: Write &rarr; AI Reflect &rarr; Tag Themes &rarr; Micro-Experiment &rarr; Weekly Recap. Inspired by clinical research.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128170;</div>
+                <h3>Pattern Discovery</h3>
+                <p>Auto-detects life themes (work, health, relationships) and mood-behavior correlations. Bilingual EN/CN support.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128203;</div>
+                <h3>Weekly &amp; Monthly Recaps</h3>
+                <p>AI-generated summaries with mood trends, top themes, growth notes, and suggested actions. Exportable for therapists.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128274;</div>
+                <h3>Face ID / Touch ID</h3>
+                <p>Lock your journal with biometric authentication. Auto-locks when you switch apps.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128190;</div>
+                <h3>Export Anywhere</h3>
+                <p>Export as Markdown (with YAML frontmatter), JSON, or plain text. Your data is always yours.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="comparison" id="compare">
+    <div class="container">
+        <h2 class="section-title">How Kinen compares.</h2>
+        <p class="section-subtitle">The only journal that combines deep AI with true privacy.</p>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Kinen</th>
+                    <th>Day One</th>
+                    <th>Rosebud</th>
+                    <th>Reflectly</th>
+                    <th>Apple Journal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>AI Sentiment Analysis</td>
+                    <td><span class="check">&#10003; Local</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cloud">&#9729; Cloud</span></td>
+                    <td><span class="cloud">&#9729; Cloud</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>CBT Distortion Detection</td>
+                    <td><span class="check">&#10003; Local</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cloud">&#9729; Basic</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>Voice Journaling</td>
+                    <td><span class="check">&#10003; On-device</span></td>
+                    <td><span class="check">&#10003;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>Templates</td>
+                    <td><span class="check">&#10003; 8 (incl. CBT)</span></td>
+                    <td><span class="check">&#10003;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td>Limited</td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>Weekly/Monthly Recaps</td>
+                    <td><span class="check">&#10003; AI-generated</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td>Yearly only</td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>Privacy</td>
+                    <td><span class="check">&#10003; 100% local</span></td>
+                    <td><span class="cloud">E2E encrypted</span></td>
+                    <td><span class="cross">Cloud AI</span></td>
+                    <td><span class="cross">Cloud AI</span></td>
+                    <td><span class="check">&#10003; Local</span></td>
+                </tr>
+                <tr>
+                    <td>Price</td>
+                    <td><strong>$19.99/yr</strong></td>
+                    <td>$50-75/yr</td>
+                    <td>$155/yr</td>
+                    <td>$20-60/yr</td>
+                    <td>Free</td>
+                </tr>
+                <tr>
+                    <td>Lifetime Option</td>
+                    <td><span class="check">&#10003; $49.99</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td>&mdash;</td>
+                </tr>
+                <tr>
+                    <td>Mac + iOS</td>
+                    <td><span class="check">&#10003; Both</span></td>
+                    <td><span class="check">&#10003;</span></td>
+                    <td>iOS + Web</td>
+                    <td>iOS + Android</td>
+                    <td>iPhone only</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="pricing" id="pricing">
+    <div class="container">
+        <h2 class="section-title">Simple, honest pricing.</h2>
+        <p class="section-subtitle">No tricks. No hidden fees. And a lifetime option because subscriptions shouldn't last forever.</p>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <h3>Free</h3>
+                <div class="price-amount">$0</div>
+                <ul class="price-features">
+                    <li>1 entry per day</li>
+                    <li>Basic mood tracking</li>
+                    <li>7-day insights</li>
+                    <li>Face ID lock</li>
+                    <li>All templates</li>
+                </ul>
+            </div>
+            <div class="price-card featured">
+                <h3>Pro</h3>
+                <div class="price-amount">$19.99<span>/year</span></div>
+                <ul class="price-features">
+                    <li>Unlimited entries</li>
+                    <li>Full AI analysis</li>
+                    <li>CBT reflections</li>
+                    <li>Weekly &amp; monthly recaps</li>
+                    <li>Voice journaling</li>
+                    <li>Export (MD/JSON/PDF)</li>
+                    <li>Pattern discovery</li>
+                </ul>
+            </div>
+            <div class="price-card">
+                <h3>Lifetime</h3>
+                <div class="price-amount">$49.99</div>
+                <ul class="price-features">
+                    <li>Everything in Pro</li>
+                    <li>One-time payment</li>
+                    <li>All future updates</li>
+                    <li>No subscription ever</li>
+                    <li>Support indie dev</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>Kinen (記念) &mdash; Built by <a href="https://github.com/JasonYeYuhe">Jason Ye</a></p>
+        <p style="margin-top: 8px;">100% on-device AI. Your thoughts are yours alone.</p>
+        <p style="margin-top: 16px; font-size: 0.75rem;">
+            Kinen is a self-reflection tool, not a substitute for professional mental health care.<br>
+            If you're in crisis, call <strong>988</strong> (US) or visit <a href="https://988lifeline.org">988lifeline.org</a>.
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>

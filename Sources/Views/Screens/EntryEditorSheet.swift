@@ -16,6 +16,8 @@ struct EntryEditorSheet: View {
     @State private var showingTemplatePicker = false
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var photoData: Data?
+    @State private var crisisAlert: CrisisDetector.CrisisAlert?
+    @State private var showCrisisAlert = false
     @State private var writingStartTime: Date?
     @State private var elapsedTime: TimeInterval = 0
     @State private var timer: Timer?
@@ -73,6 +75,18 @@ struct EntryEditorSheet: View {
             }
             .onAppear { startTimer() }
             .onDisappear { stopTimer() }
+            .overlay {
+                if showCrisisAlert, let alert = crisisAlert {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .overlay {
+                            CrisisAlertView(alert: alert) {
+                                showCrisisAlert = false
+                            }
+                            .padding()
+                        }
+                }
+            }
         }
         #if os(macOS)
         .frame(minWidth: 560, minHeight: 500)
@@ -299,6 +313,13 @@ struct EntryEditorSheet: View {
 
     private func save() {
         stopTimer()
+
+        // Crisis detection — check before saving
+        if let alert = CrisisDetector.check(effectiveContent) {
+            crisisAlert = alert
+            showCrisisAlert = true
+            // Still save the entry — don't block journaling, just show resources
+        }
 
         // Build final content from template responses or free-form
         var finalContent: String
