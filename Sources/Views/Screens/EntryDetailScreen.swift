@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct EntryDetailScreen: View {
+    @Environment(\.modelContext) private var modelContext
     let entry: JournalEntry
     @State private var showingEditor = false
+    @State private var isReanalyzing = false
 
     var body: some View {
         ScrollView {
@@ -99,9 +101,33 @@ struct EntryDetailScreen: View {
                           systemImage: entry.isBookmarked ? "bookmark.fill" : "bookmark")
                 }
             }
+            ToolbarItem {
+                Button(action: { reanalyze() }) {
+                    if isReanalyzing {
+                        ProgressView()
+                            .controlSize(.small)
+                    } else {
+                        Label("Re-analyze", systemImage: "sparkles")
+                    }
+                }
+                .disabled(isReanalyzing)
+                .help("Re-run AI analysis on this entry")
+            }
         }
         .sheet(isPresented: $showingEditor) {
             EntryEditorSheet(entry: entry)
+        }
+    }
+
+    private func reanalyze() {
+        isReanalyzing = true
+        // Clear old insights
+        entry.insights.removeAll()
+        entry.sentimentScore = nil
+
+        Task {
+            await AIJournalingLoop.shared.processEntry(entry, in: modelContext)
+            isReanalyzing = false
         }
     }
 }

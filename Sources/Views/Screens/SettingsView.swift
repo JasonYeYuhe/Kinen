@@ -10,6 +10,7 @@ struct SettingsView: View {
     @AppStorage("defaultMoodEnabled") private var defaultMoodEnabled = true
     @State private var appLock = AppLockService.shared
     @State private var showExportPicker = false
+    @State private var showTagManagement = false
     @State private var exportFormat: ExportService.ExportFormat = .markdown
     @State private var exportMessage: String?
 
@@ -25,6 +26,7 @@ struct SettingsView: View {
 
             Section("Journal") {
                 Toggle("Show mood picker for new entries", isOn: $defaultMoodEnabled)
+                Button("Manage Tags") { showTagManagement = true }
             }
 
             Section("Security") {
@@ -87,6 +89,9 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Settings")
+        .sheet(isPresented: $showTagManagement) {
+            TagManagementSheet()
+        }
     }
 
     private func exportEntries() {

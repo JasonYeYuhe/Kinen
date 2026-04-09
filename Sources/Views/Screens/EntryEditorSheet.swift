@@ -18,6 +18,7 @@ struct EntryEditorSheet: View {
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var photoData: Data?
     @AppStorage("defaultMoodEnabled") private var defaultMoodEnabled = true
+    @State private var entryTags: [Tag] = []
     @State private var crisisAlert: CrisisDetector.CrisisAlert?
     @State private var showCrisisAlert = false
     @State private var writingStartTime: Date?
@@ -31,6 +32,7 @@ struct EntryEditorSheet: View {
         _mood = State(initialValue: entry?.mood)
         _template = State(initialValue: entry?.template)
         _photoData = State(initialValue: entry?.photoData)
+        _entryTags = State(initialValue: entry?.tags ?? [])
     }
 
     var body: some View {
@@ -52,6 +54,15 @@ struct EntryEditorSheet: View {
                     }
 
                     photoSection
+
+                    // Tags
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Tags")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        TagEditor(selectedTags: $entryTags)
+                    }
+
                     footerStats
                 }
                 .padding()
@@ -395,6 +406,7 @@ struct EntryEditorSheet: View {
             entry.wordCount = trimmed.split(separator: " ").count
             entry.photoData = photoData
             entry.writingDuration += elapsedTime
+            entry.tags = entryTags
         } else {
             let newEntry = JournalEntry(
                 content: trimmed,
@@ -404,6 +416,7 @@ struct EntryEditorSheet: View {
             )
             newEntry.photoData = photoData
             newEntry.writingDuration = elapsedTime
+            newEntry.tags = entryTags
             modelContext.insert(newEntry)
 
             // Record writing session

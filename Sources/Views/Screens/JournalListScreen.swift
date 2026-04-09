@@ -8,32 +8,82 @@ struct JournalListScreen: View {
     @State private var showingEditor = false
     @State private var searchText = ""
 
+    // Filter state
+    @State private var selectedMoods: Set<Mood> = []
+    @State private var selectedTags: Set<String> = []
+    @State private var dateRange: DateRange = .all
+    @State private var bookmarkedOnly = false
+
     private var filteredEntries: [JournalEntry] {
-        if searchText.isEmpty { return entries }
-        return entries.filter {
-            $0.content.localizedCaseInsensitiveContains(searchText) ||
-            ($0.title?.localizedCaseInsensitiveContains(searchText) ?? false)
+        var result = entries
+
+        // Text search (coexists with filters — Gemini recommendation)
+        if !searchText.isEmpty {
+            result = result.filter {
+                $0.content.localizedCaseInsensitiveContains(searchText) ||
+                ($0.title?.localizedCaseInsensitiveContains(searchText) ?? false)
+            }
         }
+
+        // Mood filter
+        if !selectedMoods.isEmpty {
+            result = result.filter { entry in
+                guard let mood = entry.mood else { return false }
+                return selectedMoods.contains(mood)
+            }
+        }
+
+        // Tag filter
+        if !selectedTags.isEmpty {
+            result = result.filter { entry in
+                entry.tags.contains { selectedTags.contains($0.name) }
+            }
+        }
+
+        // Date range
+        if let start = dateRange.startDate {
+            result = result.filter { $0.createdAt >= start }
+        }
+
+        // Bookmarked only
+        if bookmarkedOnly {
+            result = result.filter { $0.isBookmarked }
+        }
+
+        return result
     }
 
     var body: some View {
-        List(selection: $selectedEntry) {
-            ForEach(groupedByDate, id: \.key) { date, dayEntries in
-                Section(header: Text(date, style: .date)) {
-                    ForEach(dayEntries) { entry in
-                        NavigationLink(value: entry) {
-                            EntryRow(entry: entry)
+        VStack(spacing: 0) {
+            // Filter bar
+            FilterBar(
+                selectedMoods: $selectedMoods,
+                selectedTags: $selectedTags,
+                dateRange: $dateRange,
+                bookmarkedOnly: $bookmarkedOnly
+            )
+
+            Divider()
+
+            // Entry list
+            List(selection: $selectedEntry) {
+                ForEach(groupedByDate, id: \.key) { date, dayEntries in
+                    Section(header: Text(date, style: .date)) {
+                        ForEach(dayEntries) { entry in
+                            NavigationLink(value: entry) {
+                                EntryRow(entry: entry)
+                            }
+                            .tag(entry)
                         }
-                        .tag(entry)
-                    }
-                    .onDelete { offsets in
-                        deleteEntries(dayEntries: dayEntries, at: offsets)
+                        .onDelete { offsets in
+                            deleteEntries(dayEntries: dayEntries, at: offsets)
+                        }
                     }
                 }
             }
         }
         .searchable(text: $searchText, prompt: "Search entries...")
-        .navigationTitle("Journal")
+        .navigationTitle("Journal (\(filteredEntries.count))")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { showingEditor = true }) {
