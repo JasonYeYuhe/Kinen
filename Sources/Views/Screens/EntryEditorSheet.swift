@@ -76,6 +76,8 @@ struct EntryEditorSheet: View {
         }
         #if os(macOS)
         .frame(minWidth: 560, minHeight: 500)
+        #else
+        .presentationDetents([.large])
         #endif
     }
 
@@ -151,7 +153,7 @@ struct EntryEditorSheet: View {
                         .frame(minHeight: 80)
                         .scrollContentBackground(.hidden)
                         .padding(8)
-                        .background(Color(.textBackgroundColor).opacity(0.5))
+                        .background(Color.secondary.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(alignment: .topLeading) {
                             if (templateResponses[prompt.id] ?? "").isEmpty {
@@ -193,24 +195,43 @@ struct EntryEditorSheet: View {
                 }
             }
 
-            if let photoData, let nsImage = NSImage(data: photoData) {
-                Image(nsImage: nsImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxHeight: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(alignment: .topTrailing) {
-                        Button(action: { self.photoData = nil; selectedPhoto = nil }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.title3)
-                                .foregroundStyle(.white)
-                                .shadow(radius: 2)
+            if let photoData {
+                #if os(macOS)
+                if let nsImage = NSImage(data: photoData) {
+                    Image(nsImage: nsImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: 200)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(alignment: .topTrailing) {
+                            removePhotoButton
                         }
-                        .buttonStyle(.borderless)
-                        .padding(4)
-                    }
+                }
+                #else
+                if let uiImage = UIImage(data: photoData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxHeight: 200)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(alignment: .topTrailing) {
+                            removePhotoButton
+                        }
+                }
+                #endif
             }
         }
+    }
+
+    private var removePhotoButton: some View {
+        Button(action: { self.photoData = nil; selectedPhoto = nil }) {
+            Image(systemName: "xmark.circle.fill")
+                .font(.title3)
+                .foregroundStyle(.white)
+                .shadow(radius: 2)
+        }
+        .buttonStyle(.borderless)
+        .padding(4)
     }
 
     // MARK: - Footer Stats

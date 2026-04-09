@@ -17,7 +17,6 @@ settings:
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_STRICT_CONCURRENCY: complete
-    ENABLE_HARDENED_RUNTIME: YES
 
 targets:
   Kinen:
@@ -25,7 +24,10 @@ targets:
     platform: macOS
     sources:
       - Sources
-      - Resources
+      - path: Resources
+        excludes:
+          - "Info-iOS.plist"
+          - "Kinen-iOS.entitlements"
     settings:
       base:
         PRODUCT_NAME: Kinen
@@ -34,9 +36,33 @@ targets:
         INFOPLIST_FILE: Resources/Info.plist
         GENERATE_INFOPLIST_FILE: false
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_HARDENED_RUNTIME: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
     info:
       path: Resources/Info.plist
+
+  KinenIOS:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+      - path: Resources
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_NAME: Kinen
+        PRODUCT_BUNDLE_IDENTIFIER: com.kinen.app
+        IPHONEOS_DEPLOYMENT_TARGET: "18.0"
+        INFOPLIST_FILE: Resources/Info-iOS.plist
+        GENERATE_INFOPLIST_FILE: false
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+    info:
+      path: Resources/Info-iOS.plist
+    entitlements:
+      path: Resources/Kinen-iOS.entitlements
 
   KinenTests:
     type: bundle.unit-test

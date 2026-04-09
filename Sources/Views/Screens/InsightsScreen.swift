@@ -1,16 +1,20 @@
 import SwiftUI
 import SwiftData
+import Charts
 
 struct InsightsScreen: View {
     @Query(sort: \JournalEntry.createdAt, order: .reverse) private var entries: [JournalEntry]
+    @State private var chartRange: ChartRange = .week
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
                     streakCard
-                    moodTrendCard
+                    moodChartCard
                     weeklyStatsCard
+                    sentimentTrendCard
+                    writingActivityCard
                     topTagsCard
                 }
                 .padding()
@@ -50,45 +54,122 @@ struct InsightsScreen: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
-    // MARK: - Mood Trend
+    // MARK: - Mood Chart (Swift Charts)
 
-    private var moodTrendCard: some View {
+    private var moodChartCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Mood Trend (Last 7 Days)")
-                .font(.headline)
+            HStack {
+                Text("Mood Trend")
+                    .font(.headline)
+                Spacer()
+                Picker("Range", selection: $chartRange) {
+                    ForEach(ChartRange.allCases) { range in
+                        Text(range.label).tag(range)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(maxWidth: 200)
+            }
 
-            if last7DaysMoods.isEmpty {
+            if moodChartData.isEmpty {
                 Text("Start logging moods to see your trend")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.vertical, 20)
             } else {
-                HStack(alignment: .bottom, spacing: 8) {
-                    ForEach(last7DaysMoods, id: \.date) { item in
-                        VStack(spacing: 4) {
-                            if let mood = item.averageMood {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(mood.color.gradient)
-                                    .frame(height: CGFloat(mood.rawValue) * 20)
+                Chart(moodChartData) { point in
+                    LineMark(
+                        x: .value("Date", point.date, unit: .day),
+                        y: .value("Mood", point.value)
+                    )
+                    .foregroundStyle(.purple.gradient)
+                    .interpolationMethod(.catmullRom)
+
+                    AreaMark(
+                        x: .value("Date", point.date, unit: .day),
+                        y: .value("Mood", point.value)
+                    )
+                    .foregroundStyle(.purple.opacity(0.1).gradient)
+                    .interpolationMethod(.catmullRom)
+
+                    PointMark(
+                        x: .value("Date", point.date, unit: .day),
+                        y: .value("Mood", point.value)
+                    )
+                    .foregroundStyle(moodColor(for: point.value))
+                    .symbolSize(30)
+                }
+                .chartYScale(domain: 1...5)
+                .chartYAxis {
+                    AxisMarks(values: [1, 2, 3, 4, 5]) { value in
+                        AxisGridLine()
+                        AxisValueLabel {
+                            if let v = value.as(Int.self), let mood = Mood(rawValue: v) {
                                 Text(mood.emoji)
-                                    .font(.caption)
-                            } else {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(.gray.opacity(0.2))
-                                    .frame(height: 20)
-                                Text("—")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
                             }
-                            Text(item.date, format: .dateTime.weekday(.abbreviated))
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
                         }
-                        .frame(maxWidth: .infinity)
                     }
                 }
+                .frame(height: 180)
+            }
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    // MARK: - Sentiment Trend
+
+    private var sentimentTrendCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Sentiment Analysis")
+                .font(.headline)
+
+            if sentimentData.isEmpty {
+                Text("Write more entries to see sentiment trends")
+                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 12)
+            } else {
+                Chart(sentimentData) { point in
+                    BarMark(
+                        x: .value("Date", point.date, unit: .day),
+                        y: .value("Sentiment", point.value)
+                    )
+                    .foregroundStyle(point.value >= 0 ? Color.green.gradient : Color.red.gradient)
+                    .cornerRadius(2)
+                }
+                .chartYScale(domain: -1...1)
                 .frame(height: 120)
             }
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    // MARK: - Writing Activity Heatmap
+
+    private var writingActivityCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Writing Activity")
+                .font(.headline)
+
+            HStack(spacing: 3) {
+                ForEach(last30DaysActivity, id: \.date) { day in
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(activityColor(count: day.count))
+                        .frame(width: 12, height: 12)
+                        .help("\(day.date.shortDate): \(day.count) entries")
+                }
+            }
+
+            HStack(spacing: 12) {
+                Label("\(totalWordsThisMonth) words this month", systemImage: "character.cursor.ibeam")
+                Spacer()
+                Label("\(averageWordsPerEntry) avg/entry", systemImage: "doc.text")
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
         }
         .padding()
         .background(.ultraThinMaterial)
@@ -109,7 +190,8 @@ struct InsightsScreen: View {
             HStack(spacing: 20) {
                 StatItem(value: "\(weekEntries.count)", label: "Entries", icon: "doc.text", color: .blue)
                 StatItem(value: "\(weekEntries.reduce(0) { $0 + $1.wordCount })", label: "Words", icon: "character.cursor.ibeam", color: .green)
-                StatItem(value: averageSentimentLabel(for: weekEntries), label: "Avg Mood", icon: "face.smiling", color: .purple)
+                StatItem(value: averageMoodEmoji(for: weekEntries), label: "Avg Mood", icon: "face.smiling", color: .purple)
+                StatItem(value: totalWritingTime(for: weekEntries), label: "Time", icon: "timer", color: .orange)
             }
         }
         .padding()
@@ -127,7 +209,7 @@ struct InsightsScreen: View {
             let tagCounts = Dictionary(grouping: entries.flatMap { $0.tags }) { $0.name }
                 .mapValues { $0.count }
                 .sorted { $0.value > $1.value }
-                .prefix(8)
+                .prefix(10)
 
             if tagCounts.isEmpty {
                 Text("Tags will appear as you write more")
@@ -154,49 +236,116 @@ struct InsightsScreen: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
-    // MARK: - Helpers
+    // MARK: - Data Models
+
+    struct ChartPoint: Identifiable {
+        let id = UUID()
+        let date: Date
+        let value: Double
+    }
+
+    enum ChartRange: String, CaseIterable, Identifiable {
+        case week = "7D"
+        case month = "30D"
+        case quarter = "90D"
+        var id: String { rawValue }
+        var label: String { rawValue }
+        var days: Int {
+            switch self {
+            case .week: 7
+            case .month: 30
+            case .quarter: 90
+            }
+        }
+    }
+
+    // MARK: - Computed Data
+
+    private var moodChartData: [ChartPoint] {
+        let calendar = Calendar.current
+        let cutoff = Date.daysAgo(chartRange.days)
+        let rangeEntries = entries.filter { $0.createdAt >= cutoff }
+
+        let grouped = Dictionary(grouping: rangeEntries) { calendar.startOfDay(for: $0.createdAt) }
+        return grouped.compactMap { date, dayEntries in
+            let moods = dayEntries.compactMap { $0.mood }
+            guard !moods.isEmpty else { return nil }
+            let avg = Double(moods.map { $0.rawValue }.reduce(0, +)) / Double(moods.count)
+            return ChartPoint(date: date, value: avg)
+        }.sorted { $0.date < $1.date }
+    }
+
+    private var sentimentData: [ChartPoint] {
+        let cutoff = Date.daysAgo(chartRange.days)
+        return entries
+            .filter { $0.createdAt >= cutoff && $0.sentimentScore != nil }
+            .map { ChartPoint(date: $0.createdAt, value: $0.sentimentScore!) }
+            .sorted { $0.date < $1.date }
+    }
+
+    struct DayActivity: Identifiable {
+        let id = UUID()
+        let date: Date
+        let count: Int
+    }
+
+    private var last30DaysActivity: [DayActivity] {
+        let calendar = Calendar.current
+        return (0..<30).reversed().map { daysAgo in
+            let date = calendar.startOfDay(for: Date.daysAgo(daysAgo))
+            let count = entries.filter { calendar.isDate($0.createdAt, inSameDayAs: date) }.count
+            return DayActivity(date: date, count: count)
+        }
+    }
 
     private var currentStreak: Int {
         let calendar = Calendar.current
-        var streak = 0
-        var checkDate = calendar.startOfDay(for: Date())
-
-        while true {
-            let hasEntry = entries.contains { calendar.isDate($0.createdAt, inSameDayAs: checkDate) }
-            if hasEntry {
-                streak += 1
-                checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate)!
-            } else {
-                break
-            }
-        }
-        return streak
+        let dates = Set(entries.map { calendar.startOfDay(for: $0.createdAt) })
+        return Date().startOfDay.consecutiveDays(in: dates)
     }
 
-    private struct DayMood {
-        let date: Date
-        let averageMood: Mood?
+    private var totalWordsThisMonth: Int {
+        let startOfMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date()))!
+        return entries.filter { $0.createdAt >= startOfMonth }.reduce(0) { $0 + $1.wordCount }
     }
 
-    private var last7DaysMoods: [DayMood] {
-        let calendar = Calendar.current
-        return (0..<7).reversed().map { daysAgo in
-            let date = calendar.date(byAdding: .day, value: -daysAgo, to: calendar.startOfDay(for: Date()))!
-            let dayEntries = entries.filter { calendar.isDate($0.createdAt, inSameDayAs: date) }
-            let moods = dayEntries.compactMap { $0.mood }
-            let avgRaw = moods.isEmpty ? nil : Double(moods.map { $0.rawValue }.reduce(0, +)) / Double(moods.count)
-            let avgMood = avgRaw.flatMap { Mood(rawValue: Int($0.rounded())) }
-            return DayMood(date: date, averageMood: avgMood)
+    private var averageWordsPerEntry: Int {
+        guard !entries.isEmpty else { return 0 }
+        return entries.reduce(0) { $0 + $1.wordCount } / entries.count
+    }
+
+    // MARK: - Helpers
+
+    private func moodColor(for value: Double) -> Color {
+        switch Int(value.rounded()) {
+        case 1: .red
+        case 2: .orange
+        case 3: .gray
+        case 4: .green
+        case 5: .purple
+        default: .gray
         }
     }
 
-    private func averageSentimentLabel(for entries: [JournalEntry]) -> String {
-        let scores = entries.compactMap { $0.sentimentScore }
-        guard !scores.isEmpty else { return "—" }
-        let avg = scores.reduce(0, +) / Double(scores.count)
-        if avg > 0.3 { return "😊" }
-        if avg < -0.3 { return "😔" }
-        return "😐"
+    private func activityColor(count: Int) -> Color {
+        switch count {
+        case 0: Color.secondary.opacity(0.1)
+        case 1: Color.purple.opacity(0.3)
+        case 2: Color.purple.opacity(0.5)
+        default: Color.purple.opacity(0.8)
+        }
+    }
+
+    private func averageMoodEmoji(for entries: [JournalEntry]) -> String {
+        let moods = entries.compactMap { $0.mood }
+        guard !moods.isEmpty else { return "—" }
+        let avg = Double(moods.map { $0.rawValue }.reduce(0, +)) / Double(moods.count)
+        return Mood(rawValue: Int(avg.rounded()))?.emoji ?? "😐"
+    }
+
+    private func totalWritingTime(for entries: [JournalEntry]) -> String {
+        let total = entries.reduce(0.0) { $0 + $1.writingDuration }
+        return total.formattedDuration
     }
 }
 
