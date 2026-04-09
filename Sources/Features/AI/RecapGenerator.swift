@@ -86,7 +86,7 @@ struct RecapGenerator {
         let moodTrend = calculateMoodTrend(sentiments: sentiments)
 
         // Top themes from tags
-        let tagCounts = Dictionary(grouping: entries.flatMap { $0.tags }) { $0.name }
+        let tagCounts = Dictionary(grouping: entries.flatMap { $0.safeTags }) { $0.name }
             .mapValues { $0.count }
             .sorted { $0.value > $1.value }
         let topThemes = Array(tagCounts.prefix(5).map { $0.key })

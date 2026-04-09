@@ -223,7 +223,7 @@ struct InsightsScreen: View {
             Text("Top Topics")
                 .font(.headline)
 
-            let tagCounts = Dictionary(grouping: entries.flatMap { $0.tags }) { $0.name }
+            let tagCounts = Dictionary(grouping: entries.flatMap { $0.safeTags }) { $0.name }
                 .mapValues { $0.count }
                 .sorted { $0.value > $1.value }
                 .prefix(10)

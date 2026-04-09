@@ -1,13 +1,12 @@
 import Foundation
 import SwiftData
 
-/// An AI-generated insight attached to a journal entry.
 @Model
 final class EntryInsight {
-    var id: UUID
-    var type: InsightType
-    var content: String
-    var createdAt: Date
+    var id: UUID = UUID()
+    var type: InsightType = InsightType.sentiment
+    var content: String = ""
+    var createdAt: Date = Date()
 
     var entry: JournalEntry?
 
@@ -20,9 +19,9 @@ final class EntryInsight {
 }
 
 enum InsightType: String, Codable {
-    case sentiment       // "Your mood seems more positive today"
-    case pattern         // "You tend to feel better on days you exercise"
-    case suggestion      // "Consider journaling about what made today good"
-    case topicExtraction // "Main topics: work, family, health"
-    case streak          // "7-day journaling streak!"
+    case sentiment
+    case pattern
+    case suggestion
+    case topicExtraction
+    case streak
 }

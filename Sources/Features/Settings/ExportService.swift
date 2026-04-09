@@ -82,8 +82,8 @@ struct ExportService {
         if let score = entry.sentimentScore {
             md += "sentiment: \(String(format: "%.2f", score))\n"
         }
-        if !entry.tags.isEmpty {
-            md += "tags: [\(entry.tags.map { $0.name }.joined(separator: ", "))]\n"
+        if !entry.safeTags.isEmpty {
+            md += "tags: [\(entry.safeTags.map { $0.name }.joined(separator: ", "))]\n"
         }
         md += "words: \(entry.wordCount)\n"
         md += "---\n\n"
@@ -97,9 +97,9 @@ struct ExportService {
         md += entry.content + "\n"
 
         // Insights
-        if !entry.insights.isEmpty {
+        if !entry.safeInsights.isEmpty {
             md += "\n## AI Insights\n\n"
-            for insight in entry.insights {
+            for insight in entry.safeInsights {
                 md += "- **[\(insight.type.rawValue)]** \(insight.content)\n"
             }
         }
@@ -151,8 +151,8 @@ private struct ExportableEntry: Codable {
         self.moodValue = entry.mood?.rawValue
         self.sentimentScore = entry.sentimentScore
         self.wordCount = entry.wordCount
-        self.tags = entry.tags.map { $0.name }
-        self.insights = entry.insights.map { ExportableInsight(type: $0.type.rawValue, content: $0.content) }
+        self.tags = entry.safeTags.map { $0.name }
+        self.insights = entry.safeInsights.map { ExportableInsight(type: $0.type.rawValue, content: $0.content) }
     }
 }
 

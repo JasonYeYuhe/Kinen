@@ -3,31 +3,37 @@ import SwiftData
 
 @Model
 final class JournalEntry {
-    var id: UUID
-    var content: String
+    // CloudKit requires all properties to have default values
+    var id: UUID = UUID()
+    var content: String = ""
     var title: String?
-    var createdAt: Date
-    var updatedAt: Date
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
     var mood: Mood?
-    var sentimentScore: Double? // -1.0 (negative) to 1.0 (positive), from NL framework
-    var wordCount: Int
-    var isBookmarked: Bool
+    var sentimentScore: Double?
+    var wordCount: Int = 0
+    var isBookmarked: Bool = false
     var weather: String?
     var location: String?
     var template: JournalTemplate?
-    var writingDuration: TimeInterval
-    var isHidden: Bool
+    var writingDuration: TimeInterval = 0
+    var isHidden: Bool = false
 
     @Attribute(.externalStorage)
     var photoData: Data?
 
-    var audioFilename: String? // relative path in app's documents
+    var audioFilename: String?
 
+    // CloudKit requires relationships to be optional
     @Relationship(deleteRule: .nullify, inverse: \Tag.entries)
-    var tags: [Tag]
+    var tags: [Tag]?
 
     @Relationship(deleteRule: .cascade)
-    var insights: [EntryInsight]
+    var insights: [EntryInsight]?
+
+    /// Safe accessor — always returns non-nil array (Gemini recommendation)
+    var safeTags: [Tag] { tags ?? [] }
+    var safeInsights: [EntryInsight] { insights ?? [] }
 
     init(
         content: String,
@@ -49,11 +55,20 @@ final class JournalEntry {
         self.isBookmarked = false
         self.isHidden = false
         self.writingDuration = 0
-        self.tags = tags
+        self.tags = tags  // Always [] not nil (Gemini safety rule)
         self.insights = []
     }
 
-    /// Preview/summary: first line or first 100 chars
+    /// Safe append to optional tags array
+    func addTag(_ tag: Tag) {
+        if tags != nil { tags!.append(tag) } else { tags = [tag] }
+    }
+
+    /// Safe append to optional insights array
+    func addInsight(_ insight: EntryInsight) {
+        if insights != nil { insights!.append(insight) } else { insights = [insight] }
+    }
+
     var preview: String {
         let firstLine = content.components(separatedBy: "\n").first ?? content
         if firstLine.count > 100 {
@@ -62,7 +77,6 @@ final class JournalEntry {
         return firstLine
     }
 
-    /// Display title: explicit title or date-based
     var displayTitle: String {
         if let title, !title.isEmpty { return title }
         let formatter = DateFormatter()

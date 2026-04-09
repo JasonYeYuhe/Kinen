@@ -45,10 +45,10 @@ struct EntryDetailScreen: View {
                     .lineSpacing(4)
 
                 // Tags
-                if !entry.tags.isEmpty {
+                if !entry.safeTags.isEmpty {
                     Divider()
                     FlowLayout(spacing: 6) {
-                        ForEach(entry.tags) { tag in
+                        ForEach(entry.safeTags) { tag in
                             Text(tag.name)
                                 .font(.caption)
                                 .padding(.horizontal, 10)
@@ -60,14 +60,14 @@ struct EntryDetailScreen: View {
                 }
 
                 // AI Insights
-                if !entry.insights.isEmpty {
+                if !entry.safeInsights.isEmpty {
                     Divider()
                     VStack(alignment: .leading, spacing: 8) {
                         Label("AI Insights", systemImage: "sparkles")
                             .font(.headline)
                             .foregroundStyle(.purple)
 
-                        ForEach(entry.insights) { insight in
+                        ForEach(entry.safeInsights) { insight in
                             HStack(alignment: .top, spacing: 8) {
                                 Image(systemName: insight.type.icon)
                                     .foregroundStyle(.purple)
@@ -121,7 +121,7 @@ struct EntryDetailScreen: View {
     private func reanalyze() {
         isReanalyzing = true
         // Clear old insights
-        entry.insights.removeAll()
+        entry.insights = []
         entry.sentimentScore = nil
 
         Task {

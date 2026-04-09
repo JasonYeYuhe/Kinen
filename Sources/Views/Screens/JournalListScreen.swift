@@ -36,7 +36,7 @@ struct JournalListScreen: View {
         // Tag filter
         if !selectedTags.isEmpty {
             result = result.filter { entry in
-                entry.tags.contains { selectedTags.contains($0.name) }
+                entry.safeTags.contains { selectedTags.contains($0.name) }
             }
         }
 

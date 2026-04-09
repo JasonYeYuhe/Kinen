@@ -13,9 +13,31 @@ struct SettingsView: View {
     @State private var showTagManagement = false
     @State private var exportFormat: ExportService.ExportFormat = .markdown
     @State private var exportMessage: String?
+    @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = true
 
     var body: some View {
         Form {
+            Section("iCloud Sync") {
+                Toggle("Sync entries across devices", isOn: $iCloudSyncEnabled)
+                if iCloudSyncEnabled {
+                    HStack {
+                        Image(systemName: "icloud.fill")
+                            .foregroundStyle(.green)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Connected to iCloud")
+                                .font(.subheadline)
+                            Text("\(entries.count) entries syncing")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } else {
+                    Text("Your entries are stored locally only. Enable sync to access them across your devices.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Section("AI Analysis") {
                 Toggle("Auto-analyze sentiment", isOn: $enableAutoSentiment)
                 Toggle("Auto-suggest tags", isOn: $enableAutoTags)

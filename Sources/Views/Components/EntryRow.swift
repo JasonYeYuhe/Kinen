@@ -41,9 +41,9 @@ struct EntryRow: View {
                             .foregroundStyle(.tertiary)
                     }
 
-                    if !entry.tags.isEmpty {
+                    if !entry.safeTags.isEmpty {
                         HStack(spacing: 2) {
-                            ForEach(entry.tags.prefix(3)) { tag in
+                            ForEach(entry.safeTags.prefix(3)) { tag in
                                 Text(tag.name)
                                     .font(.caption2)
                                     .padding(.horizontal, 6)

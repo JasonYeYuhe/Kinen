@@ -5,11 +5,11 @@ import SwiftData
 /// Used to show writing stats and encourage consistency.
 @Model
 final class WritingSession {
-    var id: UUID
-    var startedAt: Date
+    var id: UUID = UUID()
+    var startedAt: Date = Date()
     var endedAt: Date?
-    var initialWordCount: Int
-    var finalWordCount: Int
+    var initialWordCount: Int = 0
+    var finalWordCount: Int = 0
     var entryId: UUID?
 
     init(entryId: UUID? = nil, initialWordCount: Int = 0) {

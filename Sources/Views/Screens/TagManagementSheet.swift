@@ -159,9 +159,10 @@ struct TagMergeSheet: View {
                 Button("Merge") {
                     guard let target = selectedTarget else { return }
                     // Move all entries from source to target
-                    for entry in sourceTag.entries {
-                        if !target.entries.contains(where: { $0.id == entry.id }) {
-                            target.entries.append(entry)
+                    for entry in sourceTag.safeEntries {
+                        if !target.safeEntries.contains(where: { $0.id == entry.id }) {
+                            if target.entries != nil { target.entries!.append(entry) }
+                            else { target.entries = [entry] }
                         }
                     }
                     modelContext.delete(sourceTag)
