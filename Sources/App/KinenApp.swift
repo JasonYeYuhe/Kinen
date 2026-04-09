@@ -7,7 +7,7 @@ struct KinenApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [JournalEntry.self, Tag.self, EntryInsight.self])
+        .modelContainer(for: [JournalEntry.self, Tag.self, EntryInsight.self, WritingSession.self])
 
         #if os(macOS)
         Settings {

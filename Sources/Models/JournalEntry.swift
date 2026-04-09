@@ -14,6 +14,14 @@ final class JournalEntry {
     var isBookmarked: Bool
     var weather: String?
     var location: String?
+    var template: JournalTemplate?
+    var writingDuration: TimeInterval
+    var isHidden: Bool
+
+    @Attribute(.externalStorage)
+    var photoData: Data?
+
+    var audioFilename: String? // relative path in app's documents
 
     @Relationship(deleteRule: .nullify, inverse: \Tag.entries)
     var tags: [Tag]
@@ -25,6 +33,7 @@ final class JournalEntry {
         content: String,
         title: String? = nil,
         mood: Mood? = nil,
+        template: JournalTemplate? = nil,
         tags: [Tag] = [],
         createdAt: Date = Date()
     ) {
@@ -34,9 +43,12 @@ final class JournalEntry {
         self.createdAt = createdAt
         self.updatedAt = createdAt
         self.mood = mood
+        self.template = template
         self.sentimentScore = nil
         self.wordCount = content.split(separator: " ").count
         self.isBookmarked = false
+        self.isHidden = false
+        self.writingDuration = 0
         self.tags = tags
         self.insights = []
     }
