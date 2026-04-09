@@ -1,8 +1,10 @@
 import SwiftUI
 import SwiftData
+import StoreKit
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.requestReview) private var requestReviewAction
     @Query(sort: \JournalEntry.createdAt, order: .reverse) private var entries: [JournalEntry]
 
     @AppStorage("enableAutoSentiment") private var enableAutoSentiment = true
@@ -127,8 +129,10 @@ struct SettingsView: View {
                     Text("Jason Ye")
                         .foregroundStyle(.secondary)
                 }
+                Button("Rate Kinen") { requestReview() }
                 Link("GitHub", destination: URL(string: "https://github.com/JasonYeYuhe/Kinen")!)
                 Link("Privacy Policy", destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/")!)
+                Link("Terms of Use", destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/")!)
             }
         }
         .formStyle(.grouped)
@@ -147,6 +151,10 @@ struct SettingsView: View {
             exportMessage = "Exported to \(url.lastPathComponent)"
         }
         #endif
+    }
+
+    private func requestReview() {
+        requestReviewAction()
     }
 
     private func createBackup() {

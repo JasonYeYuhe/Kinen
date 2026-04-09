@@ -1,0 +1,2 @@
+journal,diary,AI,mood,CBT,mental health,private,local,sentiment,reflection,gratitude,mindfulness,wellness,tracker,writing
+日记,日记本,AI,情绪,CBT,心理健康,隐私,本地,情感分析,反思,感恩,正念,健康,追踪,写作

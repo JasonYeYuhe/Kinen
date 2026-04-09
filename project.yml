@@ -7,6 +7,7 @@ options:
   xcodeVersion: "16.0"
   minimumXcodeGenVersion: "2.38.0"
   groupSortPosition: top
+  knownRegions: [en, zh-Hans]
 
 settings:
   base:

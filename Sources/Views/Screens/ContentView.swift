@@ -4,6 +4,7 @@ import SwiftData
 struct ContentView: View {
     @State private var selectedTab: AppTab = .journal
     @State private var selectedEntry: JournalEntry?
+    @State private var showWhatsNew = WhatsNewSheet.shouldShow
 
     var body: some View {
         #if os(macOS)
@@ -13,6 +14,9 @@ struct ContentView: View {
             detailView
         }
         .frame(minWidth: 800, minHeight: 500)
+        .sheet(isPresented: $showWhatsNew) {
+            WhatsNewSheet()
+        }
         #else
         TabView(selection: $selectedTab) {
             JournalListScreen(selectedEntry: $selectedEntry)
@@ -36,6 +40,9 @@ struct ContentView: View {
                 .tag(AppTab.settings)
         }
         .tint(.purple)
+        .sheet(isPresented: $showWhatsNew) {
+            WhatsNewSheet()
+        }
         #endif
     }
 

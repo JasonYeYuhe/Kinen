@@ -1,0 +1,43 @@
+Kinen — Your Private AI Journal
+
+Write freely. Discover patterns. Grow.
+
+Kinen is a privacy-first journaling app with on-device AI that analyzes your mood, detects thought patterns, and helps you reflect deeper — all without sending a single byte to the cloud.
+
+PRIVATE BY DESIGN
+Every word you write stays on your device. No accounts. No servers. No tracking. No data collection. Your thoughts belong to you alone. All AI analysis runs locally using Apple's NaturalLanguage framework.
+
+AI THAT UNDERSTANDS YOU
+- Automatic mood and sentiment analysis
+- CBT-based cognitive distortion detection (8 patterns)
+- Life theme discovery (work, health, relationships & more)
+- Smart writing prompts based on your mood and history
+- Weekly and monthly AI-generated recaps
+
+8 GUIDED TEMPLATES
+Daily Review, Gratitude Journal, Morning Pages, CBT Three-Column, Dream Journal, Goal Reflection, Weekly Review, and Free Write.
+
+BEAUTIFUL INSIGHTS
+- Mood trend charts (7, 30, 90 days)
+- Sentiment analysis visualization
+- Writing activity heatmap
+- Year-at-a-glance calendar with mood colors
+- Journaling streak tracking
+
+VOICE JOURNALING
+Speak your thoughts. On-device speech recognition transcribes in real time.
+
+SYNC & BACKUP
+- iCloud sync across all your Apple devices (Pro)
+- AES-256 encrypted backups with your password
+- Export to Markdown, JSON, or plain text
+
+SECURITY
+- Face ID / Touch ID app lock
+- Crisis detection with mental health resources
+- Medical disclaimer for CBT features
+
+Kinen is a self-reflection tool, not a substitute for professional mental health care.
+
+Free: Unlimited entries, basic mood tracking, 7-day insights
+Pro: $19.99/year or $49.99 lifetime — full AI, iCloud sync, exports, all templates

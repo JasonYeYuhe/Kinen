@@ -1,0 +1,176 @@
+/* Kinen English Localization */
+
+/* Tabs */
+"tab.journal" = "Journal";
+"tab.insights" = "Insights";
+"tab.recap" = "Recap";
+"tab.calendar" = "Calendar";
+"tab.settings" = "Settings";
+
+/* Journal List */
+"journal.title" = "Journal";
+"journal.empty.title" = "No Entries Yet";
+"journal.empty.description" = "Tap + to write your first journal entry";
+"journal.empty.action" = "Write Now";
+"journal.new" = "New Entry";
+"journal.search" = "Search entries...";
+
+/* Entry Editor */
+"editor.title.new" = "New Entry";
+"editor.title.edit" = "Edit Entry";
+"editor.title.placeholder" = "Title (optional)";
+"editor.mood.question" = "How are you feeling?";
+"editor.template.use" = "Use a Template";
+"editor.template.change" = "Change";
+"editor.photo.add" = "Add Photo";
+"editor.tags.title" = "Tags";
+"editor.tags.add" = "Add tag...";
+"editor.save" = "Save";
+"editor.cancel" = "Cancel";
+
+/* Mood */
+"mood.terrible" = "Terrible";
+"mood.bad" = "Bad";
+"mood.neutral" = "Neutral";
+"mood.good" = "Good";
+"mood.great" = "Great";
+
+/* Templates */
+"template.freeWrite" = "Free Write";
+"template.dailyReview" = "Daily Review";
+"template.gratitude" = "Gratitude Journal";
+"template.morningPages" = "Morning Pages";
+"template.cbt" = "CBT Reflection";
+"template.dream" = "Dream Journal";
+"template.goal" = "Goal Reflection";
+"template.weekly" = "Weekly Review";
+"template.choose" = "Choose Template";
+
+/* Insights */
+"insights.title" = "Insights";
+"insights.streak" = "Current Streak";
+"insights.totalEntries" = "Total Entries";
+"insights.moodTrend" = "Mood Trend";
+"insights.sentiment" = "Sentiment Analysis";
+"insights.activity" = "Writing Activity";
+"insights.thisWeek" = "This Week";
+"insights.topTopics" = "Top Topics";
+"insights.viewRecap" = "View Weekly Recap";
+"insights.entries" = "Entries";
+"insights.words" = "Words";
+"insights.avgMood" = "Avg Mood";
+"insights.time" = "Time";
+"insights.wordsMonth" = "%d words this month";
+"insights.avgPerEntry" = "%d avg/entry";
+
+/* Recap */
+"recap.title" = "Recap";
+"recap.thisWeek" = "This Week";
+"recap.thisMonth" = "This Month";
+"recap.empty" = "Write some entries to see your recap";
+"recap.mood" = "Mood";
+"recap.themes" = "Themes";
+"recap.highlights" = "Highlights";
+"recap.challenges" = "Challenges";
+"recap.growth" = "Growth Note";
+"recap.copy" = "Copy Recap to Clipboard";
+
+/* Calendar */
+"calendar.title" = "Calendar";
+"calendar.month" = "Month";
+"calendar.year" = "Year";
+"calendar.noEntries" = "No entries for this day";
+"calendar.entriesYear" = "%d entries this year";
+
+/* Settings */
+"settings.title" = "Settings";
+"settings.icloud" = "iCloud Sync";
+"settings.icloud.toggle" = "Sync entries across devices";
+"settings.icloud.connected" = "Connected to iCloud";
+"settings.icloud.syncing" = "%d entries syncing";
+"settings.icloud.disabled" = "Your entries are stored locally only. Enable sync to access them across your devices.";
+"settings.ai" = "AI Analysis";
+"settings.ai.sentiment" = "Auto-analyze sentiment";
+"settings.ai.tags" = "Auto-suggest tags";
+"settings.ai.local" = "All AI analysis runs locally on your device. No data is sent anywhere.";
+"settings.journal" = "Journal";
+"settings.journal.mood" = "Show mood picker for new entries";
+"settings.journal.tags" = "Manage Tags";
+"settings.security" = "Security";
+"settings.export" = "Export";
+"settings.export.all" = "Export All Entries (%d)";
+"settings.backup" = "Backup & Restore";
+"settings.backup.create" = "Create Encrypted Backup";
+"settings.backup.password" = "Backup password";
+"settings.backup.note" = "Backups are encrypted with AES-256. Keep your password safe — we cannot recover it.";
+"settings.privacy" = "Privacy";
+"settings.privacy.title" = "Your Data is Private";
+"settings.privacy.description" = "All journal entries are stored locally on this device. No cloud sync, no tracking, no analytics.";
+"settings.about" = "About";
+"settings.rate" = "Rate Kinen";
+"settings.version" = "Version";
+"settings.developer" = "Developer";
+
+/* Onboarding */
+"onboarding.welcome" = "Welcome to Kinen";
+"onboarding.subtitle" = "記念";
+"onboarding.welcome.description" = "Your private AI-powered journal.\nReflect, discover patterns, and grow — all on your device.";
+"onboarding.privacy" = "100% Private";
+"onboarding.privacy.subtitle" = "Zero cloud. Zero tracking.";
+"onboarding.privacy.description" = "Every word you write stays on this device.\nNo servers, no accounts, no data collection.\nYour thoughts belong to you alone.";
+"onboarding.ai" = "AI That Understands You";
+"onboarding.ai.subtitle" = "On-device intelligence";
+"onboarding.ai.description" = "Mood analysis, pattern discovery, and CBT-based reflections — all powered by on-device AI.\nNo internet required. No API calls.";
+"onboarding.disclaimer" = "Important Note";
+"onboarding.disclaimer.text" = "Kinen is a self-reflection and journaling tool.\n\nIt is not a substitute for professional mental health care, therapy, or crisis intervention.\n\nIf you're experiencing a mental health crisis, please reach out to a professional or call your local crisis line.";
+"onboarding.start" = "I Understand — Start Journaling";
+
+/* Pro */
+"pro.title" = "Kinen Pro";
+"pro.unlock" = "Unlock Kinen Pro";
+"pro.description" = "Deep AI insights, iCloud sync, and more.\nAll processing stays on your device.";
+"pro.restore" = "Restore Purchases";
+"pro.feature.ai" = "Full AI Analysis";
+"pro.feature.ai.desc" = "CBT reflections, pattern discovery, cognitive distortion detection";
+"pro.feature.insights" = "Advanced Insights";
+"pro.feature.insights.desc" = "30/90-day mood trends, weekly & monthly AI recaps";
+"pro.feature.sync" = "iCloud Sync";
+"pro.feature.sync.desc" = "Seamless sync across all your Apple devices";
+"pro.feature.export" = "Export & Backup";
+"pro.feature.export.desc" = "Markdown, JSON, encrypted backup with AES-256";
+"pro.feature.templates" = "All 8 Templates";
+"pro.feature.templates.desc" = "CBT three-column, dream journal, goal reflection & more";
+"pro.feature.prompts" = "Smart Prompts";
+"pro.feature.prompts.desc" = "AI-powered writing suggestions based on your mood & history";
+"pro.requires" = "%@ requires Pro";
+"pro.unlock.button" = "Unlock Pro";
+
+/* Crisis */
+"crisis.title" = "You Matter";
+"crisis.support" = "Reach out for support:";
+"crisis.disclaimer" = "Kinen is a self-reflection tool, not a substitute for professional mental health care.";
+"crisis.understand" = "I Understand";
+
+/* Lock */
+"lock.title" = "Kinen is Locked";
+"lock.subtitle" = "Your journal is protected";
+"lock.unlock" = "Unlock with %@";
+
+/* Filter */
+"filter.clear" = "Clear";
+"filter.bookmarked" = "Bookmarked";
+"filter.allTime" = "All Time";
+"filter.today" = "Today";
+"filter.thisWeek" = "This Week";
+"filter.thisMonth" = "This Month";
+"filter.3months" = "3 Months";
+
+/* General */
+"general.done" = "Done";
+"general.cancel" = "Cancel";
+"general.delete" = "Delete";
+"general.next" = "Next";
+"general.days" = "days";
+"general.day" = "day";
+"general.entries" = "entries";
+"general.words" = "words";

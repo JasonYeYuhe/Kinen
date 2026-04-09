@@ -1,0 +1,176 @@
+/* Kinen 简体中文本地化 */
+
+/* Tabs */
+"tab.journal" = "日记";
+"tab.insights" = "洞察";
+"tab.recap" = "回顾";
+"tab.calendar" = "日历";
+"tab.settings" = "设置";
+
+/* Journal List */
+"journal.title" = "日记";
+"journal.empty.title" = "还没有日记";
+"journal.empty.description" = "点击 + 写下你的第一篇日记";
+"journal.empty.action" = "开始写作";
+"journal.new" = "新建日记";
+"journal.search" = "搜索日记...";
+
+/* Entry Editor */
+"editor.title.new" = "新建日记";
+"editor.title.edit" = "编辑日记";
+"editor.title.placeholder" = "标题（可选）";
+"editor.mood.question" = "你现在感觉如何？";
+"editor.template.use" = "使用模板";
+"editor.template.change" = "更换";
+"editor.photo.add" = "添加照片";
+"editor.tags.title" = "标签";
+"editor.tags.add" = "添加标签...";
+"editor.save" = "保存";
+"editor.cancel" = "取消";
+
+/* Mood */
+"mood.terrible" = "糟糕";
+"mood.bad" = "不好";
+"mood.neutral" = "一般";
+"mood.good" = "不错";
+"mood.great" = "很棒";
+
+/* Templates */
+"template.freeWrite" = "自由写作";
+"template.dailyReview" = "每日复盘";
+"template.gratitude" = "感恩日记";
+"template.morningPages" = "晨间日记";
+"template.cbt" = "CBT 反思";
+"template.dream" = "梦境记录";
+"template.goal" = "目标反思";
+"template.weekly" = "周末回顾";
+"template.choose" = "选择模板";
+
+/* Insights */
+"insights.title" = "洞察";
+"insights.streak" = "连续记录";
+"insights.totalEntries" = "总日记数";
+"insights.moodTrend" = "情绪趋势";
+"insights.sentiment" = "情感分析";
+"insights.activity" = "写作活跃度";
+"insights.thisWeek" = "本周";
+"insights.topTopics" = "热门话题";
+"insights.viewRecap" = "查看周报";
+"insights.entries" = "日记";
+"insights.words" = "字数";
+"insights.avgMood" = "平均情绪";
+"insights.time" = "时长";
+"insights.wordsMonth" = "本月 %d 字";
+"insights.avgPerEntry" = "平均 %d 字/篇";
+
+/* Recap */
+"recap.title" = "回顾";
+"recap.thisWeek" = "本周";
+"recap.thisMonth" = "本月";
+"recap.empty" = "写几篇日记后就能看到你的回顾";
+"recap.mood" = "情绪";
+"recap.themes" = "主题";
+"recap.highlights" = "亮点";
+"recap.challenges" = "挑战";
+"recap.growth" = "成长笔记";
+"recap.copy" = "复制回顾到剪贴板";
+
+/* Calendar */
+"calendar.title" = "日历";
+"calendar.month" = "月";
+"calendar.year" = "年";
+"calendar.noEntries" = "这天没有日记";
+"calendar.entriesYear" = "今年 %d 篇日记";
+
+/* Settings */
+"settings.title" = "设置";
+"settings.icloud" = "iCloud 同步";
+"settings.icloud.toggle" = "跨设备同步日记";
+"settings.icloud.connected" = "已连接 iCloud";
+"settings.icloud.syncing" = "正在同步 %d 篇日记";
+"settings.icloud.disabled" = "日记仅存储在本设备。开启同步后可在所有设备间访问。";
+"settings.ai" = "AI 分析";
+"settings.ai.sentiment" = "自动分析情感";
+"settings.ai.tags" = "自动建议标签";
+"settings.ai.local" = "所有 AI 分析均在本地运行，不会发送任何数据。";
+"settings.journal" = "日记";
+"settings.journal.mood" = "新建日记时显示情绪选择";
+"settings.journal.tags" = "管理标签";
+"settings.security" = "安全";
+"settings.export" = "导出";
+"settings.export.all" = "导出全部日记（%d 篇）";
+"settings.backup" = "备份与恢复";
+"settings.backup.create" = "创建加密备份";
+"settings.backup.password" = "备份密码";
+"settings.backup.note" = "备份使用 AES-256 加密。请妥善保管密码——我们无法帮你找回。";
+"settings.privacy" = "隐私";
+"settings.privacy.title" = "你的数据是私密的";
+"settings.privacy.description" = "所有日记都存储在本设备上。无云端同步，无追踪，无数据分析。";
+"settings.about" = "关于";
+"settings.rate" = "给 Kinen 评分";
+"settings.version" = "版本";
+"settings.developer" = "开发者";
+
+/* Onboarding */
+"onboarding.welcome" = "欢迎使用 Kinen";
+"onboarding.subtitle" = "記念";
+"onboarding.welcome.description" = "你的私人 AI 日记。\n在设备上反思、发现规律、成长。";
+"onboarding.privacy" = "100% 隐私";
+"onboarding.privacy.subtitle" = "零云端，零追踪。";
+"onboarding.privacy.description" = "你写的每一个字都留在这台设备上。\n没有服务器，没有账号，没有数据收集。\n你的想法只属于你自己。";
+"onboarding.ai" = "懂你的 AI";
+"onboarding.ai.subtitle" = "本地智能";
+"onboarding.ai.description" = "情绪分析、模式发现和 CBT 反思——全部由本地 AI 驱动。\n无需联网，无需 API。";
+"onboarding.disclaimer" = "重要提示";
+"onboarding.disclaimer.text" = "Kinen 是一款自我反思和日记工具。\n\n它不能替代专业的心理健康服务、治疗或危机干预。\n\n如果你正在经历心理健康危机，请联系专业人士或拨打当地的心理援助热线。";
+"onboarding.start" = "我已了解——开始写日记";
+
+/* Pro */
+"pro.title" = "Kinen Pro";
+"pro.unlock" = "解锁 Kinen Pro";
+"pro.description" = "深度 AI 洞察、iCloud 同步等更多功能。\n所有处理都在你的设备上完成。";
+"pro.restore" = "恢复购买";
+"pro.feature.ai" = "全面 AI 分析";
+"pro.feature.ai.desc" = "CBT 反思、模式发现、认知扭曲检测";
+"pro.feature.insights" = "高级洞察";
+"pro.feature.insights.desc" = "30/90天情绪趋势、每周和每月 AI 回顾";
+"pro.feature.sync" = "iCloud 同步";
+"pro.feature.sync.desc" = "在所有 Apple 设备间无缝同步";
+"pro.feature.export" = "导出与备份";
+"pro.feature.export.desc" = "Markdown、JSON、AES-256 加密备份";
+"pro.feature.templates" = "全部 8 个模板";
+"pro.feature.templates.desc" = "CBT 三栏、梦境记录、目标反思等";
+"pro.feature.prompts" = "智能提示";
+"pro.feature.prompts.desc" = "基于你的情绪和历史的 AI 写作建议";
+"pro.requires" = "%@ 需要 Pro 版本";
+"pro.unlock.button" = "解锁 Pro";
+
+/* Crisis */
+"crisis.title" = "你很重要";
+"crisis.support" = "寻求帮助：";
+"crisis.disclaimer" = "Kinen 是自我反思工具，不能替代专业的心理健康服务。";
+"crisis.understand" = "我了解了";
+
+/* Lock */
+"lock.title" = "Kinen 已锁定";
+"lock.subtitle" = "你的日记受到保护";
+"lock.unlock" = "使用%@解锁";
+
+/* Filter */
+"filter.clear" = "清除";
+"filter.bookmarked" = "已收藏";
+"filter.allTime" = "全部";
+"filter.today" = "今天";
+"filter.thisWeek" = "本周";
+"filter.thisMonth" = "本月";
+"filter.3months" = "近三个月";
+
+/* General */
+"general.done" = "完成";
+"general.cancel" = "取消";
+"general.delete" = "删除";
+"general.next" = "下一步";
+"general.days" = "天";
+"general.day" = "天";
+"general.entries" = "篇";
+"general.words" = "字";
