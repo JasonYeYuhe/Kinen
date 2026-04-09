@@ -3,7 +3,7 @@ import LocalAuthentication
 import SwiftUI
 import OSLog
 
-private let logger = Logger(subsystem: "com.kinen.app", category: "AppLock")
+private let logger = Logger(subsystem: "com.jasonye.kinen", category: "AppLock")
 
 /// App lock using Face ID / Touch ID / password.
 /// Protects journal privacy with biometric authentication.

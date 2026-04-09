@@ -6,7 +6,7 @@ import OSLog
 import UIKit
 #endif
 
-private let logger = Logger(subsystem: "com.kinen.app", category: "Backup")
+private let logger = Logger(subsystem: "com.jasonye.kinen", category: "Backup")
 
 /// Encrypted backup and restore service.
 /// Creates .kinenbackup files (AES-256-GCM encrypted JSON).

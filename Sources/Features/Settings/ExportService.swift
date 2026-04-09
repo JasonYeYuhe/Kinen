@@ -5,7 +5,7 @@ import OSLog
 import AppKit
 #endif
 
-private let logger = Logger(subsystem: "com.kinen.app", category: "Export")
+private let logger = Logger(subsystem: "com.jasonye.kinen", category: "Export")
 
 /// Export journal entries in multiple formats.
 /// Supports Markdown, JSON, and plain text.

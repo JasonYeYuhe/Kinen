@@ -3,7 +3,7 @@ import NaturalLanguage
 import SwiftData
 import OSLog
 
-private let logger = Logger(subsystem: "com.kinen.app", category: "AIJournalingLoop")
+private let logger = Logger(subsystem: "com.jasonye.kinen", category: "AIJournalingLoop")
 
 /// Implements the 5-step AI Journaling Loop (industry best practice from Woebot/Wysa research).
 ///

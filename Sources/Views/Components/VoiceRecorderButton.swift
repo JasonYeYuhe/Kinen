@@ -3,7 +3,7 @@ import Speech
 import AVFoundation
 import OSLog
 
-private let logger = Logger(subsystem: "com.kinen.app", category: "VoiceRecorder")
+private let logger = Logger(subsystem: "com.jasonye.kinen", category: "VoiceRecorder")
 
 /// Real-time speech-to-text button using Apple's SFSpeechRecognizer.
 /// All processing happens on-device.

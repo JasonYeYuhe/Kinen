@@ -2,7 +2,7 @@ import Foundation
 import StoreKit
 import OSLog
 
-private let logger = Logger(subsystem: "com.kinen.app", category: "Store")
+private let logger = Logger(subsystem: "com.jasonye.kinen", category: "Store")
 
 /// StoreKit 2 subscription service. Pattern from Stride (production-tested).
 @Observable
@@ -11,9 +11,9 @@ final class StoreService {
     static let shared = StoreService()
 
     enum KinenProduct: String, CaseIterable {
-        case monthly = "com.kinen.app.pro.monthly"
-        case yearly = "com.kinen.app.pro.yearly"
-        case lifetime = "com.kinen.app.pro.lifetime"
+        case monthly = "com.jasonye.kinen.pro.monthly"
+        case yearly = "com.jasonye.kinen.pro.yearly"
+        case lifetime = "com.jasonye.kinen.pro.lifetime"
     }
 
     var products: [Product] = []

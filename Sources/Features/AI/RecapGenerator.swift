@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 import OSLog
 
-private let logger = Logger(subsystem: "com.kinen.app", category: "RecapGenerator")
+private let logger = Logger(subsystem: "com.jasonye.kinen", category: "RecapGenerator")
 
 /// Generates weekly and monthly recap summaries from journal entries.
 /// All analysis is local using NaturalLanguage framework data.

@@ -3,7 +3,7 @@ import NaturalLanguage
 import SwiftData
 import OSLog
 
-private let logger = Logger(subsystem: "com.kinen.app", category: "SentimentAnalyzer")
+private let logger = Logger(subsystem: "com.jasonye.kinen", category: "SentimentAnalyzer")
 
 /// On-device sentiment and topic analysis using Apple's NaturalLanguage framework.
 /// Zero model downloads, zero network calls, instant results.

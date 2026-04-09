@@ -33,7 +33,7 @@ targets:
     settings:
       base:
         PRODUCT_NAME: Kinen
-        PRODUCT_BUNDLE_IDENTIFIER: com.kinen.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.jasonye.kinen
         MACOSX_DEPLOYMENT_TARGET: "15.0"
         INFOPLIST_FILE: Resources/Info.plist
         GENERATE_INFOPLIST_FILE: false
@@ -55,7 +55,7 @@ targets:
     settings:
       base:
         PRODUCT_NAME: Kinen
-        PRODUCT_BUNDLE_IDENTIFIER: com.kinen.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.jasonye.kinen
         IPHONEOS_DEPLOYMENT_TARGET: "18.0"
         INFOPLIST_FILE: Resources/Info-iOS.plist
         GENERATE_INFOPLIST_FILE: false
@@ -74,4 +74,4 @@ targets:
       - target: Kinen
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.kinen.app.tests
+        PRODUCT_BUNDLE_IDENTIFIER: com.jasonye.kinen.tests
