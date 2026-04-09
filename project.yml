@@ -29,6 +29,7 @@ targets:
         excludes:
           - "Info-iOS.plist"
           - "Kinen-iOS.entitlements"
+          - "Info.plist"
     settings:
       base:
         PRODUCT_NAME: Kinen
@@ -39,8 +40,6 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ENABLE_HARDENED_RUNTIME: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
-    info:
-      path: Resources/Info.plist
     entitlements:
       path: Resources/Kinen-macOS.entitlements
 
@@ -52,6 +51,7 @@ targets:
       - path: Resources
         excludes:
           - "Info.plist"
+          - "Info-iOS.plist"
     settings:
       base:
         PRODUCT_NAME: Kinen
@@ -62,8 +62,6 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1,2"
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
-    info:
-      path: Resources/Info-iOS.plist
     entitlements:
       path: Resources/Kinen-iOS.entitlements
 
