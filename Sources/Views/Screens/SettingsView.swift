@@ -14,6 +14,10 @@ struct SettingsView: View {
     @State private var exportFormat: ExportService.ExportFormat = .markdown
     @State private var exportMessage: String?
     @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = true
+    @State private var backupPassword = ""
+    @State private var backupMessage: String?
+    @State private var showBackupPassword = false
+    @Query(sort: \Tag.name) private var allTags: [Tag]
 
     var body: some View {
         Form {
@@ -65,16 +69,34 @@ struct SettingsView: View {
                     }
                 }
 
-                Button("Export All Entries (\(entries.count))") {
+                ProButton(title: "Export All Entries (\(entries.count))", icon: "square.and.arrow.up") {
                     exportEntries()
                 }
-                .disabled(entries.isEmpty)
 
                 if let msg = exportMessage {
                     Text(msg)
                         .font(.caption)
                         .foregroundStyle(.green)
                 }
+            }
+
+            Section("Backup & Restore") {
+                SecureField("Backup password", text: $backupPassword)
+                    .textFieldStyle(.plain)
+
+                ProButton(title: "Create Encrypted Backup", icon: "lock.doc") {
+                    createBackup()
+                }
+
+                if let msg = backupMessage {
+                    Text(msg)
+                        .font(.caption)
+                        .foregroundStyle(.green)
+                }
+
+                Text("Backups are encrypted with AES-256. Keep your password safe — we cannot recover it.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section("Privacy") {
@@ -125,5 +147,24 @@ struct SettingsView: View {
             exportMessage = "Exported to \(url.lastPathComponent)"
         }
         #endif
+    }
+
+    private func createBackup() {
+        guard !backupPassword.isEmpty else {
+            backupMessage = "Please enter a password"
+            return
+        }
+        do {
+            let data = try BackupService.createBackup(entries: entries, tags: allTags, password: backupPassword)
+            let filename = "kinen-backup-\(Date().formatted(.dateTime.year().month().day())).kinenbackup"
+            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+            try data.write(to: tempURL)
+            #if os(macOS)
+            NSWorkspace.shared.open(tempURL.deletingLastPathComponent())
+            #endif
+            backupMessage = "Backup created: \(filename) (\(data.count / 1024)KB)"
+        } catch {
+            backupMessage = "Backup failed: \(error.localizedDescription)"
+        }
     }
 }

@@ -18,6 +18,7 @@ struct RecapScreen: View {
     }
 
     var body: some View {
+        ProGate(feature: "Weekly & Monthly Recaps") {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
@@ -50,6 +51,7 @@ struct RecapScreen: View {
             }
             .navigationTitle("Recap")
         }
+        } // ProGate
     }
 
     // MARK: - Cards
