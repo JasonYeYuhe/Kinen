@@ -13,9 +13,11 @@ struct EntryEditorSheet: View {
     @State private var mood: Mood?
     @State private var template: JournalTemplate?
     @State private var templateResponses: [UUID: String] = [:]
+    @State private var aiPromptSuggestion: String?
     @State private var showingTemplatePicker = false
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var photoData: Data?
+    @AppStorage("defaultMoodEnabled") private var defaultMoodEnabled = true
     @State private var crisisAlert: CrisisDetector.CrisisAlert?
     @State private var showCrisisAlert = false
     @State private var writingStartTime: Date?
@@ -36,7 +38,10 @@ struct EntryEditorSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     titleSection
-                    moodSection
+                    if defaultMoodEnabled {
+                        moodSection
+                    }
+                    aiPromptBanner
                     templateBanner
                     Divider()
 
@@ -73,7 +78,11 @@ struct EntryEditorSheet: View {
                     }
                 }
             }
-            .onAppear { startTimer() }
+            .onAppear {
+                startTimer()
+                if entry == nil { generateNewPrompt() }
+            }
+            .onChange(of: mood) { generateNewPrompt() }
             .onDisappear { stopTimer() }
             .overlay {
                 if showCrisisAlert, let alert = crisisAlert {
@@ -113,6 +122,44 @@ struct EntryEditorSheet: View {
                 .foregroundStyle(.secondary)
             MoodPicker(selectedMood: $mood)
         }
+    }
+
+    // MARK: - AI Prompt Suggestion
+
+    @ViewBuilder
+    private var aiPromptBanner: some View {
+        if entry == nil, let prompt = aiPromptSuggestion, content.isEmpty {
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(.purple)
+                    .font(.caption)
+                Text(prompt)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .italic()
+                Spacer()
+                Button(action: { generateNewPrompt() }) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.caption)
+                }
+                .buttonStyle(.borderless)
+                .help("Get a different suggestion")
+            }
+            .padding(10)
+            .background(.purple.opacity(0.06))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .onTapGesture {
+                content = prompt + "\n\n"
+                aiPromptSuggestion = nil
+            }
+        }
+    }
+
+    private func generateNewPrompt() {
+        aiPromptSuggestion = PromptGenerator.generatePrompt(
+            currentMood: mood,
+            recentEntries: []
+        )
     }
 
     // MARK: - Template Banner

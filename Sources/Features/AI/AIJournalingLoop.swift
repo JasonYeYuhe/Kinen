@@ -25,7 +25,14 @@ actor AIJournalingLoop {
         let content = entry.content
         logger.info("Processing entry through AI Journaling Loop...")
 
+        let enableSentiment = UserDefaults.standard.bool(forKey: "enableAutoSentiment")
+        let enableTags = UserDefaults.standard.bool(forKey: "enableAutoTags")
+
         // Step 2: AI Reflection — emotion labels + distortions + summary
+        guard enableSentiment else {
+            logger.info("AI analysis disabled in settings")
+            return
+        }
         let sentiment = SentimentAnalyzer.shared.analyzeSentiment(content)
         entry.sentimentScore = sentiment
 
@@ -38,8 +45,12 @@ actor AIJournalingLoop {
             entry.insights.append(insight)
         }
 
-        // Step 3: Pattern Tagging — categorize by life themes
+        // Step 3: Pattern Tagging — categorize by life themes (if enabled)
         let themes = detectLifeThemes(content)
+        guard enableTags else {
+            logger.info("Auto-tagging disabled in settings")
+            return
+        }
         for theme in themes.prefix(3) {
             let descriptor = FetchDescriptor<Tag>(predicate: #Predicate { $0.name == theme })
             let existing = (try? context.fetch(descriptor)) ?? []

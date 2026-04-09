@@ -23,6 +23,10 @@ struct ContentView: View {
                 .tabItem { Label("Insights", systemImage: "chart.line.uptrend.xyaxis") }
                 .tag(AppTab.insights)
 
+            RecapScreen()
+                .tabItem { Label("Recap", systemImage: "doc.text.magnifyingglass") }
+                .tag(AppTab.recap)
+
             CalendarScreen()
                 .tabItem { Label("Calendar", systemImage: "calendar") }
                 .tag(AppTab.calendar)
@@ -42,6 +46,8 @@ struct ContentView: View {
                 .tag(AppTab.journal)
             Label("Insights", systemImage: "chart.line.uptrend.xyaxis")
                 .tag(AppTab.insights)
+            Label("Recap", systemImage: "doc.text.magnifyingglass")
+                .tag(AppTab.recap)
             Label("Calendar", systemImage: "calendar")
                 .tag(AppTab.calendar)
         }
@@ -56,6 +62,8 @@ struct ContentView: View {
             JournalListScreen(selectedEntry: $selectedEntry)
         case .insights:
             InsightsScreen()
+        case .recap:
+            RecapScreen()
         case .calendar:
             CalendarScreen()
         case .settings:
@@ -68,6 +76,7 @@ struct ContentView: View {
 enum AppTab: String, Hashable {
     case journal
     case insights
+    case recap
     case calendar
     case settings
 }
