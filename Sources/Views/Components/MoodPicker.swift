@@ -7,12 +7,13 @@ struct MoodPicker: View {
         HStack(spacing: 16) {
             ForEach(Mood.allCases) { mood in
                 Button(action: {
-                    withAnimation(.spring(response: 0.3)) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                         if selectedMood == mood {
-                            selectedMood = nil // deselect
+                            selectedMood = nil
                         } else {
                             selectedMood = mood
                         }
+                        HapticManager.selection()
                     }
                 }) {
                     VStack(spacing: 4) {

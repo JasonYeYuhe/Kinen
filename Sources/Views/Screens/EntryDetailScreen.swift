@@ -40,9 +40,8 @@ struct EntryDetailScreen: View {
                 Divider()
 
                 // Content
-                Text(entry.content)
+                MarkdownText(content: entry.content)
                     .font(.body)
-                    .textSelection(.enabled)
                     .lineSpacing(4)
 
                 // Tags

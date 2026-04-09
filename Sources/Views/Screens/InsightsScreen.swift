@@ -16,6 +16,23 @@ struct InsightsScreen: View {
                     sentimentTrendCard
                     writingActivityCard
                     topTagsCard
+
+                    // Link to Recap
+                    NavigationLink(destination: RecapScreen()) {
+                        HStack {
+                            Label("View Weekly Recap", systemImage: "doc.text.magnifyingglass")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding()
+                        .background(.purple.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding()
             }
