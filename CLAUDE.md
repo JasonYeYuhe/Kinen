@@ -7,9 +7,9 @@ A privacy-first journaling app with on-device AI that analyzes mood trends, disc
 - **Language:** Swift 6.0 + SwiftUI + SwiftData
 - **Platforms:** macOS 15+, iOS 18+ (shared codebase)
 - **AI:** Apple NaturalLanguage framework (sentiment/NER) + MLX (optional deep analysis)
-- **Storage:** SwiftData (local, no CloudKit in Phase 0)
+- **Storage:** SwiftData (local + optional iCloud sync via CloudKit)
 - **Build:** XcodeGen (project.yml)
-- **Bundle ID:** com.kinen.app
+- **Bundle ID:** com.jasonye.kinen
 - **Team ID:** KHMK6Q3L3K
 
 ## Architecture

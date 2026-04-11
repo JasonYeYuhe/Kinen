@@ -32,6 +32,7 @@ struct TagEditor: View {
                                     .font(.system(size: 8, weight: .bold))
                             }
                             .buttonStyle(.borderless)
+                            .accessibilityLabel("Remove tag \(tag.name)")
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)

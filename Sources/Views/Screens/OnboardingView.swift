@@ -23,10 +23,10 @@ struct OnboardingView: View {
         OnboardingPage(
             icon: "book.closed.fill",
             iconColor: .purple,
-            title: "Welcome to Kinen",
-            subtitle: "記念",
-            description: "Your private AI-powered journal.\nReflect, discover patterns, and grow — all on your device.",
-            buttonTitle: "Next",
+            title: String(localized: "onboarding.welcome"),
+            subtitle: String(localized: "onboarding.subtitle"),
+            description: String(localized: "onboarding.welcome.description"),
+            buttonTitle: String(localized: "general.next"),
             action: { withAnimation { currentPage = 1 } }
         )
     }
@@ -35,10 +35,10 @@ struct OnboardingView: View {
         OnboardingPage(
             icon: "lock.shield.fill",
             iconColor: .green,
-            title: "100% Private",
-            subtitle: "Zero cloud. Zero tracking.",
-            description: "Every word you write stays on this device.\nNo servers, no accounts, no data collection.\nYour thoughts belong to you alone.",
-            buttonTitle: "Next",
+            title: String(localized: "onboarding.privacy"),
+            subtitle: String(localized: "onboarding.privacy.subtitle"),
+            description: String(localized: "onboarding.privacy.description"),
+            buttonTitle: String(localized: "general.next"),
             action: { withAnimation { currentPage = 2 } }
         )
     }
@@ -47,10 +47,10 @@ struct OnboardingView: View {
         OnboardingPage(
             icon: "brain.head.profile.fill",
             iconColor: .purple,
-            title: "AI That Understands You",
-            subtitle: "On-device intelligence",
-            description: "Mood analysis, pattern discovery, and CBT-based reflections — all powered by on-device AI.\nNo internet required. No API calls.",
-            buttonTitle: "Next",
+            title: String(localized: "onboarding.ai"),
+            subtitle: String(localized: "onboarding.ai.subtitle"),
+            description: String(localized: "onboarding.ai.description"),
+            buttonTitle: String(localized: "general.next"),
             action: { withAnimation { currentPage = 3 } }
         )
     }
@@ -63,11 +63,11 @@ struct OnboardingView: View {
                 .font(.system(size: 48))
                 .foregroundStyle(.red)
 
-            Text("Important Note")
+            Text(String(localized: "onboarding.disclaimer"))
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("Kinen is a **self-reflection and journaling tool**.\n\nIt is **not** a substitute for professional mental health care, therapy, or crisis intervention.\n\nIf you're experiencing a mental health crisis, please reach out to a professional or call your local crisis line.")
+            Text(String(localized: "onboarding.disclaimer.text"))
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
@@ -88,7 +88,7 @@ struct OnboardingView: View {
             Button(action: {
                 hasSeenOnboarding = true
             }) {
-                Text("I Understand — Start Journaling")
+                Text(String(localized: "onboarding.start"))
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)

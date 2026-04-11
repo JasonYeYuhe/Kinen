@@ -25,15 +25,15 @@ actor AIJournalingLoop {
         let content = entry.content
         logger.info("Processing entry through AI Journaling Loop...")
 
-        let enableSentiment = UserDefaults.standard.bool(forKey: "enableAutoSentiment")
-        let enableTags = UserDefaults.standard.bool(forKey: "enableAutoTags")
+        let enableSentiment = UserDefaults.standard.object(forKey: "enableAutoSentiment") as? Bool ?? true
+        let enableTags = UserDefaults.standard.object(forKey: "enableAutoTags") as? Bool ?? true
 
         // Step 2: AI Reflection — emotion labels + distortions + summary
         guard enableSentiment else {
             logger.info("AI analysis disabled in settings")
             return
         }
-        let sentiment = SentimentAnalyzer.shared.analyzeSentiment(content)
+        let sentiment = await SentimentAnalyzer.shared.analyzeSentiment(content)
         entry.sentimentScore = sentiment
 
         let distortions = CBTReflection.analyze(content)
@@ -66,7 +66,7 @@ actor AIJournalingLoop {
         }
 
         // Step 2 continued: Topic extraction
-        let topics = SentimentAnalyzer.shared.extractTopics(content)
+        let topics = await SentimentAnalyzer.shared.extractTopics(content)
         if !topics.isEmpty {
             let topicList = topics.prefix(5).joined(separator: ", ")
             let insight = EntryInsight(type: .topicExtraction, content: "Main topics: \(topicList)")

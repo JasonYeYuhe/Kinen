@@ -69,32 +69,108 @@ struct CrisisDetector {
         return nil
     }
 
-    static let crisisResources: [CrisisResource] = [
-        CrisisResource(
-            name: "988 Suicide & Crisis Lifeline",
-            number: "988",
-            description: "Call or text 988 (US). Available 24/7.",
-            url: URL(string: "https://988lifeline.org")
-        ),
-        CrisisResource(
-            name: "Crisis Text Line",
-            number: "Text HOME to 741741",
-            description: "Free 24/7 text-based crisis support (US).",
-            url: URL(string: "https://www.crisistextline.org")
-        ),
-        CrisisResource(
-            name: "Beijing Psychological Crisis Line",
-            number: "010-82951332",
-            description: "24 hours, Chinese language.",
-            url: nil
-        ),
-        CrisisResource(
+    /// Region-aware crisis resources. Shows local resources first, plus the international directory.
+    static var crisisResources: [CrisisResource] {
+        var resources: [CrisisResource] = []
+        let region = Locale.current.region?.identifier ?? ""
+
+        switch region {
+        case "US":
+            resources.append(CrisisResource(
+                name: "988 Suicide & Crisis Lifeline",
+                number: "988",
+                description: "Call or text 988. Available 24/7.",
+                url: URL(string: "https://988lifeline.org")
+            ))
+            resources.append(CrisisResource(
+                name: "Crisis Text Line",
+                number: "Text HOME to 741741",
+                description: "Free 24/7 text-based crisis support.",
+                url: URL(string: "https://www.crisistextline.org")
+            ))
+        case "CN":
+            resources.append(CrisisResource(
+                name: "北京心理危机研究与干预中心",
+                number: "010-82951332",
+                description: "24小时心理援助热线",
+                url: nil
+            ))
+            resources.append(CrisisResource(
+                name: "全国心理援助热线",
+                number: "400-161-9995",
+                description: "24小时免费心理咨询",
+                url: nil
+            ))
+        case "GB":
+            resources.append(CrisisResource(
+                name: "Samaritans",
+                number: "116 123",
+                description: "Free 24/7 emotional support.",
+                url: URL(string: "https://www.samaritans.org")
+            ))
+        case "CA":
+            resources.append(CrisisResource(
+                name: "Talk Suicide Canada",
+                number: "988",
+                description: "Call or text 988. Available 24/7.",
+                url: URL(string: "https://talksuicide.ca")
+            ))
+        case "AU":
+            resources.append(CrisisResource(
+                name: "Lifeline Australia",
+                number: "13 11 14",
+                description: "24/7 crisis support and suicide prevention.",
+                url: URL(string: "https://www.lifeline.org.au")
+            ))
+        case "JP":
+            resources.append(CrisisResource(
+                name: "いのちの電話",
+                number: "0120-783-556",
+                description: "無料・24時間対応の相談電話",
+                url: URL(string: "https://www.inochinodenwa.org")
+            ))
+        case "TW":
+            resources.append(CrisisResource(
+                name: "安心專線",
+                number: "1925",
+                description: "24小時免費心理諮詢服務",
+                url: nil
+            ))
+        case "KR":
+            resources.append(CrisisResource(
+                name: "정신건강 위기상담전화",
+                number: "1577-0199",
+                description: "24시간 정신건강 위기상담",
+                url: nil
+            ))
+        case "DE":
+            resources.append(CrisisResource(
+                name: "Telefonseelsorge",
+                number: "0800 111 0 111",
+                description: "Kostenlose 24/7 Krisenberatung.",
+                url: URL(string: "https://www.telefonseelsorge.de")
+            ))
+        case "FR":
+            resources.append(CrisisResource(
+                name: "SOS Amitié",
+                number: "09 72 39 40 50",
+                description: "Écoute 24h/24, 7j/7.",
+                url: URL(string: "https://www.sos-amitie.com")
+            ))
+        default:
+            break
+        }
+
+        // Always include the international directory as a fallback
+        resources.append(CrisisResource(
             name: "International Association for Suicide Prevention",
             number: "See website",
             description: "Find crisis centers worldwide.",
             url: URL(string: "https://www.iasp.info/resources/Crisis_Centres/")
-        ),
-    ]
+        ))
+
+        return resources
+    }
 }
 
 /// Crisis alert overlay shown when concerning language is detected.

@@ -1,10 +1,12 @@
 import SwiftUI
 import SwiftData
 import PhotosUI
+import StoreKit
 
 struct EntryEditorSheet: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.requestReview) private var requestReview
 
     let entry: JournalEntry? // nil = new entry
 
@@ -12,7 +14,7 @@ struct EntryEditorSheet: View {
     @State private var title: String
     @State private var mood: Mood?
     @State private var template: JournalTemplate?
-    @State private var templateResponses: [UUID: String] = [:]
+    @State private var templateResponses: [String: String] = [:]
     @State private var aiPromptSuggestion: String?
     @State private var showingTemplatePicker = false
     @State private var selectedPhoto: PhotosPickerItem?
@@ -33,6 +35,86 @@ struct EntryEditorSheet: View {
         _template = State(initialValue: entry?.template)
         _photoData = State(initialValue: entry?.photoData)
         _entryTags = State(initialValue: entry?.tags ?? [])
+
+        // Restore template responses from saved content for template entries
+        if let entry, let template = entry.template,
+           template != .freeWrite, template != .morningPages {
+            let prompts = template.prompts
+            let parsed = Self.parseTemplateContent(entry.content, prompts: prompts)
+            _templateResponses = State(initialValue: parsed)
+        }
+    }
+
+    /// Parse saved content back into per-prompt responses.
+    /// Primary format (new): "<!-- promptId -->\n**Title**\nresponse"
+    /// Legacy fallback: "**Title**\nresponse" (matched by current-locale title)
+    private static let markerRegex = try! NSRegularExpression(pattern: "<!-- ([\\w-]+) -->")
+
+    static func parseTemplateContent(_ content: String, prompts: [TemplatePrompt]) -> [String: String] {
+        var responses: [String: String] = [:]
+
+        // Try stable ID markers first: <!-- promptId -->
+        let promptIds = Set(prompts.map(\.id))
+        let regex = markerRegex
+        let nsContent = content as NSString
+        let matches = regex.matches(in: content, range: NSRange(location: 0, length: nsContent.length))
+
+        // Filter to only markers that match known prompt IDs
+        var positions: [(id: String, markerEnd: String.Index)] = []
+        for match in matches {
+            let idRange = match.range(at: 1)
+            let matchedId = nsContent.substring(with: idRange)
+            if promptIds.contains(matchedId) {
+                let endOffset = match.range.location + match.range.length
+                let endIndex = content.index(content.startIndex, offsetBy: endOffset)
+                positions.append((id: matchedId, markerEnd: endIndex))
+            }
+        }
+
+        if !positions.isEmpty {
+            // Parse using stable markers
+            for (i, pos) in positions.enumerated() {
+                let textEnd: String.Index
+                if i + 1 < positions.count {
+                    // Find the start of the next marker (go back to its <!-- )
+                    let nextMatch = matches[i + 1]
+                    textEnd = content.index(content.startIndex, offsetBy: nextMatch.range.location)
+                } else {
+                    textEnd = content.endIndex
+                }
+                var text = String(content[pos.markerEnd..<textEnd])
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                // Strip the localized bold title line if present (first line matching **...**)
+                if text.hasPrefix("**"), let titleEnd = text.range(of: "**", range: text.index(text.startIndex, offsetBy: 2)..<text.endIndex) {
+                    text = String(text[titleEnd.upperBound...])
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+                }
+                responses[pos.id] = text
+            }
+            return responses
+        }
+
+        // Legacy fallback: match by current-locale **Title**
+        var headerPositions: [(id: String, range: Range<String.Index>)] = []
+        for prompt in prompts {
+            if let title = prompt.title, let range = content.range(of: "**\(title)**") {
+                headerPositions.append((id: prompt.id, range: range))
+            }
+        }
+        if headerPositions.isEmpty {
+            if let first = prompts.first {
+                responses[first.id] = content
+            }
+            return responses
+        }
+        headerPositions.sort { $0.range.lowerBound < $1.range.lowerBound }
+        for (i, pos) in headerPositions.enumerated() {
+            let textStart = pos.range.upperBound
+            let textEnd = i + 1 < headerPositions.count ? headerPositions[i + 1].range.lowerBound : content.endIndex
+            responses[pos.id] = String(content[textStart..<textEnd])
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return responses
     }
 
     var body: some View {
@@ -57,7 +139,7 @@ struct EntryEditorSheet: View {
 
                     // Tags
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Tags")
+                        Text(String(localized: "editor.tags.title"))
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         TagEditor(selectedTags: $entryTags)
@@ -67,16 +149,16 @@ struct EntryEditorSheet: View {
                 }
                 .padding()
             }
-            .navigationTitle(entry == nil ? "New Entry" : "Edit Entry")
+            .navigationTitle(entry == nil ? String(localized: "editor.title.new") : String(localized: "editor.title.edit"))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { stopTimer(); dismiss() }
+                    Button(String(localized: "editor.cancel")) { stopTimer(); dismiss() }
                 }
                 ToolbarItemGroup(placement: .primaryAction) {
-                    Button("Save") { save() }
+                    Button(String(localized: "editor.save")) { save() }
                         .disabled(effectiveContent.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                         .fontWeight(.semibold)
                 }
@@ -118,7 +200,7 @@ struct EntryEditorSheet: View {
     // MARK: - Title
 
     private var titleSection: some View {
-        TextField("Title (optional)", text: $title)
+        TextField(String(localized: "editor.title.placeholder"), text: $title)
             .font(.title2)
             .fontWeight(.semibold)
             .textFieldStyle(.plain)
@@ -128,7 +210,7 @@ struct EntryEditorSheet: View {
 
     private var moodSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("How are you feeling?")
+            Text(String(localized: "editor.mood.question"))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             MoodPicker(selectedMood: $mood)
@@ -155,6 +237,7 @@ struct EntryEditorSheet: View {
                 }
                 .buttonStyle(.borderless)
                 .help("Get a different suggestion")
+                .accessibilityLabel("Get a different suggestion")
             }
             .padding(10)
             .background(.purple.opacity(0.06))
@@ -190,11 +273,11 @@ struct EntryEditorSheet: View {
                 .background(template.color.opacity(0.1))
                 .clipShape(Capsule())
 
-                Button("Change") { showingTemplatePicker = true }
+                Button(String(localized: "editor.template.change")) { showingTemplatePicker = true }
                     .font(.caption)
             } else if entry == nil {
                 Button(action: { showingTemplatePicker = true }) {
-                    Label("Use a Template", systemImage: "doc.text")
+                    Label(String(localized: "editor.template.use"), systemImage: "doc.text")
                         .font(.subheadline)
                 }
                 .buttonStyle(.bordered)
@@ -255,7 +338,7 @@ struct EntryEditorSheet: View {
     private var photoSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                Label("Add Photo", systemImage: "photo.badge.plus")
+                Label(String(localized: "editor.photo.add"), systemImage: "photo.badge.plus")
                     .font(.subheadline)
             }
             .buttonStyle(.bordered)
@@ -304,6 +387,7 @@ struct EntryEditorSheet: View {
         }
         .buttonStyle(.borderless)
         .padding(4)
+        .accessibilityLabel(String(localized: "editor.photo.remove.accessibility"))
     }
 
     // MARK: - Footer Stats
@@ -323,7 +407,7 @@ struct EntryEditorSheet: View {
             Spacer()
 
             // Word count
-            Text("\(effectiveContent.split(separator: " ").count) words")
+            Text("\(effectiveContent.split(separator: " ").count) \(String(localized: "general.words"))")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
         }
@@ -384,10 +468,13 @@ struct EntryEditorSheet: View {
         if let template, template != .freeWrite, template != .morningPages {
             let parts = template.prompts.compactMap { prompt -> String? in
                 guard let response = templateResponses[prompt.id], !response.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+                // Use stable prompt ID as locale-independent marker
+                var section = "<!-- \(prompt.id) -->"
                 if let promptTitle = prompt.title {
-                    return "**\(promptTitle)**\n\(response)"
+                    section += "\n**\(promptTitle)**"
                 }
-                return response
+                section += "\n\(response)"
+                return section
             }
             finalContent = parts.joined(separator: "\n\n")
         } else {
@@ -428,8 +515,26 @@ struct EntryEditorSheet: View {
             Task {
                 await AIJournalingLoop.shared.processEntry(newEntry, in: modelContext)
             }
+
+            // Request App Store review after 5th entry, at most once per 60 days
+            requestAppReview()
         }
 
         dismiss()
+    }
+
+    private func requestAppReview() {
+        let entryCountKey = "totalNewEntryCount"
+        let lastReviewKey = "lastReviewRequestDate"
+        let count = UserDefaults.standard.integer(forKey: entryCountKey) + 1
+        UserDefaults.standard.set(count, forKey: entryCountKey)
+
+        guard count >= 5 else { return }
+
+        let lastRequest = UserDefaults.standard.object(forKey: lastReviewKey) as? Date ?? .distantPast
+        guard Date().timeIntervalSince(lastRequest) > 60 * 86400 else { return } // 60 days
+
+        UserDefaults.standard.set(Date(), forKey: lastReviewKey)
+        requestReview()
     }
 }

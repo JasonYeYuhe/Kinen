@@ -10,8 +10,6 @@ private let logger = Logger(subsystem: "com.jasonye.kinen", category: "Sentiment
 actor SentimentAnalyzer {
     static let shared = SentimentAnalyzer()
 
-    private let tagger = NLTagger(tagSchemes: [.sentimentScore, .nameType, .lemma])
-
     private init() {}
 
     /// Analyze a journal entry: sentiment score + auto-generated tags + insights.
@@ -20,11 +18,11 @@ actor SentimentAnalyzer {
         let content = entry.content
 
         // 1. Sentiment analysis
-        let sentiment = analyzeSentiment(content)
+        let sentiment = await analyzeSentiment(content)
         entry.sentimentScore = sentiment
 
         // 2. Extract key topics/entities as auto-tags
-        let topics = extractTopics(content)
+        let topics = await extractTopics(content)
         for topic in topics.prefix(5) {
             let descriptor = FetchDescriptor<Tag>(predicate: #Predicate { $0.name == topic })
             let existingTags = (try? context.fetch(descriptor)) ?? []
@@ -60,12 +58,14 @@ actor SentimentAnalyzer {
 
     // MARK: - Sentiment
 
-    /// Returns a score from -1.0 (very negative) to 1.0 (very positive)
-    nonisolated func analyzeSentiment(_ text: String) -> Double {
-        let tagger = NLTagger(tagSchemes: [.sentimentScore])
-        tagger.string = text
+    private let sentimentTagger = NLTagger(tagSchemes: [.sentimentScore])
+    private let topicTagger = NLTagger(tagSchemes: [.nameType, .lexicalClass])
 
-        let (sentimentTag, _) = tagger.tag(at: text.startIndex, unit: .paragraph, scheme: .sentimentScore)
+    /// Returns a score from -1.0 (very negative) to 1.0 (very positive)
+    func analyzeSentiment(_ text: String) -> Double {
+        sentimentTagger.string = text
+
+        let (sentimentTag, _) = sentimentTagger.tag(at: text.startIndex, unit: .paragraph, scheme: .sentimentScore)
         if let tag = sentimentTag, let score = Double(tag.rawValue) {
             return score
         }
@@ -75,15 +75,14 @@ actor SentimentAnalyzer {
     // MARK: - Topic Extraction
 
     /// Extract named entities and key nouns as topics
-    nonisolated func extractTopics(_ text: String) -> [String] {
-        let tagger = NLTagger(tagSchemes: [.nameType, .lexicalClass])
-        tagger.string = text
+    func extractTopics(_ text: String) -> [String] {
+        topicTagger.string = text
 
         var topics: [String: Int] = [:]
         let options: NLTagger.Options = [.omitPunctuation, .omitWhitespace, .omitOther]
 
         // Extract named entities
-        tagger.enumerateTags(in: text.startIndex..<text.endIndex, unit: .word, scheme: .nameType, options: options) { tag, range in
+        topicTagger.enumerateTags(in: text.startIndex..<text.endIndex, unit: .word, scheme: .nameType, options: options) { tag, range in
             if let tag, tag != .otherWord {
                 let word = String(text[range]).trimmingCharacters(in: .whitespacesAndNewlines)
                 if word.count > 2 {
@@ -94,7 +93,7 @@ actor SentimentAnalyzer {
         }
 
         // Extract nouns
-        tagger.enumerateTags(in: text.startIndex..<text.endIndex, unit: .word, scheme: .lexicalClass, options: options) { tag, range in
+        topicTagger.enumerateTags(in: text.startIndex..<text.endIndex, unit: .word, scheme: .lexicalClass, options: options) { tag, range in
             if tag == .noun {
                 let word = String(text[range]).trimmingCharacters(in: .whitespacesAndNewlines)
                 if word.count > 3 {

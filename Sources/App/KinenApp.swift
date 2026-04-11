@@ -1,11 +1,24 @@
 import SwiftUI
 import SwiftData
+import OSLog
+
+private let logger = Logger(subsystem: "com.jasonye.kinen", category: "App")
 
 @main
 struct KinenApp: App {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = true
     @State private var appLock = AppLockService.shared
+    @State private var containerError: String?
+
+    init() {
+        UserDefaults.standard.register(defaults: [
+            "enableAutoSentiment": true,
+            "enableAutoTags": true,
+            "defaultMoodEnabled": true,
+            "iCloudSyncEnabled": true,
+        ])
+    }
 
     var sharedModelContainer: ModelContainer {
         let schema = Schema([
@@ -22,7 +35,18 @@ struct KinenApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [config])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            logger.error("CloudKit ModelContainer failed: \(error). Falling back to local-only storage.")
+            // Fallback: try local-only without CloudKit
+            let localConfig = ModelConfiguration(
+                schema: schema,
+                isStoredInMemoryOnly: false,
+                cloudKitDatabase: .none
+            )
+            do {
+                return try ModelContainer(for: schema, configurations: [localConfig])
+            } catch {
+                fatalError("Could not create ModelContainer: \(error)")
+            }
         }
     }
 

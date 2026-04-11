@@ -27,6 +27,7 @@ struct VoiceRecorderButton: View {
         }
         .buttonStyle(.borderless)
         .help(recorder.isRecording ? "Stop recording" : "Start voice input")
+        .accessibilityLabel(recorder.isRecording ? "Stop recording" : "Start voice input")
         .alert("Microphone Access Required", isPresented: $recorder.showPermissionAlert) {
             Button("Open Settings") {
                 #if os(macOS)

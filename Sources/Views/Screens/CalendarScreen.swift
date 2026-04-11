@@ -50,6 +50,7 @@ struct CalendarScreen: View {
                     Image(systemName: "chevron.left")
                 }
                 .buttonStyle(.borderless)
+                .accessibilityLabel("Previous month")
 
                 Text(displayedMonth, format: .dateTime.year().month(.wide))
                     .font(.headline)
@@ -59,6 +60,7 @@ struct CalendarScreen: View {
                     Image(systemName: "chevron.right")
                 }
                 .buttonStyle(.borderless)
+                .accessibilityLabel("Next month")
             }
 
             // Weekday headers
@@ -167,6 +169,7 @@ struct CalendarScreen: View {
                     Image(systemName: "chevron.left")
                 }
                 .buttonStyle(.borderless)
+                .accessibilityLabel("Previous year")
 
                 Text(displayedMonth, format: .dateTime.year())
                     .font(.headline)
@@ -178,6 +181,7 @@ struct CalendarScreen: View {
                     Image(systemName: "chevron.right")
                 }
                 .buttonStyle(.borderless)
+                .accessibilityLabel("Next year")
             }
 
             // Month labels

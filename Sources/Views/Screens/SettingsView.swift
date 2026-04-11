@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import StoreKit
+import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -19,59 +20,68 @@ struct SettingsView: View {
     @State private var backupPassword = ""
     @State private var backupMessage: String?
     @State private var showBackupPassword = false
+    @State private var showRestoreFilePicker = false
+    @State private var restorePassword = ""
+    @State private var restoreMessage: String?
+    @State private var restoreIsError = false
+    @State private var pendingRestoreURL: URL?
+    @State private var pendingRestoreData: Data?
+    @State private var restorePreview: BackupService.BackupPreview?
+    @State private var showRestorePasswordPrompt = false
+    @State private var showRestoreConfirmation = false
     @Query(sort: \Tag.name) private var allTags: [Tag]
 
     var body: some View {
         Form {
-            Section("iCloud Sync") {
-                Toggle("Sync entries across devices", isOn: $iCloudSyncEnabled)
+            Section(String(localized: "settings.icloud")) {
+                Toggle(String(localized: "settings.icloud.toggle"), isOn: $iCloudSyncEnabled)
                 if iCloudSyncEnabled {
                     HStack {
                         Image(systemName: "icloud.fill")
                             .foregroundStyle(.green)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Connected to iCloud")
+                            Text(String(localized: "settings.icloud.connected"))
                                 .font(.subheadline)
-                            Text("\(entries.count) entries syncing")
+                            Text("\(entries.count) \(String(localized: "general.entries"))")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
                     }
                 } else {
-                    Text("Your entries are stored locally only. Enable sync to access them across your devices.")
+                    Text(String(localized: "settings.icloud.disabled"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            Section("AI Analysis") {
-                Toggle("Auto-analyze sentiment", isOn: $enableAutoSentiment)
-                Toggle("Auto-suggest tags", isOn: $enableAutoTags)
-                Text("All AI analysis runs locally on your device. No data is sent anywhere.")
+            Section(String(localized: "settings.ai")) {
+                Toggle(String(localized: "settings.ai.sentiment"), isOn: $enableAutoSentiment)
+                Toggle(String(localized: "settings.ai.tags"), isOn: $enableAutoTags)
+                Text(String(localized: "settings.ai.local"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
-            Section("Journal") {
-                Toggle("Show mood picker for new entries", isOn: $defaultMoodEnabled)
-                Button("Manage Tags") { showTagManagement = true }
+            Section(String(localized: "settings.journal")) {
+                Toggle(String(localized: "settings.journal.mood"), isOn: $defaultMoodEnabled)
+                Button(String(localized: "settings.journal.tags")) { showTagManagement = true }
             }
 
-            Section("Security") {
-                Toggle("App Lock (\(appLock.biometricType.name))", isOn: $appLock.isEnabled)
+            Section(String(localized: "settings.security")) {
+                Toggle(String(format: String(localized: "settings.security.appLock"), appLock.biometricType.name), isOn: $appLock.isEnabled)
                 if appLock.isEnabled {
-                    Toggle("Lock when switching apps", isOn: $appLock.lockOnBackground)
+                    Toggle(String(localized: "settings.security.lockSwitch"), isOn: $appLock.lockOnBackground)
                 }
             }
 
-            Section("Export") {
-                Picker("Format", selection: $exportFormat) {
+            Section(String(localized: "settings.export")) {
+                Picker(String(localized: "settings.export.format"), selection: $exportFormat) {
                     ForEach(ExportService.ExportFormat.allCases, id: \.self) { format in
                         Text(format.rawValue).tag(format)
                     }
                 }
 
-                ProButton(title: "Export All Entries (\(entries.count))", icon: "square.and.arrow.up") {
+                ProButton(title: String(format: String(localized: "settings.export.all"), entries.count), icon: "square.and.arrow.up") {
                     exportEntries()
                 }
 
@@ -82,12 +92,18 @@ struct SettingsView: View {
                 }
             }
 
-            Section("Backup & Restore") {
-                SecureField("Backup password", text: $backupPassword)
+            Section(String(localized: "settings.backup")) {
+                SecureField(String(localized: "settings.backup.password"), text: $backupPassword)
                     .textFieldStyle(.plain)
 
-                ProButton(title: "Create Encrypted Backup", icon: "lock.doc") {
+                ProButton(title: String(localized: "settings.backup.create"), icon: "lock.doc") {
                     createBackup()
+                }
+
+                Button {
+                    showRestoreFilePicker = true
+                } label: {
+                    Label(String(localized: "settings.backup.restore"), systemImage: "arrow.down.doc")
                 }
 
                 if let msg = backupMessage {
@@ -96,59 +112,110 @@ struct SettingsView: View {
                         .foregroundStyle(.green)
                 }
 
-                Text("Backups are encrypted with AES-256. Keep your password safe — we cannot recover it.")
+                if let msg = restoreMessage {
+                    Text(msg)
+                        .font(.caption)
+                        .foregroundStyle(restoreIsError ? .red : .green)
+                }
+
+                Text(String(localized: "settings.backup.note"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
-            Section("Privacy") {
+            Section(String(localized: "settings.privacy")) {
                 HStack {
                     Image(systemName: "lock.shield")
                         .foregroundStyle(.green)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("Your Data is Private")
+                        Text(String(localized: "settings.privacy.title"))
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                        Text("All journal entries are stored locally on this device. No cloud sync, no tracking, no analytics.")
+                        Text(String(localized: "settings.privacy.description"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
             }
 
-            Section("About") {
+            Section(String(localized: "settings.about")) {
                 HStack {
-                    Text("Version")
+                    Text(String(localized: "settings.version"))
                     Spacer()
                     Text("0.1.0")
                         .foregroundStyle(.secondary)
                 }
                 HStack {
-                    Text("Developer")
+                    Text(String(localized: "settings.developer"))
                     Spacer()
                     Text("Jason Ye")
                         .foregroundStyle(.secondary)
                 }
-                Button("Rate Kinen") { requestReview() }
+                Button(String(localized: "settings.rate")) { requestReview() }
                 Link("GitHub", destination: URL(string: "https://github.com/JasonYeYuhe/Kinen")!)
                 Link("Privacy Policy", destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/")!)
                 Link("Terms of Use", destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/")!)
             }
         }
         .formStyle(.grouped)
-        .navigationTitle("Settings")
+        .navigationTitle(String(localized: "settings.title"))
         .sheet(isPresented: $showTagManagement) {
             TagManagementSheet()
+        }
+        .fileImporter(
+            isPresented: $showRestoreFilePicker,
+            allowedContentTypes: [.data],
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case .success(let urls):
+                if let url = urls.first {
+                    pendingRestoreURL = url
+                    showRestorePasswordPrompt = true
+                }
+            case .failure(let error):
+                restoreIsError = true
+                restoreMessage = String(format: String(localized: "settings.backup.restoreFailed"), error.localizedDescription)
+            }
+        }
+        .alert(String(localized: "settings.backup.enterPassword"), isPresented: $showRestorePasswordPrompt) {
+            SecureField(String(localized: "settings.backup.password"), text: $restorePassword)
+            Button(String(localized: "general.cancel"), role: .cancel) {
+                restorePassword = ""
+                pendingRestoreURL = nil
+            }
+            Button(String(localized: "settings.backup.restore")) {
+                previewRestore()
+            }
+        } message: {
+            Text(String(localized: "settings.backup.enterPasswordMsg"))
+        }
+        .alert(String(localized: "settings.backup.confirmRestore"), isPresented: $showRestoreConfirmation) {
+            Button(String(localized: "general.cancel"), role: .cancel) {
+                restorePassword = ""
+                pendingRestoreData = nil
+                restorePreview = nil
+            }
+            Button(String(localized: "settings.backup.restore")) {
+                executeRestore()
+            }
+        } message: {
+            if let preview = restorePreview {
+                Text(String(format: String(localized: "settings.backup.previewMsg"),
+                    preview.entryCount, preview.tagCount,
+                    preview.deviceName,
+                    preview.createdAt.formatted(date: .abbreviated, time: .shortened)))
+            }
         }
     }
 
     private func exportEntries() {
         #if os(macOS)
         ExportService.exportWithDialog(entries: entries, format: exportFormat)
-        exportMessage = "Exported \(entries.count) entries as \(exportFormat.rawValue)"
+        exportMessage = String(format: String(localized: "settings.export.done"), entries.count, exportFormat.rawValue)
         #else
         if let url = ExportService.exportAll(entries: entries, format: exportFormat) {
-            exportMessage = "Exported to \(url.lastPathComponent)"
+            exportMessage = String(format: String(localized: "settings.export.doneTo"), url.lastPathComponent)
         }
         #endif
     }
@@ -157,9 +224,49 @@ struct SettingsView: View {
         requestReviewAction()
     }
 
+    private func previewRestore() {
+        guard let url = pendingRestoreURL, !restorePassword.isEmpty else {
+            restoreIsError = true
+            restoreMessage = String(localized: "settings.backup.noFileOrPassword")
+            return
+        }
+        do {
+            let accessing = url.startAccessingSecurityScopedResource()
+            defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+            let data = try Data(contentsOf: url)
+            let preview = try BackupService.previewBackup(data: data, password: restorePassword)
+            pendingRestoreData = data
+            restorePreview = preview
+            showRestoreConfirmation = true
+        } catch {
+            restoreIsError = true
+            restoreMessage = String(format: String(localized: "settings.backup.restoreFailed"), error.localizedDescription)
+            restorePassword = ""
+            pendingRestoreURL = nil
+        }
+    }
+
+    private func executeRestore() {
+        guard let data = pendingRestoreData else { return }
+        defer {
+            restorePassword = ""
+            pendingRestoreURL = nil
+            pendingRestoreData = nil
+            restorePreview = nil
+        }
+        do {
+            let count = try BackupService.restoreBackup(data: data, password: restorePassword, context: modelContext)
+            restoreIsError = false
+            restoreMessage = String(format: String(localized: "settings.backup.restored"), count)
+        } catch {
+            restoreIsError = true
+            restoreMessage = String(format: String(localized: "settings.backup.restoreFailed"), error.localizedDescription)
+        }
+    }
+
     private func createBackup() {
         guard !backupPassword.isEmpty else {
-            backupMessage = "Please enter a password"
+            backupMessage = String(localized: "settings.backup.needPassword")
             return
         }
         do {
@@ -170,9 +277,9 @@ struct SettingsView: View {
             #if os(macOS)
             NSWorkspace.shared.open(tempURL.deletingLastPathComponent())
             #endif
-            backupMessage = "Backup created: \(filename) (\(data.count / 1024)KB)"
+            backupMessage = String(format: String(localized: "settings.backup.created"), filename, data.count / 1024)
         } catch {
-            backupMessage = "Backup failed: \(error.localizedDescription)"
+            backupMessage = String(format: String(localized: "settings.backup.failed"), error.localizedDescription)
         }
     }
 }

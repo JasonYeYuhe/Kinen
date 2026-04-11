@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 import CryptoKit
+import CommonCrypto
 import OSLog
 #if canImport(UIKit)
 import UIKit
@@ -110,6 +111,29 @@ struct BackupService {
         return encrypted
     }
 
+    // MARK: - Preview Backup
+
+    struct BackupPreview {
+        let entryCount: Int
+        let tagCount: Int
+        let deviceName: String
+        let createdAt: Date
+    }
+
+    /// Decrypt and inspect a backup without importing. Returns metadata for user confirmation.
+    static func previewBackup(data: Data, password: String) throws -> BackupPreview {
+        let jsonData = try decrypt(data: data, password: password)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let backup = try decoder.decode(BackupData.self, from: jsonData)
+        return BackupPreview(
+            entryCount: backup.entries.count,
+            tagCount: backup.tags.count,
+            deviceName: backup.metadata.deviceName,
+            createdAt: backup.metadata.createdAt
+        )
+    }
+
     // MARK: - Restore Backup
 
     static func restoreBackup(data: Data, password: String, context: ModelContext) throws -> Int {
@@ -153,6 +177,24 @@ struct BackupService {
                 entry.isBookmarked = backupEntry.isBookmarked
                 entry.writingDuration = backupEntry.writingDuration
                 context.insert(entry)
+
+                // Restore tag relationships
+                for tagName in backupEntry.tagNames {
+                    let tagDescriptor = FetchDescriptor<Tag>(predicate: #Predicate { $0.name == tagName })
+                    if let tag = (try? context.fetch(tagDescriptor))?.first {
+                        entry.addTag(tag)
+                    }
+                }
+
+                // Restore insights
+                for backupInsight in backupEntry.insights {
+                    if let type = InsightType(rawValue: backupInsight.type) {
+                        let insight = EntryInsight(type: type, content: backupInsight.content)
+                        insight.createdAt = backupInsight.createdAt
+                        entry.addInsight(insight)
+                    }
+                }
+
                 importedCount += 1
             }
         }
@@ -163,26 +205,59 @@ struct BackupService {
 
     // MARK: - AES-256-GCM Encryption
 
+    private static let saltLength = 16
+    private static let pbkdf2Rounds: UInt32 = 100_000
+
     private static func encrypt(data: Data, password: String) throws -> Data {
-        let key = deriveKey(password: password)
+        var salt = Data(count: saltLength)
+        let result = salt.withUnsafeMutableBytes { SecRandomCopyBytes(kSecRandomDefault, saltLength, $0.baseAddress!) }
+        guard result == errSecSuccess else { throw BackupError.encryptionFailed }
+
+        let key = try deriveKey(password: password, salt: salt)
         let sealedBox = try AES.GCM.seal(data, using: key)
         guard let combined = sealedBox.combined else {
             throw BackupError.encryptionFailed
         }
-        return combined
+        // Format: [salt (16 bytes)] + [AES-GCM sealed box]
+        return salt + combined
     }
 
     private static func decrypt(data: Data, password: String) throws -> Data {
-        let key = deriveKey(password: password)
-        let sealedBox = try AES.GCM.SealedBox(combined: data)
+        guard data.count > saltLength else { throw BackupError.corruptedData }
+
+        let salt = data.prefix(saltLength)
+        let encrypted = data.dropFirst(saltLength)
+
+        let key = try deriveKey(password: password, salt: salt)
+        let sealedBox = try AES.GCM.SealedBox(combined: encrypted)
         return try AES.GCM.open(sealedBox, using: key)
     }
 
-    /// Derive a 256-bit key from password using SHA256.
-    /// In production, use PBKDF2 or Argon2 for stronger key derivation.
-    private static func deriveKey(password: String) -> SymmetricKey {
-        let hash = SHA256.hash(data: Data(password.utf8))
-        return SymmetricKey(data: hash)
+    /// Derive a 256-bit key from password using PBKDF2-HMAC-SHA256.
+    private static func deriveKey(password: String, salt: Data) throws -> SymmetricKey {
+        let passwordData = Data(password.utf8)
+        var derivedKey = Data(count: 32) // 256 bits
+
+        let status = derivedKey.withUnsafeMutableBytes { derivedKeyBytes in
+            salt.withUnsafeBytes { saltBytes in
+                passwordData.withUnsafeBytes { passwordBytes in
+                    CCKeyDerivationPBKDF(
+                        CCPBKDFAlgorithm(kCCPBKDF2),
+                        passwordBytes.baseAddress?.assumingMemoryBound(to: Int8.self),
+                        passwordData.count,
+                        saltBytes.baseAddress?.assumingMemoryBound(to: UInt8.self),
+                        salt.count,
+                        CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA256),
+                        pbkdf2Rounds,
+                        derivedKeyBytes.baseAddress?.assumingMemoryBound(to: UInt8.self),
+                        32
+                    )
+                }
+            }
+        }
+
+        guard status == kCCSuccess else { throw BackupError.encryptionFailed }
+        return SymmetricKey(data: derivedKey)
     }
 }
 
