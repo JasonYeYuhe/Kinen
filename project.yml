@@ -45,10 +45,6 @@ targets:
       properties:
         com.apple.security.app-sandbox: true
         com.apple.security.network.client: true
-        com.apple.developer.icloud-services:
-          - CloudKit
-        com.apple.developer.icloud-container-identifiers:
-          - iCloud.com.jasonye.kinen
 
   KinenIOS:
     type: application
@@ -71,11 +67,6 @@ targets:
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
     entitlements:
       path: Resources/Kinen-iOS.entitlements
-      properties:
-        com.apple.developer.icloud-services:
-          - CloudKit
-        com.apple.developer.icloud-container-identifiers:
-          - iCloud.com.jasonye.kinen
 
   KinenTests:
     type: bundle.unit-test
