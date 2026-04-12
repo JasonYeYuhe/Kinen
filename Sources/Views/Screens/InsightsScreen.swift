@@ -6,6 +6,8 @@ struct InsightsScreen: View {
     @Query(sort: \JournalEntry.createdAt, order: .reverse) private var entries: [JournalEntry]
     @State private var chartRange: ChartRange = .week
     @State private var appeared = false
+    @AppStorage("enableHealthKit") private var enableHealthKit = false
+    @State private var healthKit = HealthKitService.shared
 
     var body: some View {
         NavigationStack {
@@ -18,8 +20,13 @@ struct InsightsScreen: View {
                     writingActivityCard.cardAppear(appeared, delay: 0.2)
                     topTagsCard.cardAppear(appeared, delay: 0.25)
 
+                    // Health data
+                    if enableHealthKit {
+                        healthDataCard.cardAppear(appeared, delay: 0.3)
+                    }
+
                     // Smart Insights
-                    smartInsightsSection.cardAppear(appeared, delay: 0.3)
+                    smartInsightsSection.cardAppear(appeared, delay: enableHealthKit ? 0.35 : 0.3)
 
                     // Link to Recap
                     NavigationLink(destination: RecapScreen()) {
@@ -258,6 +265,70 @@ struct InsightsScreen: View {
         .padding()
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    // MARK: - Health Data Card
+
+    private var healthDataCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label(String(localized: "insights.health"), systemImage: "heart.fill")
+                .font(.headline)
+                .foregroundStyle(.red)
+
+            HStack(spacing: 20) {
+                if let sleep = healthKit.todaySleep {
+                    VStack(spacing: 4) {
+                        Image(systemName: "bed.double.fill")
+                            .foregroundStyle(.indigo)
+                        Text(String(format: "%.1fh", sleep))
+                            .font(.title3).fontWeight(.bold)
+                        Text(String(localized: "insights.health.sleep"))
+                            .font(.caption2).foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                if let steps = healthKit.todaySteps {
+                    VStack(spacing: 4) {
+                        Image(systemName: "figure.walk")
+                            .foregroundStyle(.green)
+                        Text("\(steps)")
+                            .font(.title3).fontWeight(.bold)
+                        Text(String(localized: "insights.health.steps"))
+                            .font(.caption2).foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                if let hr = healthKit.todayRestingHR {
+                    VStack(spacing: 4) {
+                        Image(systemName: "heart.fill")
+                            .foregroundStyle(.red)
+                        Text("\(Int(hr))")
+                            .font(.title3).fontWeight(.bold)
+                        Text(String(localized: "insights.health.hr"))
+                            .font(.caption2).foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+
+            if let insight = healthKit.generateCorrelationInsight(entries: entries) {
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "lightbulb.fill")
+                        .foregroundStyle(.yellow)
+                        .font(.caption)
+                    Text(insight)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(8)
+                .background(.yellow.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .task { await healthKit.fetchTodayData() }
     }
 
     // MARK: - Smart Insights

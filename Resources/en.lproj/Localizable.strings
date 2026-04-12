@@ -172,6 +172,8 @@
 "settings.journal.tags" = "Manage Tags";
 "settings.journal.location" = "Auto-record location & weather";
 "settings.journal.location.desc" = "Automatically tag entries with your location and weather. All data stays on your device.";
+"settings.journal.healthkit" = "HealthKit integration";
+"settings.journal.healthkit.desc" = "Correlate sleep, steps, and heart rate with your mood. All data stays on your device.";
 "settings.security" = "Security";
 "settings.security.appLock" = "App Lock (%@)";
 "settings.security.lockSwitch" = "Lock when switching apps";
@@ -285,6 +287,15 @@
 "sentiment.positive" = "Positive";
 "sentiment.negative" = "Negative";
 "sentiment.neutral" = "Neutral";
+
+/* Health */
+"insights.health" = "Today's Health";
+"insights.health.sleep" = "Sleep";
+"insights.health.steps" = "Steps";
+"insights.health.hr" = "Resting HR";
+"healthkit.insight.lowSleep" = "Low sleep may be affecting your mood. Try to rest earlier tonight.";
+"healthkit.insight.goodSleep" = "Great sleep last night! Good rest often leads to better mood.";
+"healthkit.insight.activeDay" = "Active day! Exercise correlates with positive mood.";
 
 /* Smart Insights */
 "insights.smart" = "Smart Insights";

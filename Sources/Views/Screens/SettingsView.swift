@@ -12,6 +12,8 @@ struct SettingsView: View {
     @AppStorage("enableAutoTags") private var enableAutoTags = true
     @AppStorage("defaultMoodEnabled") private var defaultMoodEnabled = true
     @AppStorage("enableLocationWeather") private var enableLocationWeather = false
+    @AppStorage("enableHealthKit") private var enableHealthKit = false
+    @State private var healthKit = HealthKitService.shared
     @State private var appLock = AppLockService.shared
     @State private var reminder = ReminderService.shared
     @State private var showExportPicker = false
@@ -78,6 +80,24 @@ struct SettingsView: View {
                 Text(String(localized: "settings.journal.location.desc"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                if healthKit.isAvailable {
+                    Toggle(String(localized: "settings.journal.healthkit"), isOn: Binding(
+                        get: { enableHealthKit },
+                        set: { newValue in
+                            if newValue {
+                                Task {
+                                    let granted = await healthKit.requestAuthorization()
+                                    enableHealthKit = granted
+                                }
+                            } else {
+                                enableHealthKit = false
+                            }
+                        }
+                    ))
+                    Text(String(localized: "settings.journal.healthkit.desc"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Button(String(localized: "settings.journal.tags")) { showTagManagement = true }
             }
 
