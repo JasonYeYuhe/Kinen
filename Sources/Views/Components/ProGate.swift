@@ -12,23 +12,20 @@ struct ProGate<Content: View>: View {
         if isPro {
             content()
         } else {
-            content()
-                .overlay {
-                    VStack(spacing: 12) {
-                        Image(systemName: "lock.fill")
-                            .font(.title)
-                            .foregroundStyle(.purple)
-                        Text("\(feature) requires Pro")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        Button("Unlock Pro") { showPaywall = true }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.purple)
-                            .controlSize(.small)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(.ultraThinMaterial)
-                }
+            VStack(spacing: 12) {
+                Image(systemName: "lock.fill")
+                    .font(.title)
+                    .foregroundStyle(.purple)
+                Text(String(format: String(localized: "pro.requires"), feature))
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                Button(String(localized: "pro.unlock.button")) { showPaywall = true }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.purple)
+                    .controlSize(.small)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(.ultraThinMaterial)
                 .sheet(isPresented: $showPaywall) {
                     ProPaywallView()
                 }
