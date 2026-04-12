@@ -288,6 +288,16 @@
 "sentiment.negative" = "Negative";
 "sentiment.neutral" = "Neutral";
 
+/* Chat */
+"insights.chat" = "Chat with your Journal";
+"chat.title" = "Journal Chat";
+"chat.placeholder" = "Ask about your journal...";
+"chat.thinking" = "Searching your journal...";
+"chat.welcome.title" = "Ask me anything";
+"chat.welcome.description" = "Search your journal with natural language. All processing happens on your device.";
+"chat.noResults" = "I couldn't find anything matching that. Try rephrasing your question.";
+"chat.found.%lld" = "I found %lld related entries:";
+
 /* Health */
 "insights.health" = "Today's Health";
 "insights.health.sleep" = "Sleep";

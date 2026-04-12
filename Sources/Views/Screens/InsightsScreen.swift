@@ -28,6 +28,24 @@ struct InsightsScreen: View {
                     // Smart Insights
                     smartInsightsSection.cardAppear(appeared, delay: enableHealthKit ? 0.35 : 0.3)
 
+                    // Chat with Journal
+                    NavigationLink(destination: JournalChatScreen()) {
+                        HStack {
+                            Label(String(localized: "insights.chat"), systemImage: "bubble.left.and.text.bubble.right")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.purple)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding()
+                        .background(.purple.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(.plain)
+
                     // Link to Recap
                     NavigationLink(destination: RecapScreen()) {
                         HStack {

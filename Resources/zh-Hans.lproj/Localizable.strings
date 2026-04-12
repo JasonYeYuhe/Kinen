@@ -288,6 +288,16 @@
 "sentiment.negative" = "消极";
 "sentiment.neutral" = "中性";
 
+/* Chat */
+"insights.chat" = "与日记对话";
+"chat.title" = "日记对话";
+"chat.placeholder" = "问任何关于日记的问题...";
+"chat.thinking" = "正在搜索你的日记...";
+"chat.welcome.title" = "问我任何问题";
+"chat.welcome.description" = "用自然语言搜索你的日记。所有处理都在本设备完成。";
+"chat.noResults" = "没有找到相关内容。试试换个说法？";
+"chat.found.%lld" = "找到 %lld 篇相关日记：";
+
 /* Health */
 "insights.health" = "今日健康";
 "insights.health.sleep" = "睡眠";
