@@ -18,7 +18,10 @@ final class HealthKitService {
         #endif
     }
 
-    var isAuthorized = false
+    /// Whether authorization has been requested at least once this session.
+    /// HealthKit doesn't expose read auth status; we just attempt queries.
+    /// Gate on UserDefaults("enableHealthKit") at call sites instead.
+    private(set) var hasRequestedAuth = false
     var todaySleep: TimeInterval? // hours
     var todaySteps: Int?
     var todayRestingHR: Double?
@@ -42,8 +45,8 @@ final class HealthKitService {
         guard isAvailable else { return false }
         do {
             try await store.requestAuthorization(toShare: [], read: readTypes)
-            isAuthorized = true
-            logger.info("HealthKit authorization granted")
+            hasRequestedAuth = true
+            logger.info("HealthKit authorization requested")
             return true
         } catch {
             logger.error("HealthKit authorization failed: \(error)")
@@ -57,7 +60,10 @@ final class HealthKitService {
     /// Fetch today's health data (sleep, steps, resting HR).
     func fetchTodayData() async {
         #if canImport(HealthKit)
-        guard isAuthorized else { return }
+        guard isAvailable else { return }
+        if !hasRequestedAuth {
+            _ = await requestAuthorization()
+        }
 
         async let steps = fetchSteps()
         async let sleep = fetchSleep()
@@ -127,18 +133,20 @@ final class HealthKitService {
 
         do {
             let result = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<TimeInterval?, Error>) in
-                let query = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
+                let query = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [NSSortDescriptor(key: "startDate", ascending: true)]) { _, samples, error in
                     if let error {
                         continuation.resume(throwing: error)
                     } else {
-                        let totalSeconds = (samples as? [HKCategorySample])?.reduce(0.0) { total, sample in
-                            guard sample.value == HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue ||
-                                  sample.value == HKCategoryValueSleepAnalysis.asleepCore.rawValue ||
-                                  sample.value == HKCategoryValueSleepAnalysis.asleepDeep.rawValue ||
-                                  sample.value == HKCategoryValueSleepAnalysis.asleepREM.rawValue
-                            else { return total }
-                            return total + sample.endDate.timeIntervalSince(sample.startDate)
-                        } ?? 0
+                        // Filter to actual sleep stages
+                        let sleepSamples = (samples as? [HKCategorySample])?.filter { sample in
+                            [HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue,
+                             HKCategoryValueSleepAnalysis.asleepCore.rawValue,
+                             HKCategoryValueSleepAnalysis.asleepDeep.rawValue,
+                             HKCategoryValueSleepAnalysis.asleepREM.rawValue].contains(sample.value)
+                        } ?? []
+
+                        // Merge overlapping intervals to avoid double-counting
+                        let totalSeconds = Self.mergedDuration(sleepSamples)
                         continuation.resume(returning: totalSeconds > 0 ? totalSeconds / 3600.0 : nil)
                     }
                 }
@@ -172,6 +180,23 @@ final class HealthKitService {
             logger.error("Failed to fetch resting HR: \(error)")
             return nil
         }
+    }
+    /// Merge overlapping time intervals and return total non-overlapping duration in seconds.
+    private static func mergedDuration(_ samples: [HKCategorySample]) -> TimeInterval {
+        guard !samples.isEmpty else { return 0 }
+        let sorted = samples.sorted { $0.startDate < $1.startDate }
+        var merged: [(start: Date, end: Date)] = []
+
+        for sample in sorted {
+            if let last = merged.last, sample.startDate <= last.end {
+                // Overlapping — extend the end
+                merged[merged.count - 1].end = max(last.end, sample.endDate)
+            } else {
+                merged.append((start: sample.startDate, end: sample.endDate))
+            }
+        }
+
+        return merged.reduce(0) { $0 + $1.end.timeIntervalSince($1.start) }
     }
     #endif
 
