@@ -170,6 +170,8 @@
 "settings.journal" = "日记";
 "settings.journal.mood" = "新建日记时显示情绪选择";
 "settings.journal.tags" = "管理标签";
+"settings.journal.location" = "自动记录位置和天气";
+"settings.journal.location.desc" = "自动为日记添加位置和天气信息。所有数据保留在本设备。";
 "settings.security" = "安全";
 "settings.security.appLock" = "应用锁（%@）";
 "settings.security.lockSwitch" = "切换应用时锁定";

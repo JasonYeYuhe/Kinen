@@ -170,6 +170,8 @@
 "settings.journal" = "Journal";
 "settings.journal.mood" = "Show mood picker for new entries";
 "settings.journal.tags" = "Manage Tags";
+"settings.journal.location" = "Auto-record location & weather";
+"settings.journal.location.desc" = "Automatically tag entries with your location and weather. All data stays on your device.";
 "settings.security" = "Security";
 "settings.security.appLock" = "App Lock (%@)";
 "settings.security.lockSwitch" = "Lock when switching apps";

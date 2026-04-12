@@ -11,6 +11,7 @@ struct SettingsView: View {
     @AppStorage("enableAutoSentiment") private var enableAutoSentiment = true
     @AppStorage("enableAutoTags") private var enableAutoTags = true
     @AppStorage("defaultMoodEnabled") private var defaultMoodEnabled = true
+    @AppStorage("enableLocationWeather") private var enableLocationWeather = false
     @State private var appLock = AppLockService.shared
     @State private var reminder = ReminderService.shared
     @State private var showExportPicker = false
@@ -65,6 +66,18 @@ struct SettingsView: View {
 
             Section(String(localized: "settings.journal")) {
                 Toggle(String(localized: "settings.journal.mood"), isOn: $defaultMoodEnabled)
+                Toggle(String(localized: "settings.journal.location"), isOn: Binding(
+                    get: { enableLocationWeather },
+                    set: { newValue in
+                        if newValue {
+                            LocationWeatherService.shared.requestPermission()
+                        }
+                        enableLocationWeather = newValue
+                    }
+                ))
+                Text(String(localized: "settings.journal.location.desc"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 Button(String(localized: "settings.journal.tags")) { showTagManagement = true }
             }
 

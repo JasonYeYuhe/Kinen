@@ -28,6 +28,7 @@ struct EntryEditorSheet: View {
     @State private var elapsedTime: TimeInterval = 0
     @State private var timer: Timer?
     @State private var locationWeather = LocationWeatherService.shared
+    @AppStorage("enableLocationWeather") private var enableLocationWeather = false
 
     init(entry: JournalEntry?) {
         self.entry = entry
@@ -177,7 +178,9 @@ struct EntryEditorSheet: View {
                 startTimer()
                 if entry == nil {
                     generateNewPrompt()
-                    Task { await locationWeather.fetchLocationAndWeather() }
+                    if enableLocationWeather {
+                        Task { await locationWeather.fetchLocationAndWeather() }
+                    }
                 }
             }
             .onChange(of: mood) { generateNewPrompt() }
