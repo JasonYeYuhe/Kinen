@@ -89,6 +89,9 @@ targets:
         SKIP_INSTALL: YES
     entitlements:
       path: KinenWatch/KinenWatch.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.jasonye.kinen
 
   KinenWidgetExtension:
     type: app-extension

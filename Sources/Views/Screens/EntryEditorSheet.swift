@@ -544,6 +544,7 @@ struct EntryEditorSheet: View {
             entry.photoData = photoData
             entry.writingDuration += elapsedTime
             entry.tags = entryTags
+            entry.journal = selectedJournal
         } else {
             let newEntry = JournalEntry(
                 content: trimmed,

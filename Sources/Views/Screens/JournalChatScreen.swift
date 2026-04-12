@@ -7,6 +7,7 @@ struct JournalChatScreen: View {
     @State private var query = ""
     @State private var messages: [ChatMessage] = []
     @State private var isSearching = false
+    @State private var searchTask: Task<Void, Never>?
 
     struct ChatMessage: Identifiable {
         let id = UUID()
@@ -183,13 +184,16 @@ struct JournalChatScreen: View {
 
     private func sendQuery() {
         let trimmed = query.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return }
+        guard !trimmed.isEmpty, !isSearching else { return }
+
+        // Cancel any in-flight search
+        searchTask?.cancel()
 
         messages.append(ChatMessage(isUser: true, text: trimmed))
         query = ""
         isSearching = true
 
-        Task {
+        searchTask = Task {
             // Try to answer as a question first
             if let answer = SemanticSearch.answerQuestion(trimmed, entries: entries) {
                 let results = SemanticSearch.search(query: trimmed, in: entries, limit: 3)
