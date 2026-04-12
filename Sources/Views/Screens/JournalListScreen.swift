@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct JournalListScreen: View {
     @Environment(\.modelContext) private var modelContext
@@ -135,5 +136,6 @@ struct JournalListScreen: View {
             }
         }
         HapticManager.notification(.warning)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }

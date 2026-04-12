@@ -246,6 +246,18 @@
 "lock.subtitle" = "你的日记受到保护";
 "lock.unlock" = "使用%@解锁";
 
+/* Tags */
+"tags.empty.title" = "暂无标签";
+"tags.empty.description" = "AI 会在你写日记时自动创建标签，你也可以在编辑器中手动添加。";
+"tags.rename" = "重命名";
+"tags.merge" = "合并到...";
+"tags.manage.%lld" = "管理标签（%lld）";
+"tags.delete.title" = "删除标签？";
+"tags.delete.message" = "此标签将从所有日记中移除，且无法撤销。";
+"tags.merge.into.%@" = "将「%@」合并到：";
+"tags.merge.action" = "合并";
+"tags.merge.title" = "合并标签";
+
 /* Filter */
 "filter.clear" = "清除";
 "filter.bookmarked" = "已收藏";

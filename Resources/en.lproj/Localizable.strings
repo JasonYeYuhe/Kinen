@@ -246,6 +246,18 @@
 "lock.subtitle" = "Your journal is protected";
 "lock.unlock" = "Unlock with %@";
 
+/* Tags */
+"tags.empty.title" = "No Tags";
+"tags.empty.description" = "Tags are created automatically by AI when you write entries, or you can add them manually in the editor.";
+"tags.rename" = "Rename";
+"tags.merge" = "Merge into...";
+"tags.manage.%lld" = "Manage Tags (%lld)";
+"tags.delete.title" = "Delete Tag?";
+"tags.delete.message" = "This tag will be removed from all entries. This cannot be undone.";
+"tags.merge.into.%@" = "Merge \"%@\" into:";
+"tags.merge.action" = "Merge";
+"tags.merge.title" = "Merge Tag";
+
 /* Filter */
 "filter.clear" = "Clear";
 "filter.bookmarked" = "Bookmarked";

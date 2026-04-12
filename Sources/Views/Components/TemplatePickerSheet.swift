@@ -43,18 +43,18 @@ struct TemplatePickerSheet: View {
                 }
                 .padding()
             }
-            .navigationTitle("Choose Template")
+            .navigationTitle(String(localized: "template.choose"))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(String(localized: "general.cancel")) { dismiss() }
                 }
             }
         }
         #if os(macOS)
-        .frame(minWidth: 420, minHeight: 400)
+        .frame(minWidth: 360, idealWidth: 420, minHeight: 350, idealHeight: 400)
         #endif
     }
 }

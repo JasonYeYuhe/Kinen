@@ -18,9 +18,9 @@ struct TagManagementSheet: View {
             List {
                 if tags.isEmpty {
                     ContentUnavailableView {
-                        Label("No Tags", systemImage: "tag")
+                        Label(String(localized: "tags.empty.title"), systemImage: "tag")
                     } description: {
-                        Text("Tags are created automatically by AI when you write entries, or you can add them manually in the editor.")
+                        Text(String(localized: "tags.empty.description"))
                     }
                 } else {
                     ForEach(tags) { tag in
@@ -33,7 +33,7 @@ struct TagManagementSheet: View {
                                 TextField("Tag name", text: $newName)
                                     .textFieldStyle(.plain)
                                     .onSubmit { finishEditing(tag: tag) }
-                                Button("Done") { finishEditing(tag: tag) }
+                                Button(String(localized: "general.done")) { finishEditing(tag: tag) }
                                     .buttonStyle(.borderless)
                                     .foregroundStyle(.purple)
                             } else {
@@ -59,16 +59,16 @@ struct TagManagementSheet: View {
                             }
                         }
                         .contextMenu {
-                            Button("Rename") {
+                            Button(String(localized: "tags.rename")) {
                                 editingTag = tag
                                 newName = tag.name
                             }
-                            Button("Merge into...") {
+                            Button(String(localized: "tags.merge")) {
                                 mergeSource = tag
                                 showMergeSheet = true
                             }
                             Divider()
-                            Button("Delete", role: .destructive) {
+                            Button(String(localized: "general.delete"), role: .destructive) {
                                 tagToDelete = tag
                                 showDeleteConfirm = true
                             }
@@ -78,37 +78,37 @@ struct TagManagementSheet: View {
                                 tagToDelete = tag
                                 showDeleteConfirm = true
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Label(String(localized: "general.delete"), systemImage: "trash")
                             }
                             Button {
                                 editingTag = tag
                                 newName = tag.name
                             } label: {
-                                Label("Rename", systemImage: "pencil")
+                                Label(String(localized: "tags.rename"), systemImage: "pencil")
                             }
                             .tint(.purple)
                         }
                     }
                 }
             }
-            .navigationTitle("Manage Tags (\(tags.count))")
+            .navigationTitle(String(localized: "tags.manage.\(tags.count)"))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
+                    Button(String(localized: "general.done")) { dismiss() }
                 }
             }
-            .alert("Delete Tag?", isPresented: $showDeleteConfirm) {
-                Button("Delete", role: .destructive) {
+            .alert(String(localized: "tags.delete.title"), isPresented: $showDeleteConfirm) {
+                Button(String(localized: "general.delete"), role: .destructive) {
                     if let tag = tagToDelete {
                         modelContext.delete(tag)
                     }
                 }
-                Button("Cancel", role: .cancel) {}
+                Button(String(localized: "general.cancel"), role: .cancel) {}
             } message: {
-                Text("This tag will be removed from all entries. This cannot be undone.")
+                Text(String(localized: "tags.delete.message"))
             }
             .sheet(isPresented: $showMergeSheet) {
                 if let source = mergeSource {
@@ -117,7 +117,7 @@ struct TagManagementSheet: View {
             }
         }
         #if os(macOS)
-        .frame(minWidth: 400, minHeight: 350)
+        .frame(minWidth: 340, idealWidth: 400, minHeight: 300, idealHeight: 350)
         #endif
     }
 
@@ -143,7 +143,7 @@ struct TagMergeSheet: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Merge \"\(sourceTag.name)\" into:")
+                Text(String(localized: "tags.merge.into.\(sourceTag.name)"))
                     .font(.headline)
 
                 List(allTags, selection: $selectedTarget) { tag in
@@ -151,12 +151,12 @@ struct TagMergeSheet: View {
                         Circle().fill(tag.color).frame(width: 10, height: 10)
                         Text(tag.name)
                         Spacer()
-                        Text("\(tag.entryCount) entries").font(.caption).foregroundStyle(.secondary)
+                        Text("\(tag.entryCount) \(String(localized: "general.entries"))").font(.caption).foregroundStyle(.secondary)
                     }
                     .tag(tag)
                 }
 
-                Button("Merge") {
+                Button(String(localized: "tags.merge.action")) {
                     guard let target = selectedTarget else { return }
                     // Move all entries from source to target
                     for entry in sourceTag.safeEntries {
@@ -173,18 +173,18 @@ struct TagMergeSheet: View {
                 .disabled(selectedTarget == nil)
             }
             .padding()
-            .navigationTitle("Merge Tag")
+            .navigationTitle(String(localized: "tags.merge.title"))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(String(localized: "general.cancel")) { dismiss() }
                 }
             }
         }
         #if os(macOS)
-        .frame(minWidth: 350, minHeight: 300)
+        .frame(minWidth: 300, idealWidth: 350, minHeight: 260, idealHeight: 300)
         #endif
     }
 }

@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 import StoreKit
+import WidgetKit
 
 struct EntryEditorSheet: View {
     @Environment(\.modelContext) private var modelContext
@@ -527,6 +528,7 @@ struct EntryEditorSheet: View {
         }
 
         HapticManager.notification(.success)
+        WidgetCenter.shared.reloadAllTimelines()
         dismiss()
     }
 
