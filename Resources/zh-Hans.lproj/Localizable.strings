@@ -259,6 +259,18 @@
 "lock.subtitle" = "你的日记受到保护";
 "lock.unlock" = "使用%@解锁";
 
+/* Journals */
+"journals.all" = "全部";
+"journals.manage" = "管理日记本";
+"journals.empty.title" = "暂无日记本";
+"journals.empty.description" = "创建日记本来按类别整理日记。";
+"journals.default" = "默认";
+"journals.entryCount.%lld" = "%lld 篇日记";
+"journals.quickAdd" = "快速添加";
+"editor.journal" = "日记本";
+"editor.journal.default" = "默认";
+"settings.journal.notebooks" = "管理日记本";
+
 /* Tags */
 "tags.empty.title" = "暂无标签";
 "tags.empty.description" = "AI 会在你写日记时自动创建标签，你也可以在编辑器中手动添加。";

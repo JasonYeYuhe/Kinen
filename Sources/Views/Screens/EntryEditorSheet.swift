@@ -21,6 +21,8 @@ struct EntryEditorSheet: View {
     @State private var photoData: Data?
     @AppStorage("defaultMoodEnabled") private var defaultMoodEnabled = true
     @State private var entryTags: [Tag] = []
+    @State private var selectedJournal: Journal?
+    @Query(sort: \Journal.createdAt) private var journals: [Journal]
     @State private var crisisAlert: CrisisDetector.CrisisAlert?
     @State private var showCrisisAlert = false
     @State private var writingStartTime: Date?
@@ -38,6 +40,7 @@ struct EntryEditorSheet: View {
         _template = State(initialValue: entry?.template)
         _photoData = State(initialValue: entry?.photoData)
         _entryTags = State(initialValue: entry?.tags ?? [])
+        _selectedJournal = State(initialValue: entry?.journal)
 
         // Restore template responses from saved content for template entries
         if let entry, let template = entry.template,
@@ -146,6 +149,23 @@ struct EntryEditorSheet: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         TagEditor(selectedTags: $entryTags)
+                    }
+
+                    // Journal notebook picker
+                    if !journals.isEmpty {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(String(localized: "editor.journal"))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    journalChip(nil, label: String(localized: "editor.journal.default"))
+                                    ForEach(journals) { journal in
+                                        journalChip(journal, label: journal.name)
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     footerStats
@@ -437,6 +457,28 @@ struct EntryEditorSheet: View {
         )
     }
 
+    private func journalChip(_ journal: Journal?, label: String) -> some View {
+        let isSelected = selectedJournal?.id == journal?.id
+        let color = journal?.color ?? .purple
+        return Button {
+            selectedJournal = journal
+            HapticManager.selection()
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: journal?.icon ?? "tray.full")
+                    .font(.caption)
+                Text(label)
+                    .font(.caption)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(isSelected ? color.opacity(0.2) : .secondary.opacity(0.08))
+            .foregroundStyle(isSelected ? color : .secondary)
+            .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+
     private func startTimer() {
         writingStartTime = Date()
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
@@ -514,6 +556,7 @@ struct EntryEditorSheet: View {
             newEntry.tags = entryTags
             newEntry.location = fetchedLocationWeather.location
             newEntry.weather = fetchedLocationWeather.weather
+            newEntry.journal = selectedJournal
             modelContext.insert(newEntry)
 
             // Record writing session

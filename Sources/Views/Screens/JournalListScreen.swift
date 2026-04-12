@@ -13,6 +13,9 @@ struct JournalListScreen: View {
     @State private var selectedTags: Set<String> = []
     @State private var dateRange: DateRange = .all
     @State private var bookmarkedOnly = false
+    @State private var selectedJournal: Journal?
+    @Query(sort: \Journal.createdAt) private var journals: [Journal]
+    @State private var showJournalManagement = false
 
     private var filteredEntries: [JournalEntry] {
         var result = entries
@@ -50,11 +53,39 @@ struct JournalListScreen: View {
             result = result.filter { $0.isBookmarked }
         }
 
+        // Journal filter
+        if let journal = selectedJournal {
+            result = result.filter { $0.journal?.id == journal.id }
+        }
+
         return result
     }
 
     var body: some View {
         VStack(spacing: 0) {
+            // Journal picker (if journals exist)
+            if !journals.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        journalFilterChip(nil, label: String(localized: "journals.all"))
+                        ForEach(journals) { journal in
+                            journalFilterChip(journal, label: journal.name)
+                        }
+                        Button {
+                            showJournalManagement = true
+                        } label: {
+                            Image(systemName: "plus.circle")
+                                .font(.caption)
+                                .foregroundStyle(.purple)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 6)
+                }
+                Divider()
+            }
+
             // Filter bar
             FilterBar(
                 selectedMoods: $selectedMoods,
@@ -102,6 +133,9 @@ struct JournalListScreen: View {
         .sheet(isPresented: $showingEditor) {
             EntryEditorSheet(entry: nil)
         }
+        .sheet(isPresented: $showJournalManagement) {
+            JournalManagementSheet()
+        }
         .navigationDestination(for: JournalEntry.self) { entry in
             EntryDetailScreen(entry: entry)
         }
@@ -126,6 +160,28 @@ struct JournalListScreen: View {
             calendar.startOfDay(for: entry.createdAt)
         }
         return grouped.sorted { $0.key > $1.key }
+    }
+
+    private func journalFilterChip(_ journal: Journal?, label: String) -> some View {
+        let isSelected = selectedJournal?.id == journal?.id
+        let color = journal?.color ?? .purple
+        return Button {
+            withAnimation(.easeInOut(duration: 0.2)) { selectedJournal = journal }
+            HapticManager.selection()
+        } label: {
+            HStack(spacing: 4) {
+                if let journal {
+                    Image(systemName: journal.icon).font(.caption2)
+                }
+                Text(label).font(.caption).fontWeight(isSelected ? .semibold : .regular)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(isSelected ? color.opacity(0.2) : .secondary.opacity(0.08))
+            .foregroundStyle(isSelected ? color : .secondary)
+            .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
     }
 
     private func deleteEntries(dayEntries: [JournalEntry], at offsets: IndexSet) {

@@ -26,7 +26,8 @@ struct KinenApp: App {
             JournalEntry.self,
             Tag.self,
             EntryInsight.self,
-            WritingSession.self
+            WritingSession.self,
+            Journal.self,
         ])
         let config = ModelConfiguration(
             schema: schema,

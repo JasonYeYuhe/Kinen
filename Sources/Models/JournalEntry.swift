@@ -24,6 +24,9 @@ final class JournalEntry {
 
     var audioFilename: String?
 
+    // Journal notebook (optional — nil means "All Entries" / default)
+    var journal: Journal?
+
     // CloudKit requires relationships to be optional
     @Relationship(deleteRule: .nullify, inverse: \Tag.entries)
     var tags: [Tag]?

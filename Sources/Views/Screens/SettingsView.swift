@@ -18,6 +18,7 @@ struct SettingsView: View {
     @State private var reminder = ReminderService.shared
     @State private var showExportPicker = false
     @State private var showTagManagement = false
+    @State private var showJournalManagement = false
     @State private var exportFormat: ExportService.ExportFormat = .markdown
     @State private var exportMessage: String?
     @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = true
@@ -99,6 +100,7 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
                 Button(String(localized: "settings.journal.tags")) { showTagManagement = true }
+                Button(String(localized: "settings.journal.notebooks")) { showJournalManagement = true }
             }
 
             Section(String(localized: "settings.reminders")) {
@@ -228,6 +230,9 @@ struct SettingsView: View {
         .navigationTitle(String(localized: "settings.title"))
         .sheet(isPresented: $showTagManagement) {
             TagManagementSheet()
+        }
+        .sheet(isPresented: $showJournalManagement) {
+            JournalManagementSheet()
         }
         .fileImporter(
             isPresented: $showRestoreFilePicker,

@@ -259,6 +259,18 @@
 "lock.subtitle" = "Your journal is protected";
 "lock.unlock" = "Unlock with %@";
 
+/* Journals */
+"journals.all" = "All";
+"journals.manage" = "Manage Journals";
+"journals.empty.title" = "No Journals";
+"journals.empty.description" = "Create journals to organize entries by category.";
+"journals.default" = "Default";
+"journals.entryCount.%lld" = "%lld entries";
+"journals.quickAdd" = "Quick Add";
+"editor.journal" = "Journal";
+"editor.journal.default" = "Default";
+"settings.journal.notebooks" = "Manage Journals";
+
 /* Tags */
 "tags.empty.title" = "No Tags";
 "tags.empty.description" = "Tags are created automatically by AI when you write entries, or you can add them manually in the editor.";
