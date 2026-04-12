@@ -32,9 +32,17 @@ struct EntryDetailScreen: View {
                     }
                 }
 
-                // Sentiment badge
-                if let score = entry.sentimentScore {
-                    SentimentBadge(score: score)
+                // Metadata badges
+                HStack(spacing: 8) {
+                    if let score = entry.sentimentScore {
+                        SentimentBadge(score: score)
+                    }
+                    if let location = entry.location {
+                        MetadataBadge(icon: "location.fill", text: location, color: .blue)
+                    }
+                    if let weather = entry.weather {
+                        MetadataBadge(icon: "cloud.sun.fill", text: weather, color: .orange)
+                    }
                 }
 
                 Divider()
@@ -63,7 +71,7 @@ struct EntryDetailScreen: View {
                 if !entry.safeInsights.isEmpty {
                     Divider()
                     VStack(alignment: .leading, spacing: 8) {
-                        Label("AI Insights", systemImage: "sparkles")
+                        Label(String(localized: "detail.aiInsights"), systemImage: "sparkles")
                             .font(.headline)
                             .foregroundStyle(.purple)
 
@@ -148,12 +156,13 @@ struct SentimentBadge: View {
         .background(color.opacity(0.1))
         .foregroundStyle(color)
         .clipShape(Capsule())
+        .accessibilityLabel(String(localized: "accessibility.sentiment") + " " + label)
     }
 
     private var label: String {
-        if score > 0.3 { return "Positive" }
-        if score < -0.3 { return "Negative" }
-        return "Neutral"
+        if score > 0.3 { return String(localized: "sentiment.positive") }
+        if score < -0.3 { return String(localized: "sentiment.negative") }
+        return String(localized: "sentiment.neutral")
     }
 
     private var icon: String {
@@ -166,6 +175,26 @@ struct SentimentBadge: View {
         if score > 0.3 { return .green }
         if score < -0.3 { return .red }
         return .gray
+    }
+}
+
+struct MetadataBadge: View {
+    let icon: String
+    let text: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.caption2)
+            Text(text)
+                .font(.caption)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(color.opacity(0.1))
+        .foregroundStyle(color)
+        .clipShape(Capsule())
     }
 }
 

@@ -5,22 +5,26 @@ import Charts
 struct InsightsScreen: View {
     @Query(sort: \JournalEntry.createdAt, order: .reverse) private var entries: [JournalEntry]
     @State private var chartRange: ChartRange = .week
+    @State private var appeared = false
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    streakCard
-                    moodChartCard
-                    weeklyStatsCard
-                    sentimentTrendCard
-                    writingActivityCard
-                    topTagsCard
+                    streakCard.cardAppear(appeared, delay: 0)
+                    moodChartCard.cardAppear(appeared, delay: 0.05)
+                    weeklyStatsCard.cardAppear(appeared, delay: 0.1)
+                    sentimentTrendCard.cardAppear(appeared, delay: 0.15)
+                    writingActivityCard.cardAppear(appeared, delay: 0.2)
+                    topTagsCard.cardAppear(appeared, delay: 0.25)
+
+                    // Smart Insights
+                    smartInsightsSection.cardAppear(appeared, delay: 0.3)
 
                     // Link to Recap
                     NavigationLink(destination: RecapScreen()) {
                         HStack {
-                            Label("View Weekly Recap", systemImage: "doc.text.magnifyingglass")
+                            Label(String(localized: "insights.viewRecap"), systemImage: "doc.text.magnifyingglass")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                             Spacer()
@@ -37,6 +41,7 @@ struct InsightsScreen: View {
                 .padding()
             }
             .navigationTitle("Insights")
+            .onAppear { withAnimation(.easeOut(duration: 0.4)) { appeared = true } }
         }
     }
 
@@ -45,30 +50,32 @@ struct InsightsScreen: View {
     private var streakCard: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Label("Current Streak", systemImage: "flame.fill")
+                Label(String(localized: "insights.streak"), systemImage: "flame.fill")
                     .font(.subheadline)
                     .foregroundStyle(.orange)
                 Text("\(currentStreak)")
                     .font(.system(size: 48, weight: .bold))
-                Text(currentStreak == 1 ? "day" : "days")
+                Text(currentStreak == 1 ? String(localized: "general.day") : String(localized: "general.days"))
                     .foregroundStyle(.secondary)
             }
 
             Spacer()
 
             VStack(alignment: .trailing, spacing: 4) {
-                Label("Total Entries", systemImage: "book.closed.fill")
+                Label(String(localized: "insights.totalEntries"), systemImage: "book.closed.fill")
                     .font(.subheadline)
                     .foregroundStyle(.purple)
                 Text("\(entries.count)")
                     .font(.system(size: 48, weight: .bold))
-                Text("entries")
+                Text(String(localized: "general.entries"))
                     .foregroundStyle(.secondary)
             }
         }
         .padding()
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(String(localized: "insights.streak") + " \(currentStreak) " + (currentStreak == 1 ? String(localized: "general.day") : String(localized: "general.days")) + ", " + String(localized: "insights.totalEntries") + " \(entries.count)")
     }
 
     // MARK: - Mood Chart (Swift Charts)
@@ -76,7 +83,7 @@ struct InsightsScreen: View {
     private var moodChartCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Mood Trend")
+                Text(String(localized: "insights.moodTrend"))
                     .font(.headline)
                 Spacer()
                 Picker("Range", selection: $chartRange) {
@@ -89,7 +96,7 @@ struct InsightsScreen: View {
             }
 
             if moodChartData.isEmpty {
-                Text("Start logging moods to see your trend")
+                Text(String(localized: "insights.moodTrend.empty"))
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.vertical, 20)
@@ -139,11 +146,11 @@ struct InsightsScreen: View {
 
     private var sentimentTrendCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Sentiment Analysis")
+            Text(String(localized: "insights.sentiment"))
                 .font(.headline)
 
             if sentimentData.isEmpty {
-                Text("Write more entries to see sentiment trends")
+                Text(String(localized: "insights.sentiment.empty"))
                     .foregroundStyle(.secondary)
                     .padding(.vertical, 12)
             } else {
@@ -168,7 +175,7 @@ struct InsightsScreen: View {
 
     private var writingActivityCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Writing Activity")
+            Text(String(localized: "insights.activity"))
                 .font(.headline)
 
             HStack(spacing: 3) {
@@ -181,9 +188,9 @@ struct InsightsScreen: View {
             }
 
             HStack(spacing: 12) {
-                Label("\(totalWordsThisMonth) words this month", systemImage: "character.cursor.ibeam")
+                Label(String(localized: "insights.wordsMonth", defaultValue: "\(totalWordsThisMonth) words this month"), systemImage: "character.cursor.ibeam")
                 Spacer()
-                Label("\(averageWordsPerEntry) avg/entry", systemImage: "doc.text")
+                Label(String(localized: "insights.avgPerEntry", defaultValue: "\(averageWordsPerEntry) avg/entry"), systemImage: "doc.text")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -197,7 +204,7 @@ struct InsightsScreen: View {
 
     private var weeklyStatsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("This Week")
+            Text(String(localized: "insights.thisWeek"))
                 .font(.headline)
 
             let weekEntries = entries.filter {
@@ -205,10 +212,10 @@ struct InsightsScreen: View {
             }
 
             HStack(spacing: 20) {
-                StatItem(value: "\(weekEntries.count)", label: "Entries", icon: "doc.text", color: .blue)
-                StatItem(value: "\(weekEntries.reduce(0) { $0 + $1.wordCount })", label: "Words", icon: "character.cursor.ibeam", color: .green)
-                StatItem(value: averageMoodEmoji(for: weekEntries), label: "Avg Mood", icon: "face.smiling", color: .purple)
-                StatItem(value: totalWritingTime(for: weekEntries), label: "Time", icon: "timer", color: .orange)
+                StatItem(value: "\(weekEntries.count)", label: String(localized: "insights.entries"), icon: "doc.text", color: .blue)
+                StatItem(value: "\(weekEntries.reduce(0) { $0 + $1.wordCount })", label: String(localized: "insights.words"), icon: "character.cursor.ibeam", color: .green)
+                StatItem(value: averageMoodEmoji(for: weekEntries), label: String(localized: "insights.avgMood"), icon: "face.smiling", color: .purple)
+                StatItem(value: totalWritingTime(for: weekEntries), label: String(localized: "insights.time"), icon: "timer", color: .orange)
             }
         }
         .padding()
@@ -220,7 +227,7 @@ struct InsightsScreen: View {
 
     private var topTagsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Top Topics")
+            Text(String(localized: "insights.topTopics"))
                 .font(.headline)
 
             let tagCounts = Dictionary(grouping: entries.flatMap { $0.safeTags }) { $0.name }
@@ -229,7 +236,7 @@ struct InsightsScreen: View {
                 .prefix(10)
 
             if tagCounts.isEmpty {
-                Text("Tags will appear as you write more")
+                Text(String(localized: "insights.topTopics.empty"))
                     .foregroundStyle(.secondary)
             } else {
                 FlowLayout(spacing: 6) {
@@ -251,6 +258,45 @@ struct InsightsScreen: View {
         .padding()
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    // MARK: - Smart Insights
+
+    @ViewBuilder
+    private var smartInsightsSection: some View {
+        let smartInsights = InsightEngine.generateInsights(from: entries)
+        if !smartInsights.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Label(String(localized: "insights.smart"), systemImage: "sparkles")
+                    .font(.headline)
+                    .foregroundStyle(.purple)
+
+                ForEach(smartInsights.prefix(4)) { insight in
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: insight.icon)
+                            .foregroundStyle(.purple)
+                            .font(.subheadline)
+                            .frame(width: 24)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(insight.title)
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                            Text(insight.description)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.purple.opacity(0.05))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            }
+            .padding()
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
     }
 
     // MARK: - Data Models
@@ -384,5 +430,16 @@ struct StatItem: View {
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
+    }
+}
+
+// MARK: - Card Appear Animation
+
+private extension View {
+    func cardAppear(_ appeared: Bool, delay: Double) -> some View {
+        self
+            .opacity(appeared ? 1 : 0)
+            .offset(y: appeared ? 0 : 20)
+            .animation(.easeOut(duration: 0.4).delay(delay), value: appeared)
     }
 }

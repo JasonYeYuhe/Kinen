@@ -12,6 +12,7 @@ struct SettingsView: View {
     @AppStorage("enableAutoTags") private var enableAutoTags = true
     @AppStorage("defaultMoodEnabled") private var defaultMoodEnabled = true
     @State private var appLock = AppLockService.shared
+    @State private var reminder = ReminderService.shared
     @State private var showExportPicker = false
     @State private var showTagManagement = false
     @State private var exportFormat: ExportService.ExportFormat = .markdown
@@ -65,6 +66,39 @@ struct SettingsView: View {
             Section(String(localized: "settings.journal")) {
                 Toggle(String(localized: "settings.journal.mood"), isOn: $defaultMoodEnabled)
                 Button(String(localized: "settings.journal.tags")) { showTagManagement = true }
+            }
+
+            Section(String(localized: "settings.reminders")) {
+                Toggle(String(localized: "settings.reminders.daily"), isOn: Binding(
+                    get: { reminder.isEnabled },
+                    set: { newValue in
+                        if newValue {
+                            Task {
+                                let granted = await reminder.requestPermission()
+                                if granted {
+                                    reminder.isEnabled = true
+                                }
+                            }
+                        } else {
+                            reminder.isEnabled = false
+                        }
+                    }
+                ))
+
+                if reminder.isEnabled {
+                    DatePicker(
+                        String(localized: "settings.reminders.time"),
+                        selection: Binding(
+                            get: { reminder.reminderTime },
+                            set: { reminder.reminderTime = $0 }
+                        ),
+                        displayedComponents: .hourAndMinute
+                    )
+                }
+
+                Text(String(localized: "settings.reminders.description"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section(String(localized: "settings.security")) {

@@ -20,23 +20,23 @@ struct ContentView: View {
         #else
         TabView(selection: $selectedTab) {
             JournalListScreen(selectedEntry: $selectedEntry)
-                .tabItem { Label("Journal", systemImage: "book.closed") }
+                .tabItem { Label(String(localized: "tab.journal"), systemImage: "book.closed") }
                 .tag(AppTab.journal)
 
             InsightsScreen()
-                .tabItem { Label("Insights", systemImage: "chart.line.uptrend.xyaxis") }
+                .tabItem { Label(String(localized: "tab.insights"), systemImage: "chart.line.uptrend.xyaxis") }
                 .tag(AppTab.insights)
 
             RecapScreen()
-                .tabItem { Label("Recap", systemImage: "doc.text.magnifyingglass") }
+                .tabItem { Label(String(localized: "tab.recap"), systemImage: "doc.text.magnifyingglass") }
                 .tag(AppTab.recap)
 
             CalendarScreen()
-                .tabItem { Label("Calendar", systemImage: "calendar") }
+                .tabItem { Label(String(localized: "tab.calendar"), systemImage: "calendar") }
                 .tag(AppTab.calendar)
 
             SettingsView()
-                .tabItem { Label("Settings", systemImage: "gearshape") }
+                .tabItem { Label(String(localized: "tab.settings"), systemImage: "gearshape") }
                 .tag(AppTab.settings)
         }
         .tint(.purple)
@@ -49,13 +49,13 @@ struct ContentView: View {
     #if os(macOS)
     private var sidebar: some View {
         List(selection: $selectedTab) {
-            Label("Journal", systemImage: "book.closed")
+            Label(String(localized: "tab.journal"), systemImage: "book.closed")
                 .tag(AppTab.journal)
-            Label("Insights", systemImage: "chart.line.uptrend.xyaxis")
+            Label(String(localized: "tab.insights"), systemImage: "chart.line.uptrend.xyaxis")
                 .tag(AppTab.insights)
-            Label("Recap", systemImage: "doc.text.magnifyingglass")
+            Label(String(localized: "tab.recap"), systemImage: "doc.text.magnifyingglass")
                 .tag(AppTab.recap)
-            Label("Calendar", systemImage: "calendar")
+            Label(String(localized: "tab.calendar"), systemImage: "calendar")
                 .tag(AppTab.calendar)
         }
         .listStyle(.sidebar)

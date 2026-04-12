@@ -2,6 +2,7 @@ import SwiftUI
 
 struct EntryRow: View {
     let entry: JournalEntry
+    var highlightText: String = ""
 
     var body: some View {
         HStack(spacing: 12) {
@@ -25,7 +26,7 @@ struct EntryRow: View {
                     .font(.headline)
                     .lineLimit(1)
 
-                Text(entry.preview)
+                highlightedText(entry.preview)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
@@ -36,7 +37,7 @@ struct EntryRow: View {
                         .foregroundStyle(.tertiary)
 
                     if entry.wordCount > 0 {
-                        Text("\(entry.wordCount) words")
+                        Text("\(entry.wordCount) \(String(localized: "general.words"))")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
                     }
@@ -65,5 +66,30 @@ struct EntryRow: View {
             }
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(entryAccessibilityLabel)
+    }
+
+    private func highlightedText(_ text: String) -> Text {
+        guard !highlightText.isEmpty else { return Text(text) }
+        let lower = text.lowercased()
+        let searchLower = highlightText.lowercased()
+        guard let range = lower.range(of: searchLower) else { return Text(text) }
+
+        let before = String(text[text.startIndex..<range.lowerBound])
+        let match = String(text[range])
+        let after = String(text[range.upperBound...])
+
+        return Text(before) + Text(match).bold().foregroundColor(.purple) + Text(after)
+    }
+
+    private var entryAccessibilityLabel: String {
+        var parts: [String] = []
+        if let mood = entry.mood { parts.append(mood.label) }
+        parts.append(entry.displayTitle)
+        parts.append(entry.createdAt.formatted(date: .abbreviated, time: .shortened))
+        if entry.wordCount > 0 { parts.append("\(entry.wordCount) \(String(localized: "general.words"))") }
+        if entry.isBookmarked { parts.append(String(localized: "filter.bookmarked")) }
+        return parts.joined(separator: ", ")
     }
 }

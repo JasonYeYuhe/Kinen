@@ -55,7 +55,9 @@ struct WhatsNewSheet: View {
             }
         }
         #if os(macOS)
-        .frame(minWidth: 420, minHeight: 480)
+        .frame(minWidth: 360, idealWidth: 420, minHeight: 400, idealHeight: 480)
+        #else
+        .presentationDetents([.medium, .large])
         #endif
     }
 }

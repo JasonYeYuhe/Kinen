@@ -112,10 +112,13 @@
 "insights.streak" = "Current Streak";
 "insights.totalEntries" = "Total Entries";
 "insights.moodTrend" = "Mood Trend";
+"insights.moodTrend.empty" = "Start logging moods to see your trend";
 "insights.sentiment" = "Sentiment Analysis";
+"insights.sentiment.empty" = "Write more entries to see sentiment trends";
 "insights.activity" = "Writing Activity";
 "insights.thisWeek" = "This Week";
 "insights.topTopics" = "Top Topics";
+"insights.topTopics.empty" = "Tags will appear as you write more";
 "insights.viewRecap" = "View Weekly Recap";
 "insights.entries" = "Entries";
 "insights.words" = "Words";
@@ -126,22 +129,32 @@
 
 /* Recap */
 "recap.title" = "Recap";
+"recap.period" = "Period";
 "recap.thisWeek" = "This Week";
 "recap.thisMonth" = "This Month";
 "recap.empty" = "Write some entries to see your recap";
 "recap.mood" = "Mood";
+"recap.average" = "Average: %@";
+"recap.topFeelings" = "Top feelings:";
 "recap.themes" = "Themes";
+"recap.themes.empty" = "No themes detected yet";
 "recap.highlights" = "Highlights";
+"recap.highlights.empty" = "Write more positive entries to see highlights";
 "recap.challenges" = "Challenges";
+"recap.challenges.empty" = "No major challenges detected — great!";
 "recap.growth" = "Growth Note";
+"recap.dayStreak" = "day streak";
 "recap.copy" = "Copy Recap to Clipboard";
 
 /* Calendar */
 "calendar.title" = "Calendar";
+"calendar.viewMode" = "View";
 "calendar.month" = "Month";
 "calendar.year" = "Year";
 "calendar.noEntries" = "No entries for this day";
 "calendar.entriesYear" = "%d entries this year";
+"calendar.less" = "Less";
+"calendar.more" = "More";
 
 /* Settings */
 "settings.title" = "Settings";
@@ -241,6 +254,64 @@
 "filter.thisWeek" = "This Week";
 "filter.thisMonth" = "This Month";
 "filter.3months" = "3 Months";
+
+/* Entry Detail */
+"detail.aiInsights" = "AI Insights";
+
+/* Sentiment */
+"sentiment.positive" = "Positive";
+"sentiment.negative" = "Negative";
+"sentiment.neutral" = "Neutral";
+
+/* Smart Insights */
+"insights.smart" = "Smart Insights";
+"insight.tagPositive.title" = "Mood Booster Found";
+"insight.tagPositive.body.%@" = "Your mood tends to be higher on days you write about '%@'. Keep it up!";
+"insight.tagNegative.title" = "Pattern Noticed";
+"insight.tagNegative.body.%@" = "Entries about '%@' tend to have lower mood scores. Worth reflecting on.";
+"insight.bestDay.title" = "Your Best Day";
+"insight.bestDay.body.%@" = "%@ is usually your happiest day of the week.";
+"insight.writingTime.title" = "Writing Habit";
+"insight.writingTime.body.%@.%lld" = "You write mostly in the %@  (%lld%% of entries).";
+"insight.time.morning" = "morning";
+"insight.time.afternoon" = "afternoon";
+"insight.time.evening" = "evening";
+"insight.longerBetter.title" = "Longer = Happier";
+"insight.longerBetter.body" = "Your longer entries tend to come with better moods. Writing more may help.";
+"insight.shorterBetter.title" = "Quick Notes Work";
+"insight.shorterBetter.body" = "Your shorter entries often capture happier moments. Quick check-ins matter.";
+"insight.consistent.title" = "Writing Machine!";
+"insight.consistent.body.%lld" = "You wrote on %lld of the last 30 days. Incredible consistency!";
+"insight.inconsistent.title" = "Missing You";
+"insight.inconsistent.body" = "You haven't written much lately. Even one sentence counts.";
+
+/* On This Day */
+"onThisDay.title" = "On This Day";
+"onThisDay.oneYearAgo" = "1 year ago";
+"onThisDay.yearsAgo.%lld" = "%lld years ago";
+
+/* Reminders */
+"settings.reminders" = "Reminders";
+"settings.reminders.daily" = "Daily Journal Reminder";
+"settings.reminders.time" = "Reminder Time";
+"settings.reminders.description" = "Get a gentle nudge to write in your journal each day.";
+"reminder.title" = "Time to Journal ✍️";
+"reminder.prompt1" = "How was your day? Take a moment to reflect.";
+"reminder.prompt2" = "What made you smile today?";
+"reminder.prompt3" = "Your journal is waiting for you.";
+"reminder.prompt4" = "A few words can make a big difference.";
+"reminder.prompt5" = "Capture today before it slips away.";
+"reminder.milestone.title" = "Journaling Milestone! 🎉";
+"reminder.milestone.body.7" = "7 days in a row! You're building a great habit.";
+"reminder.milestone.body.30" = "30 days! A full month of journaling. Amazing!";
+"reminder.milestone.body.100" = "100 days! You're truly dedicated to self-reflection.";
+"reminder.milestone.body.365" = "365 days! A full year of journaling. Incredible!";
+
+/* Accessibility */
+"accessibility.selected" = "Selected";
+"accessibility.mood.hint" = "Double-tap to select this mood";
+"accessibility.today" = "Today";
+"accessibility.sentiment" = "Sentiment:";
 
 /* General */
 "general.done" = "Done";

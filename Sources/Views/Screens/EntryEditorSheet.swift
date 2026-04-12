@@ -26,6 +26,7 @@ struct EntryEditorSheet: View {
     @State private var writingStartTime: Date?
     @State private var elapsedTime: TimeInterval = 0
     @State private var timer: Timer?
+    @State private var locationWeather = LocationWeatherService.shared
 
     init(entry: JournalEntry?) {
         self.entry = entry
@@ -173,7 +174,10 @@ struct EntryEditorSheet: View {
             }
             .onAppear {
                 startTimer()
-                if entry == nil { generateNewPrompt() }
+                if entry == nil {
+                    generateNewPrompt()
+                    Task { await locationWeather.fetchLocationAndWeather() }
+                }
             }
             .onChange(of: mood) { generateNewPrompt() }
             .onDisappear { stopTimer() }
@@ -191,7 +195,7 @@ struct EntryEditorSheet: View {
             }
         }
         #if os(macOS)
-        .frame(minWidth: 560, minHeight: 500)
+        .frame(minWidth: 460, idealWidth: 600, minHeight: 400, idealHeight: 600)
         #else
         .presentationDetents([.large])
         #endif
@@ -504,6 +508,8 @@ struct EntryEditorSheet: View {
             newEntry.photoData = photoData
             newEntry.writingDuration = elapsedTime
             newEntry.tags = entryTags
+            newEntry.location = locationWeather.currentLocation
+            newEntry.weather = locationWeather.currentWeather
             modelContext.insert(newEntry)
 
             // Record writing session
@@ -520,6 +526,7 @@ struct EntryEditorSheet: View {
             requestAppReview()
         }
 
+        HapticManager.notification(.success)
         dismiss()
     }
 

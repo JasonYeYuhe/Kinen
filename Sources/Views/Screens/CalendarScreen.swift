@@ -8,8 +8,14 @@ struct CalendarScreen: View {
     @State private var viewMode: CalendarViewMode = .month
 
     enum CalendarViewMode: String, CaseIterable {
-        case month = "Month"
-        case year = "Year"
+        case month, year
+
+        var label: String {
+            switch self {
+            case .month: String(localized: "calendar.month")
+            case .year: String(localized: "calendar.year")
+            }
+        }
     }
 
     private var calendar: Calendar { Calendar.current }
@@ -19,9 +25,9 @@ struct CalendarScreen: View {
             ScrollView {
                 VStack(spacing: 20) {
                     // View mode picker
-                    Picker("View", selection: $viewMode) {
+                    Picker(String(localized: "calendar.viewMode"), selection: $viewMode) {
                         ForEach(CalendarViewMode.allCases, id: \.self) { mode in
-                            Text(mode.rawValue).tag(mode)
+                            Text(mode.label).tag(mode)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -85,7 +91,10 @@ struct CalendarScreen: View {
                             isSelected: calendar.isDate(date, inSameDayAs: selectedDate),
                             isToday: calendar.isDateInToday(date)
                         )
-                        .onTapGesture { selectedDate = date }
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.2)) { selectedDate = date }
+                            HapticManager.selection()
+                        }
                     } else {
                         Color.clear
                             .frame(height: 36)
@@ -108,7 +117,7 @@ struct CalendarScreen: View {
                 .font(.headline)
 
             if dayEntries.isEmpty {
-                Text("No entries for this day")
+                Text(String(localized: "calendar.noEntries"))
                     .foregroundStyle(.secondary)
                     .padding(.vertical, 12)
             } else {
@@ -212,15 +221,15 @@ struct CalendarScreen: View {
 
             // Legend
             HStack(spacing: 4) {
-                Text("Less").font(.system(size: 9)).foregroundStyle(.secondary)
+                Text(String(localized: "calendar.less")).font(.system(size: 9)).foregroundStyle(.secondary)
                 ForEach(Mood.allCases) { mood in
                     RoundedRectangle(cornerRadius: 2)
                         .fill(mood.color.opacity(0.6))
                         .frame(width: 10, height: 10)
                 }
-                Text("More").font(.system(size: 9)).foregroundStyle(.secondary)
+                Text(String(localized: "calendar.more")).font(.system(size: 9)).foregroundStyle(.secondary)
                 Spacer()
-                Text("\(yearEntryCount) entries this year")
+                Text(String(localized: "calendar.entriesYear", defaultValue: "\(yearEntryCount) entries this year"))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -308,6 +317,18 @@ struct DayCell: View {
             }
         }
         .frame(height: 36)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(dayCellAccessibilityLabel)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private var dayCellAccessibilityLabel: String {
+        let day = date.formatted(date: .abbreviated, time: .omitted)
+        var label = day
+        if isToday { label += ", \(String(localized: "accessibility.today"))" }
+        if let mood { label += ", \(mood.label)" }
+        if !hasEntry { label += ", \(String(localized: "calendar.noEntries"))" }
+        return label
     }
 
     private var backgroundColor: Color {

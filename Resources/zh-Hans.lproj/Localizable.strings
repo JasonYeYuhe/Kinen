@@ -112,10 +112,13 @@
 "insights.streak" = "连续记录";
 "insights.totalEntries" = "总日记数";
 "insights.moodTrend" = "情绪趋势";
+"insights.moodTrend.empty" = "开始记录情绪以查看趋势";
 "insights.sentiment" = "情感分析";
+"insights.sentiment.empty" = "多写几篇日记以查看情感趋势";
 "insights.activity" = "写作活跃度";
 "insights.thisWeek" = "本周";
 "insights.topTopics" = "热门话题";
+"insights.topTopics.empty" = "多写日记后标签会出现在这里";
 "insights.viewRecap" = "查看周报";
 "insights.entries" = "日记";
 "insights.words" = "字数";
@@ -126,22 +129,32 @@
 
 /* Recap */
 "recap.title" = "回顾";
+"recap.period" = "时段";
 "recap.thisWeek" = "本周";
 "recap.thisMonth" = "本月";
 "recap.empty" = "写几篇日记后就能看到你的回顾";
 "recap.mood" = "情绪";
+"recap.average" = "平均：%@";
+"recap.topFeelings" = "主要感受：";
 "recap.themes" = "主题";
+"recap.themes.empty" = "暂未检测到主题";
 "recap.highlights" = "亮点";
+"recap.highlights.empty" = "多写积极的日记来查看亮点";
 "recap.challenges" = "挑战";
+"recap.challenges.empty" = "未检测到重大挑战——很棒！";
 "recap.growth" = "成长笔记";
+"recap.dayStreak" = "天连续";
 "recap.copy" = "复制回顾到剪贴板";
 
 /* Calendar */
 "calendar.title" = "日历";
+"calendar.viewMode" = "视图";
 "calendar.month" = "月";
 "calendar.year" = "年";
 "calendar.noEntries" = "这天没有日记";
 "calendar.entriesYear" = "今年 %d 篇日记";
+"calendar.less" = "少";
+"calendar.more" = "多";
 
 /* Settings */
 "settings.title" = "设置";
@@ -241,6 +254,64 @@
 "filter.thisWeek" = "本周";
 "filter.thisMonth" = "本月";
 "filter.3months" = "近三个月";
+
+/* Entry Detail */
+"detail.aiInsights" = "AI 洞察";
+
+/* Sentiment */
+"sentiment.positive" = "积极";
+"sentiment.negative" = "消极";
+"sentiment.neutral" = "中性";
+
+/* Smart Insights */
+"insights.smart" = "智能洞察";
+"insight.tagPositive.title" = "发现情绪助推器";
+"insight.tagPositive.body.%@" = "写到「%@」的日子，你的心情通常更好。继续保持！";
+"insight.tagNegative.title" = "发现模式";
+"insight.tagNegative.body.%@" = "关于「%@」的日记情绪评分偏低，值得关注。";
+"insight.bestDay.title" = "你最开心的一天";
+"insight.bestDay.body.%@" = "%@通常是你一周中最开心的一天。";
+"insight.writingTime.title" = "写作习惯";
+"insight.writingTime.body.%@.%lld" = "你大多在%@写日记（占 %lld%%）。";
+"insight.time.morning" = "上午";
+"insight.time.afternoon" = "下午";
+"insight.time.evening" = "晚上";
+"insight.longerBetter.title" = "写得越多越开心";
+"insight.longerBetter.body" = "你写得比较长的日记通常伴随着更好的心情。多写一些试试？";
+"insight.shorterBetter.title" = "简短记录也有用";
+"insight.shorterBetter.body" = "你的简短日记往往记录了更快乐的时刻。简单打卡也很好。";
+"insight.consistent.title" = "写作达人！";
+"insight.consistent.body.%lld" = "过去 30 天你写了 %lld 天的日记，令人难以置信的坚持！";
+"insight.inconsistent.title" = "想你了";
+"insight.inconsistent.body" = "你最近写得不多。哪怕一句话也好。";
+
+/* On This Day */
+"onThisDay.title" = "历史上的今天";
+"onThisDay.oneYearAgo" = "1 年前";
+"onThisDay.yearsAgo.%lld" = "%lld 年前";
+
+/* Reminders */
+"settings.reminders" = "提醒";
+"settings.reminders.daily" = "每日写作提醒";
+"settings.reminders.time" = "提醒时间";
+"settings.reminders.description" = "每天轻轻提醒你写日记。";
+"reminder.title" = "该写日记了 ✍️";
+"reminder.prompt1" = "今天过得怎么样？花一点时间来反思吧。";
+"reminder.prompt2" = "今天有什么让你微笑的事？";
+"reminder.prompt3" = "你的日记在等你。";
+"reminder.prompt4" = "几句话就能带来很大的不同。";
+"reminder.prompt5" = "趁还记得，把今天记录下来。";
+"reminder.milestone.title" = "写作里程碑！🎉";
+"reminder.milestone.body.7" = "连续 7 天！你正在养成好习惯。";
+"reminder.milestone.body.30" = "30 天！整整一个月的坚持，太棒了！";
+"reminder.milestone.body.100" = "100 天！你真的很专注于自我反思。";
+"reminder.milestone.body.365" = "365 天！整整一年的日记，不可思议！";
+
+/* Accessibility */
+"accessibility.selected" = "已选中";
+"accessibility.mood.hint" = "双击选择此情绪";
+"accessibility.today" = "今天";
+"accessibility.sentiment" = "情感：";
 
 /* General */
 "general.done" = "完成";

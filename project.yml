@@ -65,8 +65,26 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1,2"
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+    dependencies:
+      - target: KinenWidgetExtension
     entitlements:
       path: Resources/Kinen-iOS.entitlements
+
+  KinenWidgetExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - KinenWidget
+    settings:
+      base:
+        PRODUCT_NAME: KinenWidgetExtension
+        PRODUCT_BUNDLE_IDENTIFIER: com.jasonye.kinen.widget
+        IPHONEOS_DEPLOYMENT_TARGET: "18.0"
+        GENERATE_INFOPLIST_FILE: true
+        INFOPLIST_KEY_CFBundleDisplayName: Kinen Widget
+        INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SKIP_INSTALL: YES
 
   KinenTests:
     type: bundle.unit-test

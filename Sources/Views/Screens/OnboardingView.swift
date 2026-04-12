@@ -13,7 +13,9 @@ struct OnboardingView: View {
         }
         .tabViewStyle(.automatic)
         #if os(macOS)
-        .frame(width: 500, height: 520)
+        .frame(minWidth: 400, idealWidth: 500, minHeight: 420, idealHeight: 520)
+        #else
+        .presentationDetents([.large])
         #endif
     }
 

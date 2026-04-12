@@ -6,8 +6,14 @@ struct RecapScreen: View {
     @State private var recapType: RecapType = .weekly
 
     enum RecapType: String, CaseIterable {
-        case weekly = "This Week"
-        case monthly = "This Month"
+        case weekly, monthly
+
+        var label: String {
+            switch self {
+            case .weekly: String(localized: "recap.thisWeek")
+            case .monthly: String(localized: "recap.thisMonth")
+            }
+        }
     }
 
     private var recap: RecapGenerator.Recap {
@@ -23,9 +29,9 @@ struct RecapScreen: View {
             ScrollView {
                 VStack(spacing: 16) {
                     // Period picker
-                    Picker("Period", selection: $recapType) {
+                    Picker(String(localized: "recap.period"), selection: $recapType) {
                         ForEach(RecapType.allCases, id: \.self) { type in
-                            Text(type.rawValue).tag(type)
+                            Text(type.label).tag(type)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -35,7 +41,7 @@ struct RecapScreen: View {
                         ContentUnavailableView {
                             Label("No Entries", systemImage: "doc.text")
                         } description: {
-                            Text("Write some entries this \(recapType == .weekly ? "week" : "month") to see your recap")
+                            Text(String(localized: "recap.empty"))
                         }
                     } else {
                         overviewCard
@@ -61,7 +67,7 @@ struct RecapScreen: View {
             VStack(spacing: 4) {
                 Text("\(recap.entryCount)")
                     .font(.system(size: 36, weight: .bold))
-                Text("entries")
+                Text(String(localized: "general.entries"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -72,7 +78,7 @@ struct RecapScreen: View {
             VStack(spacing: 4) {
                 Text("\(recap.totalWords)")
                     .font(.system(size: 36, weight: .bold))
-                Text("words")
+                Text(String(localized: "general.words"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -95,7 +101,7 @@ struct RecapScreen: View {
                 Text("\(recap.streakDays)")
                     .font(.system(size: 36, weight: .bold))
                     .foregroundStyle(.orange)
-                Text("day streak")
+                Text(String(localized: "recap.dayStreak"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -107,12 +113,12 @@ struct RecapScreen: View {
     }
 
     private var moodTrendCard: some View {
-        recapCard(title: "Mood", icon: "face.smiling") {
+        recapCard(title: String(localized: "recap.mood"), icon: "face.smiling") {
             if let avg = recap.averageMood {
                 let mood = Mood(rawValue: Int(avg.rounded())) ?? .neutral
                 HStack(spacing: 8) {
                     Text(mood.emoji).font(.title)
-                    Text("Average: \(mood.label)")
+                    Text(String(localized: "recap.average", defaultValue: "Average: \(mood.label)"))
                         .foregroundStyle(.secondary)
                     Spacer()
                     Text(String(format: "%.1f", avg) + "/5")
@@ -122,7 +128,7 @@ struct RecapScreen: View {
             }
             if !recap.topEmotions.isEmpty {
                 HStack(spacing: 8) {
-                    Text("Top feelings:")
+                    Text(String(localized: "recap.topFeelings"))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     ForEach(recap.topEmotions, id: \.self) { emotion in
@@ -139,9 +145,9 @@ struct RecapScreen: View {
     }
 
     private var themesCard: some View {
-        recapCard(title: "Themes", icon: "tag") {
+        recapCard(title: String(localized: "recap.themes"), icon: "tag") {
             if recap.topThemes.isEmpty {
-                Text("No themes detected yet")
+                Text(String(localized: "recap.themes.empty"))
                     .foregroundStyle(.secondary)
             } else {
                 FlowLayout(spacing: 6) {
@@ -159,9 +165,9 @@ struct RecapScreen: View {
     }
 
     private var highlightsCard: some View {
-        recapCard(title: "Highlights", icon: "sun.max") {
+        recapCard(title: String(localized: "recap.highlights"), icon: "sun.max") {
             if recap.highlights.isEmpty {
-                Text("Write more positive entries to see highlights")
+                Text(String(localized: "recap.highlights.empty"))
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(recap.highlights, id: \.self) { highlight in
@@ -177,9 +183,9 @@ struct RecapScreen: View {
     }
 
     private var challengesCard: some View {
-        recapCard(title: "Challenges", icon: "cloud.rain") {
+        recapCard(title: String(localized: "recap.challenges"), icon: "cloud.rain") {
             if recap.challenges.isEmpty {
-                Text("No major challenges detected — great!")
+                Text(String(localized: "recap.challenges.empty"))
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(recap.challenges, id: \.self) { challenge in
@@ -195,7 +201,7 @@ struct RecapScreen: View {
     }
 
     private var growthCard: some View {
-        recapCard(title: "Growth Note", icon: "leaf") {
+        recapCard(title: String(localized: "recap.growth"), icon: "leaf") {
             Text(recap.growthNote)
                 .font(.body)
                 .foregroundStyle(.secondary)
@@ -222,7 +228,7 @@ struct RecapScreen: View {
             UIPasteboard.general.string = text
             #endif
         }) {
-            Label("Copy Recap to Clipboard", systemImage: "doc.on.clipboard")
+            Label(String(localized: "recap.copy"), systemImage: "doc.on.clipboard")
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
         }

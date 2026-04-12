@@ -67,11 +67,18 @@ struct JournalListScreen: View {
 
             // Entry list
             List(selection: $selectedEntry) {
+                // On This Day card
+                if searchText.isEmpty && !entries.isEmpty {
+                    OnThisDayCard(entries: entries)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                }
+
                 ForEach(groupedByDate, id: \.key) { date, dayEntries in
                     Section(header: Text(date, style: .date)) {
                         ForEach(dayEntries) { entry in
                             NavigationLink(value: entry) {
-                                EntryRow(entry: entry)
+                                EntryRow(entry: entry, highlightText: searchText)
                             }
                             .tag(entry)
                         }
@@ -82,12 +89,12 @@ struct JournalListScreen: View {
                 }
             }
         }
-        .searchable(text: $searchText, prompt: "Search entries...")
+        .searchable(text: $searchText, prompt: String(localized: "journal.search"))
         .navigationTitle("Journal (\(filteredEntries.count))")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { showingEditor = true }) {
-                    Label("New Entry", systemImage: "square.and.pencil")
+                    Label(String(localized: "journal.new"), systemImage: "square.and.pencil")
                 }
                 .keyboardShortcut("n", modifiers: .command)
             }
@@ -101,11 +108,11 @@ struct JournalListScreen: View {
         .overlay {
             if entries.isEmpty {
                 ContentUnavailableView {
-                    Label("No Entries Yet", systemImage: "book.closed")
+                    Label(String(localized: "journal.empty.title"), systemImage: "book.closed")
                 } description: {
-                    Text("Tap + to write your first journal entry")
+                    Text(String(localized: "journal.empty.description"))
                 } actions: {
-                    Button("Write Now") { showingEditor = true }
+                    Button(String(localized: "journal.empty.action")) { showingEditor = true }
                         .buttonStyle(.borderedProminent)
                         .tint(.purple)
                 }
@@ -122,8 +129,11 @@ struct JournalListScreen: View {
     }
 
     private func deleteEntries(dayEntries: [JournalEntry], at offsets: IndexSet) {
-        for index in offsets {
-            modelContext.delete(dayEntries[index])
+        withAnimation(.easeInOut(duration: 0.3)) {
+            for index in offsets {
+                modelContext.delete(dayEntries[index])
+            }
         }
+        HapticManager.notification(.warning)
     }
 }

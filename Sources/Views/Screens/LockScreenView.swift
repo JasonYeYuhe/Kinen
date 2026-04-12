@@ -11,11 +11,11 @@ struct LockScreenView: View {
                 .font(.system(size: 48))
                 .foregroundStyle(.purple)
 
-            Text("Kinen is Locked")
+            Text(String(localized: "lock.title"))
                 .font(.title2)
                 .fontWeight(.bold)
 
-            Text("Your journal is protected")
+            Text(String(localized: "lock.subtitle"))
                 .foregroundStyle(.secondary)
 
             Button(action: {

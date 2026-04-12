@@ -28,6 +28,9 @@ struct MoodPicker: View {
                     .opacity(selectedMood == nil || selectedMood == mood ? 1.0 : 0.5)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(mood.label)
+                .accessibilityValue(selectedMood == mood ? String(localized: "accessibility.selected") : "")
+                .accessibilityHint(String(localized: "accessibility.mood.hint"))
             }
         }
         .padding(.vertical, 8)

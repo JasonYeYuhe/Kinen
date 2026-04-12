@@ -41,7 +41,7 @@ struct FilterBar: View {
 
                 // Bookmark filter
                 FilterChip(
-                    label: "Bookmarked",
+                    label: String(localized: "filter.bookmarked"),
                     icon: "bookmark.fill",
                     isSelected: bookmarkedOnly,
                     action: { bookmarkedOnly.toggle() }
@@ -86,26 +86,35 @@ struct FilterBar: View {
     }
 
     private func toggleMood(_ mood: Mood) {
-        if selectedMoods.contains(mood) {
-            selectedMoods.remove(mood)
-        } else {
-            selectedMoods.insert(mood)
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if selectedMoods.contains(mood) {
+                selectedMoods.remove(mood)
+            } else {
+                selectedMoods.insert(mood)
+            }
         }
+        HapticManager.selection()
     }
 
     private func toggleTag(_ name: String) {
-        if selectedTags.contains(name) {
-            selectedTags.remove(name)
-        } else {
-            selectedTags.insert(name)
+        withAnimation(.easeInOut(duration: 0.2)) {
+            if selectedTags.contains(name) {
+                selectedTags.remove(name)
+            } else {
+                selectedTags.insert(name)
+            }
         }
+        HapticManager.selection()
     }
 
     private func clearAll() {
-        selectedMoods.removeAll()
-        selectedTags.removeAll()
-        dateRange = .all
-        bookmarkedOnly = false
+        withAnimation(.easeInOut(duration: 0.2)) {
+            selectedMoods.removeAll()
+            selectedTags.removeAll()
+            dateRange = .all
+            bookmarkedOnly = false
+        }
+        HapticManager.impact(.light)
     }
 }
 
@@ -139,20 +148,27 @@ struct FilterChip: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(label)
+        .accessibilityValue(isSelected ? String(localized: "accessibility.selected") : "")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
 // MARK: - Date Range
 
 enum DateRange: String, CaseIterable, Identifiable {
-    case all = "All Time"
-    case today = "Today"
-    case week = "This Week"
-    case month = "This Month"
-    case quarter = "3 Months"
+    case all, today, week, month, quarter
 
     var id: String { rawValue }
-    var label: String { rawValue }
+    var label: String {
+        switch self {
+        case .all: String(localized: "filter.allTime")
+        case .today: String(localized: "filter.today")
+        case .week: String(localized: "filter.thisWeek")
+        case .month: String(localized: "filter.thisMonth")
+        case .quarter: String(localized: "filter.3months")
+        }
+    }
 
     var startDate: Date? {
         let calendar = Calendar.current
