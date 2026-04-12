@@ -43,6 +43,13 @@ struct CalendarScreen: View {
                 .padding()
             }
             .navigationTitle("Calendar")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    NavigationLink(destination: MapScreen()) {
+                        Label(String(localized: "map.title"), systemImage: "map")
+                    }
+                }
+            }
         }
     }
 

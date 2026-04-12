@@ -11,6 +11,8 @@ final class LocationWeatherService: NSObject {
 
     var currentLocation: String?
     var currentWeather: String?
+    var currentLatitude: Double?
+    var currentLongitude: Double?
     var isLoading = false
     var authorizationStatus: CLAuthorizationStatus = .notDetermined
 
@@ -45,6 +47,8 @@ final class LocationWeatherService: NSObject {
         // Clear stale data from previous fetch
         currentLocation = nil
         currentWeather = nil
+        currentLatitude = nil
+        currentLongitude = nil
 
         isLoading = true
         defer { isLoading = false }
@@ -59,6 +63,9 @@ final class LocationWeatherService: NSObject {
         }
 
         guard let location else { return (nil, nil) }
+
+        currentLatitude = location.coordinate.latitude
+        currentLongitude = location.coordinate.longitude
 
         // Reverse geocode
         do {

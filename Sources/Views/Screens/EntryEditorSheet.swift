@@ -556,6 +556,8 @@ struct EntryEditorSheet: View {
             newEntry.tags = entryTags
             newEntry.location = fetchedLocationWeather.location
             newEntry.weather = fetchedLocationWeather.weather
+            newEntry.latitude = locationWeather.currentLatitude
+            newEntry.longitude = locationWeather.currentLongitude
             newEntry.journal = selectedJournal
             modelContext.insert(newEntry)
 

@@ -259,6 +259,12 @@
 "lock.subtitle" = "Your journal is protected";
 "lock.unlock" = "Unlock with %@";
 
+/* Map */
+"map.title" = "Map";
+"map.entryCount.%lld" = "%lld entries on map";
+"map.empty.title" = "No Locations";
+"map.empty.description" = "Enable location recording in Settings to see your entries on a map.";
+
 /* Journals */
 "journals.all" = "All";
 "journals.manage" = "Manage Journals";

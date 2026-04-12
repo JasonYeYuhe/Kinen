@@ -15,6 +15,8 @@ final class JournalEntry {
     var isBookmarked: Bool = false
     var weather: String?
     var location: String?
+    var latitude: Double?
+    var longitude: Double?
     var template: JournalTemplate?
     var writingDuration: TimeInterval = 0
     var isHidden: Bool = false
