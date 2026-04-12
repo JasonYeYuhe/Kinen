@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import WidgetKit
 import OSLog
 
 private let logger = Logger(subsystem: "com.jasonye.kinen", category: "App")
@@ -36,7 +37,6 @@ struct KinenApp: App {
             return try ModelContainer(for: schema, configurations: [config])
         } catch {
             logger.error("CloudKit ModelContainer failed: \(error). Falling back to local-only storage.")
-            // Fallback: try local-only without CloudKit
             let localConfig = ModelConfiguration(
                 schema: schema,
                 isStoredInMemoryOnly: false,
@@ -69,7 +69,11 @@ struct KinenApp: App {
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
                 appLock.lock()
             }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                updateWidgetData()
+            }
             #endif
+            .task { updateWidgetData() }
         }
         .modelContainer(sharedModelContainer)
 
@@ -79,5 +83,38 @@ struct KinenApp: App {
         }
         .modelContainer(sharedModelContainer)
         #endif
+    }
+
+    // MARK: - Widget Data
+
+    private func updateWidgetData() {
+        let context = sharedModelContainer.mainContext
+        let descriptor = FetchDescriptor<JournalEntry>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
+        guard let entries = try? context.fetch(descriptor) else { return }
+
+        let calendar = Calendar.current
+        let dates = Set(entries.map { calendar.startOfDay(for: $0.createdAt) })
+        let streak = Date().startOfDay.consecutiveDays(in: dates)
+
+        let recentMoods: [(date: Date, value: Double)] = entries.prefix(7).compactMap { entry in
+            guard let mood = entry.mood else { return nil }
+            return (date: entry.createdAt, value: mood.normalizedValue)
+        }
+
+        let moods = entries.compactMap { $0.mood }
+        let avgEmoji: String
+        if moods.isEmpty {
+            avgEmoji = "😐"
+        } else {
+            let avg = Double(moods.map { $0.rawValue }.reduce(0, +)) / Double(moods.count)
+            avgEmoji = Mood(rawValue: Int(avg.rounded()))?.emoji ?? "😐"
+        }
+
+        WidgetDataProvider.updateWidgetData(
+            streak: streak,
+            totalEntries: entries.count,
+            averageMoodEmoji: avgEmoji,
+            recentMoods: recentMoods
+        )
     }
 }

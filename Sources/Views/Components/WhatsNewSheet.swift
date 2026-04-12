@@ -19,10 +19,10 @@ struct WhatsNewSheet: View {
                         Image(systemName: "sparkles")
                             .font(.system(size: 40))
                             .foregroundStyle(.purple)
-                        Text("What's New in Kinen")
+                        Text(String(localized: "whatsnew.title"))
                             .font(.title2)
                             .fontWeight(.bold)
-                        Text("Version \(Self.currentVersion)")
+                        Text(String(localized: "whatsnew.version.\(Self.currentVersion)"))
                             .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity)
@@ -31,22 +31,22 @@ struct WhatsNewSheet: View {
                     Divider()
 
                     // Features
-                    ChangelogItem(icon: "icloud.fill", color: .cyan, title: "iCloud Sync", description: "Your journal now syncs seamlessly across all your Apple devices.")
-                    ChangelogItem(icon: "crown.fill", color: .purple, title: "Kinen Pro", description: "Unlock advanced AI analysis, exports, and more with a Pro subscription.")
-                    ChangelogItem(icon: "lock.doc.fill", color: .green, title: "Encrypted Backup", description: "Create AES-256 encrypted backups of your journal. Your password, your data.")
-                    ChangelogItem(icon: "tag.fill", color: .blue, title: "Tag Management", description: "Create, rename, merge, and delete tags. Full control over your organization.")
-                    ChangelogItem(icon: "line.3.horizontal.decrease.circle", color: .orange, title: "Smart Filters", description: "Filter entries by mood, tags, date range, or bookmarks.")
-                    ChangelogItem(icon: "calendar.badge.clock", color: .pink, title: "Year Heatmap", description: "GitHub-style year view shows your journaling patterns at a glance.")
+                    ChangelogItem(icon: "icloud.fill", color: .cyan, title: String(localized: "whatsnew.icloud.title"), description: String(localized: "whatsnew.icloud.desc"))
+                    ChangelogItem(icon: "crown.fill", color: .purple, title: String(localized: "whatsnew.pro.title"), description: String(localized: "whatsnew.pro.desc"))
+                    ChangelogItem(icon: "lock.doc.fill", color: .green, title: String(localized: "whatsnew.backup.title"), description: String(localized: "whatsnew.backup.desc"))
+                    ChangelogItem(icon: "tag.fill", color: .blue, title: String(localized: "whatsnew.tags.title"), description: String(localized: "whatsnew.tags.desc"))
+                    ChangelogItem(icon: "line.3.horizontal.decrease.circle", color: .orange, title: String(localized: "whatsnew.filters.title"), description: String(localized: "whatsnew.filters.desc"))
+                    ChangelogItem(icon: "calendar.badge.clock", color: .pink, title: String(localized: "whatsnew.heatmap.title"), description: String(localized: "whatsnew.heatmap.desc"))
                 }
                 .padding()
             }
-            .navigationTitle("What's New")
+            .navigationTitle(String(localized: "whatsnew.nav"))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
+                    Button(String(localized: "general.done")) {
                         lastSeenVersion = Self.currentVersion
                         dismiss()
                     }

@@ -233,6 +233,15 @@
 "pro.feature.prompts" = "Smart Prompts";
 "pro.feature.prompts.desc" = "AI-powered writing suggestions based on your mood & history";
 "pro.requires" = "%@ requires Pro";
+"pro.error" = "Purchase Error";
+"pro.loading" = "Loading prices...";
+"pro.loadFailed" = "Could not load products";
+"pro.retry" = "Retry";
+"pro.subscribe" = "Subscribe";
+"pro.bestValue" = "BEST VALUE";
+"pro.legal" = "Payment will be charged to your Apple ID account. Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period.";
+"pro.terms" = "Terms of Use";
+"pro.privacy" = "Privacy Policy";
 "pro.unlock.button" = "Unlock Pro";
 
 /* Crisis */
@@ -318,6 +327,23 @@
 "reminder.milestone.body.30" = "30 days! A full month of journaling. Amazing!";
 "reminder.milestone.body.100" = "100 days! You're truly dedicated to self-reflection.";
 "reminder.milestone.body.365" = "365 days! A full year of journaling. Incredible!";
+
+/* What's New */
+"whatsnew.title" = "What's New in Kinen";
+"whatsnew.nav" = "What's New";
+"whatsnew.version.%@" = "Version %@";
+"whatsnew.icloud.title" = "iCloud Sync";
+"whatsnew.icloud.desc" = "Your journal now syncs seamlessly across all your Apple devices.";
+"whatsnew.pro.title" = "Kinen Pro";
+"whatsnew.pro.desc" = "Unlock advanced AI analysis, exports, and more with a Pro subscription.";
+"whatsnew.backup.title" = "Encrypted Backup";
+"whatsnew.backup.desc" = "Create AES-256 encrypted backups of your journal. Your password, your data.";
+"whatsnew.tags.title" = "Tag Management";
+"whatsnew.tags.desc" = "Create, rename, merge, and delete tags. Full control over your organization.";
+"whatsnew.filters.title" = "Smart Filters";
+"whatsnew.filters.desc" = "Filter entries by mood, tags, date range, or bookmarks.";
+"whatsnew.heatmap.title" = "Year Heatmap";
+"whatsnew.heatmap.desc" = "GitHub-style year view shows your journaling patterns at a glance.";
 
 /* Accessibility */
 "accessibility.selected" = "Selected";

@@ -233,6 +233,15 @@
 "pro.feature.prompts" = "智能提示";
 "pro.feature.prompts.desc" = "基于你的情绪和历史的 AI 写作建议";
 "pro.requires" = "%@ 需要 Pro 版本";
+"pro.error" = "购买出错";
+"pro.loading" = "加载价格中...";
+"pro.loadFailed" = "无法加载产品";
+"pro.retry" = "重试";
+"pro.subscribe" = "订阅";
+"pro.bestValue" = "最超值";
+"pro.legal" = "付款将从你的 Apple ID 账户扣除。订阅将自动续期，除非在当前周期结束前至少 24 小时取消。";
+"pro.terms" = "使用条款";
+"pro.privacy" = "隐私政策";
 "pro.unlock.button" = "解锁 Pro";
 
 /* Crisis */
@@ -318,6 +327,23 @@
 "reminder.milestone.body.30" = "30 天！整整一个月的坚持，太棒了！";
 "reminder.milestone.body.100" = "100 天！你真的很专注于自我反思。";
 "reminder.milestone.body.365" = "365 天！整整一年的日记，不可思议！";
+
+/* What's New */
+"whatsnew.title" = "Kinen 新功能";
+"whatsnew.nav" = "新功能";
+"whatsnew.version.%@" = "版本 %@";
+"whatsnew.icloud.title" = "iCloud 同步";
+"whatsnew.icloud.desc" = "日记现在可以在所有 Apple 设备间无缝同步。";
+"whatsnew.pro.title" = "Kinen Pro";
+"whatsnew.pro.desc" = "解锁高级 AI 分析、导出等更多功能。";
+"whatsnew.backup.title" = "加密备份";
+"whatsnew.backup.desc" = "创建 AES-256 加密备份。你的密码，你的数据。";
+"whatsnew.tags.title" = "标签管理";
+"whatsnew.tags.desc" = "创建、重命名、合并和删除标签，完全掌控你的分类。";
+"whatsnew.filters.title" = "智能过滤";
+"whatsnew.filters.desc" = "按情绪、标签、日期范围或收藏过滤日记。";
+"whatsnew.heatmap.title" = "年度热力图";
+"whatsnew.heatmap.desc" = "GitHub 风格的年度视图，一眼看清你的写作规律。";
 
 /* Accessibility */
 "accessibility.selected" = "已选中";

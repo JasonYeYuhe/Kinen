@@ -17,23 +17,23 @@ struct ProPaywallView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Kinen Pro")
+            .navigationTitle(String(localized: "pro.title"))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
+                    Button(String(localized: "general.done")) { dismiss() }
                 }
             }
-            .alert("Purchase Error", isPresented: .constant(purchaseError != nil)) {
-                Button("OK") { purchaseError = nil }
+            .alert(String(localized: "pro.error"), isPresented: .constant(purchaseError != nil)) {
+                Button(String(localized: "general.done")) { purchaseError = nil }
             } message: {
                 Text(purchaseError ?? "")
             }
         }
         #if os(macOS)
-        .frame(minWidth: 500, minHeight: 600)
+        .frame(minWidth: 420, idealWidth: 500, minHeight: 500, idealHeight: 600)
         #endif
     }
 
@@ -45,11 +45,11 @@ struct ProPaywallView: View {
                 .font(.system(size: 48))
                 .foregroundStyle(.purple.gradient)
 
-            Text("Unlock Kinen Pro")
+            Text(String(localized: "pro.unlock"))
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("Deep AI insights, iCloud sync, and more.\nAll processing stays on your device.")
+            Text(String(localized: "pro.description"))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -60,12 +60,12 @@ struct ProPaywallView: View {
 
     private var featuresSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ProFeatureRow(icon: "brain.head.profile", color: .purple, title: "Full AI Analysis", subtitle: "CBT reflections, pattern discovery, cognitive distortion detection")
-            ProFeatureRow(icon: "chart.line.uptrend.xyaxis", color: .blue, title: "Advanced Insights", subtitle: "30/90-day mood trends, weekly & monthly AI recaps")
-            ProFeatureRow(icon: "icloud.fill", color: .cyan, title: "iCloud Sync", subtitle: "Seamless sync across all your Apple devices")
-            ProFeatureRow(icon: "square.and.arrow.up", color: .green, title: "Export & Backup", subtitle: "Markdown, JSON, encrypted backup with AES-256")
-            ProFeatureRow(icon: "doc.text", color: .orange, title: "All 8 Templates", subtitle: "CBT three-column, dream journal, goal reflection & more")
-            ProFeatureRow(icon: "sparkles", color: .pink, title: "Smart Prompts", subtitle: "AI-powered writing suggestions based on your mood & history")
+            ProFeatureRow(icon: "brain.head.profile", color: .purple, title: String(localized: "pro.feature.ai"), subtitle: String(localized: "pro.feature.ai.desc"))
+            ProFeatureRow(icon: "chart.line.uptrend.xyaxis", color: .blue, title: String(localized: "pro.feature.insights"), subtitle: String(localized: "pro.feature.insights.desc"))
+            ProFeatureRow(icon: "icloud.fill", color: .cyan, title: String(localized: "pro.feature.sync"), subtitle: String(localized: "pro.feature.sync.desc"))
+            ProFeatureRow(icon: "square.and.arrow.up", color: .green, title: String(localized: "pro.feature.export"), subtitle: String(localized: "pro.feature.export.desc"))
+            ProFeatureRow(icon: "doc.text", color: .orange, title: String(localized: "pro.feature.templates"), subtitle: String(localized: "pro.feature.templates.desc"))
+            ProFeatureRow(icon: "sparkles", color: .pink, title: String(localized: "pro.feature.prompts"), subtitle: String(localized: "pro.feature.prompts.desc"))
         }
         .padding()
         .background(.ultraThinMaterial)
@@ -77,20 +77,20 @@ struct ProPaywallView: View {
     private var pricingSection: some View {
         VStack(spacing: 12) {
             if store.isLoading {
-                ProgressView("Loading prices...")
+                ProgressView(String(localized: "pro.loading"))
             } else if store.products.isEmpty {
                 VStack(spacing: 8) {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.title2)
                         .foregroundStyle(.orange)
-                    Text("Could not load products")
+                    Text(String(localized: "pro.loadFailed"))
                         .font(.subheadline)
                     if let error = store.loadError {
                         Text(error)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
-                    Button("Retry") { Task { await store.loadProducts() } }
+                    Button(String(localized: "pro.retry")) { Task { await store.loadProducts() } }
                         .buttonStyle(.bordered)
                         .tint(.purple)
                 }
@@ -106,7 +106,7 @@ struct ProPaywallView: View {
             }
 
             // Restore
-            Button("Restore Purchases") {
+            Button(String(localized: "pro.restore")) {
                 Task { await store.restorePurchases() }
             }
             .font(.caption)
@@ -118,14 +118,14 @@ struct ProPaywallView: View {
 
     private var legalSection: some View {
         VStack(spacing: 6) {
-            Text("Payment will be charged to your Apple ID account. Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period.")
+            Text(String(localized: "pro.legal"))
                 .font(.system(size: 10))
                 .foregroundStyle(.tertiary)
                 .multilineTextAlignment(.center)
 
             HStack(spacing: 16) {
-                Link("Terms of Use", destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/")!)
-                Link("Privacy Policy", destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/")!)
+                Link(String(localized: "pro.terms"), destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/")!)
+                Link(String(localized: "pro.privacy"), destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/")!)
             }
             .font(.system(size: 10))
         }
@@ -186,7 +186,7 @@ struct PricingCard: View {
                         Text(product.displayName)
                             .font(.headline)
                         if isPopular {
-                            Text("BEST VALUE")
+                            Text(String(localized: "pro.bestValue"))
                                 .font(.system(size: 9, weight: .bold))
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
@@ -214,7 +214,7 @@ struct PricingCard: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                 } else {
-                    Text("Subscribe")
+                    Text(String(localized: "pro.subscribe"))
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
