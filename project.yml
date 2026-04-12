@@ -72,6 +72,24 @@ targets:
     entitlements:
       path: Resources/Kinen-iOS.entitlements
 
+  KinenWatch:
+    type: application
+    platform: watchOS
+    deploymentTarget:
+      watchOS: "11.0"
+    sources:
+      - KinenWatch
+    settings:
+      base:
+        PRODUCT_NAME: Kinen Watch
+        PRODUCT_BUNDLE_IDENTIFIER: com.jasonye.kinen.watch
+        GENERATE_INFOPLIST_FILE: true
+        TARGETED_DEVICE_FAMILY: "4"
+        WATCHOS_DEPLOYMENT_TARGET: "11.0"
+        SKIP_INSTALL: YES
+    entitlements:
+      path: KinenWatch/KinenWatch.entitlements
+
   KinenWidgetExtension:
     type: app-extension
     platform: iOS
