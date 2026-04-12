@@ -229,7 +229,7 @@ struct CalendarScreen: View {
                 }
                 Text(String(localized: "calendar.more")).font(.system(size: 9)).foregroundStyle(.secondary)
                 Spacer()
-                Text(String(localized: "calendar.entriesYear", defaultValue: "\(yearEntryCount) entries this year"))
+                Text(String(format: String(localized: "calendar.entriesYear"), yearEntryCount))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }

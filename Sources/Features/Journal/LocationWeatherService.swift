@@ -42,8 +42,15 @@ final class LocationWeatherService: NSObject {
         }
         #endif
 
+        // Clear stale data from previous fetch
+        currentLocation = nil
+        currentWeather = nil
+
         isLoading = true
         defer { isLoading = false }
+
+        // Serialize: if a fetch is already in flight, skip
+        guard locationContinuation == nil else { return (nil, nil) }
 
         // Get location
         let location = await withCheckedContinuation { continuation in

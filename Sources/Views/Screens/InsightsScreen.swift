@@ -188,9 +188,9 @@ struct InsightsScreen: View {
             }
 
             HStack(spacing: 12) {
-                Label(String(localized: "insights.wordsMonth", defaultValue: "\(totalWordsThisMonth) words this month"), systemImage: "character.cursor.ibeam")
+                Label(String(format: String(localized: "insights.wordsMonth"), totalWordsThisMonth), systemImage: "character.cursor.ibeam")
                 Spacer()
-                Label(String(localized: "insights.avgPerEntry", defaultValue: "\(averageWordsPerEntry) avg/entry"), systemImage: "doc.text")
+                Label(String(format: String(localized: "insights.avgPerEntry"), averageWordsPerEntry), systemImage: "doc.text")
             }
             .font(.caption)
             .foregroundStyle(.secondary)

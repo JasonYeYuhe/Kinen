@@ -83,14 +83,14 @@ struct InsightEngine {
                 results.append(SmartInsight(
                     icon: "arrow.up.heart.fill",
                     title: String(localized: "insight.tagPositive.title"),
-                    description: String(localized: "insight.tagPositive.body.\(tag)"),
+                    description: String(format: String(localized: "insight.tagPositive.body.%@"), tag),
                     type: .tagMoodCorrelation
                 ))
             } else if diff < -0.15 {
                 results.append(SmartInsight(
                     icon: "heart.text.clipboard",
                     title: String(localized: "insight.tagNegative.title"),
-                    description: String(localized: "insight.tagNegative.body.\(tag)"),
+                    description: String(format: String(localized: "insight.tagNegative.body.%@"), tag),
                     type: .tagMoodCorrelation
                 ))
             }
@@ -123,7 +123,7 @@ struct InsightEngine {
         return SmartInsight(
             icon: "calendar.badge.checkmark",
             title: String(localized: "insight.bestDay.title"),
-            description: String(localized: "insight.bestDay.body.\(dayName)"),
+            description: String(format: String(localized: "insight.bestDay.body.%@"), dayName),
             type: .timePattern
         )
     }
@@ -164,7 +164,7 @@ struct InsightEngine {
         return SmartInsight(
             icon: "clock.fill",
             title: String(localized: "insight.writingTime.title"),
-            description: String(localized: "insight.writingTime.body.\(timeOfDay).\(Int(ratio * 100))"),
+            description: String(format: String(localized: "insight.writingTime.body.%@.%lld"), timeOfDay, Int(ratio * 100)),
             type: .writingHabit
         )
     }
@@ -214,7 +214,7 @@ struct InsightEngine {
             return SmartInsight(
                 icon: "flame.fill",
                 title: String(localized: "insight.consistent.title"),
-                description: String(localized: "insight.consistent.body.\(uniqueDays)"),
+                description: String(format: String(localized: "insight.consistent.body.%lld"), uniqueDays),
                 type: .streak
             )
         } else if uniqueDays <= 5 && entries.count >= 10 {

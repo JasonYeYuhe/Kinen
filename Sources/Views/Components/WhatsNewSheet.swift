@@ -22,7 +22,7 @@ struct WhatsNewSheet: View {
                         Text(String(localized: "whatsnew.title"))
                             .font(.title2)
                             .fontWeight(.bold)
-                        Text(String(localized: "whatsnew.version.\(Self.currentVersion)"))
+                        Text(String(format: String(localized: "whatsnew.version.%@"), Self.currentVersion))
                             .foregroundStyle(.secondary)
                     }
                     .frame(maxWidth: .infinity)

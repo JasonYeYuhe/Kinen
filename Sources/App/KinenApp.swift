@@ -85,36 +85,7 @@ struct KinenApp: App {
         #endif
     }
 
-    // MARK: - Widget Data
-
     private func updateWidgetData() {
-        let context = sharedModelContainer.mainContext
-        let descriptor = FetchDescriptor<JournalEntry>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
-        guard let entries = try? context.fetch(descriptor) else { return }
-
-        let calendar = Calendar.current
-        let dates = Set(entries.map { calendar.startOfDay(for: $0.createdAt) })
-        let streak = Date().startOfDay.consecutiveDays(in: dates)
-
-        let recentMoods: [(date: Date, value: Double)] = entries.prefix(7).compactMap { entry in
-            guard let mood = entry.mood else { return nil }
-            return (date: entry.createdAt, value: mood.normalizedValue)
-        }
-
-        let moods = entries.compactMap { $0.mood }
-        let avgEmoji: String
-        if moods.isEmpty {
-            avgEmoji = "😐"
-        } else {
-            let avg = Double(moods.map { $0.rawValue }.reduce(0, +)) / Double(moods.count)
-            avgEmoji = Mood(rawValue: Int(avg.rounded()))?.emoji ?? "😐"
-        }
-
-        WidgetDataProvider.updateWidgetData(
-            streak: streak,
-            totalEntries: entries.count,
-            averageMoodEmoji: avgEmoji,
-            recentMoods: recentMoods
-        )
+        WidgetDataProvider.syncAndReload(from: sharedModelContainer.mainContext)
     }
 }

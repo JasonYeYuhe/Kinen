@@ -2,7 +2,6 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 import StoreKit
-import WidgetKit
 
 struct EntryEditorSheet: View {
     @Environment(\.modelContext) private var modelContext
@@ -29,6 +28,7 @@ struct EntryEditorSheet: View {
     @State private var timer: Timer?
     @State private var locationWeather = LocationWeatherService.shared
     @AppStorage("enableLocationWeather") private var enableLocationWeather = false
+    @State private var fetchedLocationWeather: (location: String?, weather: String?) = (nil, nil)
 
     init(entry: JournalEntry?) {
         self.entry = entry
@@ -179,7 +179,7 @@ struct EntryEditorSheet: View {
                 if entry == nil {
                     generateNewPrompt()
                     if enableLocationWeather {
-                        Task { await locationWeather.fetchLocationAndWeather() }
+                        Task { await fetchedLocationWeather = locationWeather.fetchLocationAndWeather() }
                     }
                 }
             }
@@ -512,8 +512,8 @@ struct EntryEditorSheet: View {
             newEntry.photoData = photoData
             newEntry.writingDuration = elapsedTime
             newEntry.tags = entryTags
-            newEntry.location = locationWeather.currentLocation
-            newEntry.weather = locationWeather.currentWeather
+            newEntry.location = fetchedLocationWeather.location
+            newEntry.weather = fetchedLocationWeather.weather
             modelContext.insert(newEntry)
 
             // Record writing session
@@ -531,7 +531,7 @@ struct EntryEditorSheet: View {
         }
 
         HapticManager.notification(.success)
-        WidgetCenter.shared.reloadAllTimelines()
+        WidgetDataProvider.syncAndReload(from: modelContext)
         dismiss()
     }
 

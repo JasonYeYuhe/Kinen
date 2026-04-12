@@ -62,7 +62,8 @@ struct MoodWidgetView: View {
     }
 
     private func moodColor(_ value: Double) -> Color {
-        switch Int((value * 5).rounded()) {
+        // value is 0.0-1.0 normalized; map to 1-5 mood scale
+        switch Int((value * 4).rounded()) + 1 {
         case 1: .red
         case 2: .orange
         case 3: .gray

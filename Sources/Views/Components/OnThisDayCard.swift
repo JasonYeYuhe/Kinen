@@ -59,7 +59,7 @@ struct OnThisDayCard: View {
         if years == 1 {
             return String(localized: "onThisDay.oneYearAgo")
         } else {
-            return String(localized: "onThisDay.yearsAgo.\(years)")
+            return String(format: String(localized: "onThisDay.yearsAgo.%lld"), years)
         }
     }
 }

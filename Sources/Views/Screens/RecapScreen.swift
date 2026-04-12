@@ -118,7 +118,7 @@ struct RecapScreen: View {
                 let mood = Mood(rawValue: Int(avg.rounded())) ?? .neutral
                 HStack(spacing: 8) {
                     Text(mood.emoji).font(.title)
-                    Text(String(localized: "recap.average", defaultValue: "Average: \(mood.label)"))
+                    Text(String(format: String(localized: "recap.average"), mood.label))
                         .foregroundStyle(.secondary)
                     Spacer()
                     Text(String(format: "%.1f", avg) + "/5")

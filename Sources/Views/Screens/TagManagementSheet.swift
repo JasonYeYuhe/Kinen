@@ -91,7 +91,7 @@ struct TagManagementSheet: View {
                     }
                 }
             }
-            .navigationTitle(String(localized: "tags.manage.\(tags.count)"))
+            .navigationTitle(String(format: String(localized: "tags.manage.%lld"), tags.count))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -143,7 +143,7 @@ struct TagMergeSheet: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
-                Text(String(localized: "tags.merge.into.\(sourceTag.name)"))
+                Text(String(format: String(localized: "tags.merge.into.%@"), sourceTag.name))
                     .font(.headline)
 
                 List(allTags, selection: $selectedTarget) { tag in

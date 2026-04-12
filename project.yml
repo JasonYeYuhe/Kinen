@@ -85,6 +85,8 @@ targets:
         INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier: com.apple.widgetkit-extension
         TARGETED_DEVICE_FAMILY: "1,2"
         SKIP_INSTALL: YES
+    entitlements:
+      path: KinenWidget/KinenWidget.entitlements
 
   KinenTests:
     type: bundle.unit-test

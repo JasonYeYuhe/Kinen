@@ -1,4 +1,6 @@
 import Foundation
+import SwiftData
+import WidgetKit
 
 /// Provides data to widgets via App Group shared container.
 struct WidgetDataProvider {
@@ -31,6 +33,34 @@ struct WidgetDataProvider {
         }
 
         return data
+    }
+
+    /// Update widget data from a ModelContext and reload all timelines.
+    @MainActor
+    static func syncAndReload(from context: ModelContext) {
+        let descriptor = FetchDescriptor<JournalEntry>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
+        guard let entries = try? context.fetch(descriptor) else { return }
+
+        let calendar = Calendar.current
+        let dates = Set(entries.map { calendar.startOfDay(for: $0.createdAt) })
+        let streak = Date().startOfDay.consecutiveDays(in: dates)
+
+        let recentMoods: [(date: Date, value: Double)] = entries.prefix(7).compactMap { entry in
+            guard let mood = entry.mood else { return nil }
+            return (date: entry.createdAt, value: mood.normalizedValue)
+        }
+
+        let moods = entries.compactMap { $0.mood }
+        let avgEmoji: String
+        if moods.isEmpty {
+            avgEmoji = "😐"
+        } else {
+            let avg = Double(moods.map { $0.rawValue }.reduce(0, +)) / Double(moods.count)
+            avgEmoji = Mood(rawValue: Int(avg.rounded()))?.emoji ?? "😐"
+        }
+
+        updateWidgetData(streak: streak, totalEntries: entries.count, averageMoodEmoji: avgEmoji, recentMoods: recentMoods)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     /// Called by the main app to update widget data.
