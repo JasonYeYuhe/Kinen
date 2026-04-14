@@ -300,6 +300,9 @@
 
 /* Entry Detail */
 "detail.aiInsights" = "AI Insights";
+"detail.reanalyze.title" = "Re-analyze Entry?";
+"detail.reanalyze.message" = "This will replace the current AI insights with a fresh analysis.";
+"detail.reanalyze.confirm" = "Re-analyze";
 
 /* Sentiment */
 "sentiment.positive" = "Positive";

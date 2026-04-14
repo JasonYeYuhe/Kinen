@@ -20,6 +20,8 @@ struct EntryEditorSheet: View {
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var photoData: Data?
     @AppStorage("defaultMoodEnabled") private var defaultMoodEnabled = true
+    @AppStorage("enableAutoSentiment") private var enableAutoSentiment = true
+    @AppStorage("enableAutoTags") private var enableAutoTags = true
     @State private var entryTags: [Tag] = []
     @State private var selectedJournal: Journal?
     @Query(sort: \Journal.createdAt) private var journals: [Journal]
@@ -71,8 +73,9 @@ struct EntryEditorSheet: View {
             let idRange = match.range(at: 1)
             let matchedId = nsContent.substring(with: idRange)
             if promptIds.contains(matchedId) {
-                let endOffset = match.range.location + match.range.length
-                let endIndex = content.index(content.startIndex, offsetBy: endOffset)
+                let utf16End = match.range.location + match.range.length
+                let endIndex = String.Index(utf16Offset: utf16End, in: content)
+                guard endIndex <= content.endIndex else { continue }
                 positions.append((id: matchedId, markerEnd: endIndex))
             }
         }
@@ -84,7 +87,8 @@ struct EntryEditorSheet: View {
                 if i + 1 < positions.count {
                     // Find the start of the next marker (go back to its <!-- )
                     let nextMatch = matches[i + 1]
-                    textEnd = content.index(content.startIndex, offsetBy: nextMatch.range.location)
+                    let utf16Start = nextMatch.range.location
+                    textEnd = min(String.Index(utf16Offset: utf16Start, in: content), content.endIndex)
                 } else {
                     textEnd = content.endIndex
                 }
@@ -444,8 +448,12 @@ struct EntryEditorSheet: View {
     // MARK: - Helpers
 
     private var effectiveContent: String {
-        if template != nil && template != .freeWrite && template != .morningPages {
-            return templateResponses.values.joined(separator: "\n\n")
+        if let template, template != .freeWrite, template != .morningPages {
+            return template.prompts.compactMap { prompt in
+                guard let response = templateResponses[prompt.id],
+                      !response.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+                return response
+            }.joined(separator: "\n\n")
         }
         return content
     }
@@ -568,8 +576,10 @@ struct EntryEditorSheet: View {
             modelContext.insert(session)
 
             // AI Journaling Loop (5-step) in background
+            let sentiment = enableAutoSentiment
+            let tags = enableAutoTags
             Task {
-                await AIJournalingLoop.shared.processEntry(newEntry, in: modelContext)
+                await AIJournalingLoop.shared.processEntry(newEntry, in: modelContext, enableSentiment: sentiment, enableTags: tags)
             }
 
             // Request App Store review after 5th entry, at most once per 60 days

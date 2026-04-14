@@ -39,6 +39,10 @@ struct BackupService {
         let writingDuration: TimeInterval
         let tagNames: [String]
         let insights: [BackupInsight]
+        // v1.1 fields — optional for backward compatibility with older backups
+        var photoDataBase64: String?
+        var isHidden: Bool?
+        var templateRawValue: String?
     }
 
     struct BackupInsight: Codable {
@@ -72,7 +76,10 @@ struct BackupService {
                 tagNames: entry.safeTags.map(\.name),
                 insights: entry.safeInsights.map {
                     BackupInsight(type: $0.type.rawValue, content: $0.content, createdAt: $0.createdAt)
-                }
+                },
+                photoDataBase64: entry.photoData?.base64EncodedString(),
+                isHidden: entry.isHidden,
+                templateRawValue: entry.template?.rawValue
             )
         }
 
@@ -176,6 +183,13 @@ struct BackupService {
                 entry.wordCount = backupEntry.wordCount
                 entry.isBookmarked = backupEntry.isBookmarked
                 entry.writingDuration = backupEntry.writingDuration
+                entry.isHidden = backupEntry.isHidden ?? false
+                if let photoBase64 = backupEntry.photoDataBase64 {
+                    entry.photoData = Data(base64Encoded: photoBase64)
+                }
+                if let templateRaw = backupEntry.templateRawValue {
+                    entry.template = JournalTemplate(rawValue: templateRaw)
+                }
                 context.insert(entry)
 
                 // Restore tag relationships

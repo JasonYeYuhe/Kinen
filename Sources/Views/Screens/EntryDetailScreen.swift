@@ -5,6 +5,9 @@ struct EntryDetailScreen: View {
     let entry: JournalEntry
     @State private var showingEditor = false
     @State private var isReanalyzing = false
+    @State private var showReanalyzeConfirm = false
+    @AppStorage("enableAutoSentiment") private var enableAutoSentiment = true
+    @AppStorage("enableAutoTags") private var enableAutoTags = true
 
     var body: some View {
         ScrollView {
@@ -109,7 +112,7 @@ struct EntryDetailScreen: View {
                 }
             }
             ToolbarItem {
-                Button(action: { reanalyze() }) {
+                Button(action: { showReanalyzeConfirm = true }) {
                     if isReanalyzing {
                         ProgressView()
                             .controlSize(.small)
@@ -120,6 +123,14 @@ struct EntryDetailScreen: View {
                 .disabled(isReanalyzing)
                 .help("Re-run AI analysis on this entry")
             }
+        }
+        .alert(String(localized: "detail.reanalyze.title"), isPresented: $showReanalyzeConfirm) {
+            Button(String(localized: "general.cancel"), role: .cancel) {}
+            Button(String(localized: "detail.reanalyze.confirm"), role: .destructive) {
+                reanalyze()
+            }
+        } message: {
+            Text(String(localized: "detail.reanalyze.message"))
         }
         .sheet(isPresented: $showingEditor) {
             EntryEditorSheet(entry: entry)
@@ -132,8 +143,10 @@ struct EntryDetailScreen: View {
         entry.insights = []
         entry.sentimentScore = nil
 
+        let sentiment = enableAutoSentiment
+        let tags = enableAutoTags
         Task {
-            await AIJournalingLoop.shared.processEntry(entry, in: modelContext)
+            await AIJournalingLoop.shared.processEntry(entry, in: modelContext, enableSentiment: sentiment, enableTags: tags)
             isReanalyzing = false
         }
     }

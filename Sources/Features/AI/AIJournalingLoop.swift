@@ -21,12 +21,9 @@ actor AIJournalingLoop {
 
     /// Run the full 5-step analysis on a journal entry.
     @MainActor
-    func processEntry(_ entry: JournalEntry, in context: ModelContext) async {
+    func processEntry(_ entry: JournalEntry, in context: ModelContext, enableSentiment: Bool = true, enableTags: Bool = true) async {
         let content = entry.content
         logger.info("Processing entry through AI Journaling Loop...")
-
-        let enableSentiment = UserDefaults.standard.object(forKey: "enableAutoSentiment") as? Bool ?? true
-        let enableTags = UserDefaults.standard.object(forKey: "enableAutoTags") as? Bool ?? true
 
         // Step 2: AI Reflection — emotion labels + distortions + summary
         guard enableSentiment else {

@@ -300,6 +300,9 @@
 
 /* Entry Detail */
 "detail.aiInsights" = "AI 洞察";
+"detail.reanalyze.title" = "重新分析日记？";
+"detail.reanalyze.message" = "当前的 AI 洞察将被替换为新的分析结果。";
+"detail.reanalyze.confirm" = "重新分析";
 
 /* Sentiment */
 "sentiment.positive" = "积极";
