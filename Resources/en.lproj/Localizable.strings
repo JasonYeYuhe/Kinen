@@ -428,6 +428,97 @@
 "general.entries" = "entries";
 "general.words" = "words";
 
+/* Sprint 6.4 — Engagement */
+"recap.share" = "Share Recap";
+"recap.share.message" = "My journaling recap from Kinen";
+"settings.reminders.onThisDay" = "On This Day Memories";
+"settings.reminders.onThisDay.desc" = "Get a notification when you wrote an entry exactly one year ago.";
+"onThisDay.notification.title" = "On This Day — 1 Year Ago";
+"onThisDay.notification.body" = "You wrote: %@";
+
+/* Sprint 6.3 — Visual Polish */
+"settings.appearance" = "Appearance";
+"settings.appearance.mode" = "Theme";
+"settings.appearance.system" = "System";
+"settings.appearance.light" = "Light";
+"settings.appearance.dark" = "Dark";
+"insights.bestDay" = "Most productive: %@";
+"journal.refresh" = "Refresh";
+
+/* Sprint 6.2 — Smart Journaling */
+"editor.mood.suggestion" = "Feeling %@ %@?";
+"editor.mood.suggestion.a11y" = "AI suggests mood: %@. Tap to accept.";
+"editor.duplicate.title" = "Similar Entry Detected";
+"editor.duplicate.message" = "A very similar entry was saved within the last hour. Save anyway?";
+"editor.duplicate.saveAnyway" = "Save Anyway";
+"journal.pinned" = "Pinned";
+"journal.pin" = "Pin to Top";
+"journal.unpin" = "Unpin";
+"journal.pin.limitReached" = "You can only pin up to 3 entries.";
+"settings.journal.wordGoal" = "Daily Word Goal";
+"settings.journal.wordGoal.off" = "Off";
+
+/* Backup Strength & Reminder */
+"settings.backup.tooShort" = "Password must be at least 6 characters.";
+"settings.backup.strength.weak" = "Weak";
+"settings.backup.strength.medium" = "Medium";
+"settings.backup.strength.strong" = "Strong";
+"settings.backup.reminder.title" = "Time to Backup";
+"settings.backup.reminder.desc" = "It's been over 30 days since your last backup. Protect your journal.";
+
+/* Entry Version History */
+"detail.revert" = "Revert";
+"detail.revert.help" = "Revert to previous version of this entry";
+"detail.revert.title" = "Revert Entry?";
+"detail.revert.confirm" = "Revert";
+"detail.revert.message" = "This will restore the previous version of this entry. Your current content will be saved as the new previous version.";
+
+/* Sync Status */
+"sync.status.enabled" = "iCloud Sync enabled";
+"sync.status.disabled" = "iCloud Sync disabled";
+
+/* AI Insights */
+"ai.insight.positive" = "This entry radiates positivity! Noting what brings you joy helps you recreate it.";
+"ai.insight.negative" = "Tough feelings are valid. Writing about them is already a healthy step. Be kind to yourself.";
+
+/* AI CBT Experiments */
+"ai.cbt.catastrophizing.1" = "Try this: Write down the worst case, best case, and most likely case. Focus on the most likely.";
+"ai.cbt.catastrophizing.2" = "Set a 5-minute worry timer. When it rings, shift to one action you can take right now.";
+"ai.cbt.allOrNothing.1" = "Challenge: Rate the situation on a 1-10 scale instead of pass/fail.";
+"ai.cbt.allOrNothing.2" = "Find one exception to the 'always' or 'never' pattern you noticed.";
+"ai.cbt.shouldStatements.1" = "Replace each 'should' with 'I'd like to' or 'It would be nice if'. Notice how it changes the pressure.";
+"ai.cbt.personalization.1" = "List 3 factors outside your control that contributed to this situation.";
+"ai.cbt.mindReading.1" = "Instead of assuming what they think, consider asking them directly. What's the worst that could happen?";
+"ai.cbt.overgeneralization.1" = "Can you think of one time when this didn't happen? Write it down.";
+"ai.cbt.emotionalReasoning.1" = "Separate feeling from fact: 'I feel anxious' vs 'Something bad will happen'. They're not the same.";
+"ai.cbt.labeling.1" = "Replace the label with specific behavior: Instead of 'I'm lazy', try 'I didn't finish the report today'.";
+
+/* AI Theme Experiments */
+"ai.theme.work" = "Take a 5-minute break to step outside. Fresh air resets focus.";
+"ai.theme.relationships" = "Send a short message to someone you appreciate. Connection matters.";
+"ai.theme.health" = "Do 3 deep breaths right now: 4 seconds in, 7 hold, 8 out.";
+"ai.theme.selfDoubt" = "Write down one thing you did well today, no matter how small.";
+"ai.theme.growth" = "Spend 10 minutes on something you're learning. Small steps compound.";
+"ai.theme.creativity" = "Doodle or freewrite for 5 minutes. No judgment, just flow.";
+
+/* AI Positive Experiments */
+"ai.experiment.positive.1" = "You're in a good place. Consider sharing this positive energy with someone who might need it.";
+"ai.experiment.positive.2" = "Capture what made today good so you can intentionally recreate it.";
+
+/* Recap Growth Notes */
+"recap.growth.empty" = "Start writing to unlock your personal growth insights.";
+"recap.growth.improving" = "Your mood has been trending upward. You're building positive momentum — keep going!";
+"recap.growth.declining" = "It's been a tough stretch. Remember that acknowledging difficult feelings is a sign of emotional intelligence, not weakness.";
+"recap.growth.stablePositive" = "You've maintained a consistently positive outlook. What's working well for you?";
+"recap.growth.stableNeutral" = "Consistency is powerful. Even on neutral days, showing up for yourself through journaling matters.";
+"recap.growth.insufficient" = "Write a few more entries this week and I'll start showing you personalized patterns.";
+
+/* Recap Action Items */
+"recap.action.declining" = "This week, try the CBT Three-Column template when difficult thoughts come up. It can help shift perspective.";
+"recap.action.work" = "Work has been a major theme. Consider setting one work boundary this week.";
+"recap.action.selfDoubt" = "Self-doubt appeared in your entries. Try listing 3 recent accomplishments, no matter how small.";
+"recap.action.default" = "Keep your journaling streak going! Consistency builds self-awareness.";
+
 /* Sort */
 "sort.title" = "Sort";
 "sort.dateDesc" = "Newest First";

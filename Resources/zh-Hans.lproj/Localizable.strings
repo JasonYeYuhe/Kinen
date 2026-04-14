@@ -428,6 +428,97 @@
 "general.entries" = "篇";
 "general.words" = "字";
 
+/* Sprint 6.4 — 留存增长 */
+"recap.share" = "分享回顾";
+"recap.share.message" = "来自 Kinen 的日记回顾";
+"settings.reminders.onThisDay" = "那年今日回忆";
+"settings.reminders.onThisDay.desc" = "当你恰好一年前写过日记时，收到通知提醒。";
+"onThisDay.notification.title" = "那年今日 — 1年前";
+"onThisDay.notification.body" = "你写道：%@";
+
+/* Sprint 6.3 — 视觉打磨 */
+"settings.appearance" = "外观";
+"settings.appearance.mode" = "主题";
+"settings.appearance.system" = "跟随系统";
+"settings.appearance.light" = "浅色";
+"settings.appearance.dark" = "深色";
+"insights.bestDay" = "最高产的一天：%@";
+"journal.refresh" = "刷新";
+
+/* Sprint 6.2 — 智能写作 */
+"editor.mood.suggestion" = "感觉 %@ %@？";
+"editor.mood.suggestion.a11y" = "AI 建议心情：%@。点击接受。";
+"editor.duplicate.title" = "检测到相似日记";
+"editor.duplicate.message" = "一篇非常相似的日记在过去一小时内已保存。仍然保存吗？";
+"editor.duplicate.saveAnyway" = "仍然保存";
+"journal.pinned" = "置顶";
+"journal.pin" = "置顶";
+"journal.unpin" = "取消置顶";
+"journal.pin.limitReached" = "你最多只能置顶3个日记。";
+"settings.journal.wordGoal" = "每日字数目标";
+"settings.journal.wordGoal.off" = "关闭";
+
+/* Backup Strength & Reminder */
+"settings.backup.tooShort" = "密码至少需要6个字符。";
+"settings.backup.strength.weak" = "弱";
+"settings.backup.strength.medium" = "中";
+"settings.backup.strength.strong" = "强";
+"settings.backup.reminder.title" = "该备份了";
+"settings.backup.reminder.desc" = "距离上次备份已超过30天。保护好你的日记。";
+
+/* Entry Version History */
+"detail.revert" = "恢复";
+"detail.revert.help" = "恢复到此日记的上一个版本";
+"detail.revert.title" = "恢复日记？";
+"detail.revert.confirm" = "恢复";
+"detail.revert.message" = "这将恢复此日记的上一个版本。你当前的内容将被保存为新的上一个版本。";
+
+/* Sync Status */
+"sync.status.enabled" = "iCloud 同步已开启";
+"sync.status.disabled" = "iCloud 同步已关闭";
+
+/* AI Insights */
+"ai.insight.positive" = "这篇日记充满了正能量！记住那些让你快乐的事，帮助你重新创造它们。";
+"ai.insight.negative" = "难过的感受是正常的。把它们写下来本身就是健康的一步。对自己温柔一点。";
+
+/* AI CBT Experiments */
+"ai.cbt.catastrophizing.1" = "试试这个：写下最坏情况、最好情况和最可能的情况，专注于最可能发生的。";
+"ai.cbt.catastrophizing.2" = "设一个5分钟的担忧计时器。时间到了，转向一个你现在能做的行动。";
+"ai.cbt.allOrNothing.1" = "挑战：用1-10分来评估这个情况，而不是非黑即白。";
+"ai.cbt.allOrNothing.2" = "找一个你注意到的'总是'或'从不'模式的例外情况。";
+"ai.cbt.shouldStatements.1" = "把每个'应该'换成'我想要'或'如果能...就好了'。感受压力的变化。";
+"ai.cbt.personalization.1" = "列出3个你无法控制的、促成这种情况的因素。";
+"ai.cbt.mindReading.1" = "与其猜测别人的想法，不如直接问问看。最坏能怎样呢？";
+"ai.cbt.overgeneralization.1" = "你能想到一次这件事没有发生的时候吗？把它写下来。";
+"ai.cbt.emotionalReasoning.1" = "区分感受和事实：'我感到焦虑'和'坏事会发生'是不同的。";
+"ai.cbt.labeling.1" = "用具体行为替代标签：不说'我很懒'，试试'我今天没有完成报告'。";
+
+/* AI Theme Experiments */
+"ai.theme.work" = "休息5分钟，到外面走走。新鲜空气能重置专注力。";
+"ai.theme.relationships" = "给你珍视的人发一条简短的消息。连接很重要。";
+"ai.theme.health" = "现在做3次深呼吸：吸气4秒，屏气7秒，呼气8秒。";
+"ai.theme.selfDoubt" = "写下你今天做好的一件事，不管多小。";
+"ai.theme.growth" = "花10分钟在你正在学习的事情上。小步积累，终成大事。";
+"ai.theme.creativity" = "涂鸦或自由书写5分钟。不评判，只管写。";
+
+/* AI Positive Experiments */
+"ai.experiment.positive.1" = "你现在状态很好。考虑把这份正能量分享给可能需要的人。";
+"ai.experiment.positive.2" = "记录今天的美好，这样你可以有意识地重新创造它。";
+
+/* Recap Growth Notes */
+"recap.growth.empty" = "开始写日记，解锁你的个人成长洞察。";
+"recap.growth.improving" = "你的情绪一直在上升。你正在积累正向动力——继续加油！";
+"recap.growth.declining" = "这段时间不太容易。记住，承认困难的感受是情商的表现，而不是软弱。";
+"recap.growth.stablePositive" = "你一直保持着积极的心态。是什么让你感觉这么好？";
+"recap.growth.stableNeutral" = "坚持本身就是力量。即使在平淡的日子里，坚持写日记也很重要。";
+"recap.growth.insufficient" = "这周再多写几篇日记，我就能开始为你展示个性化的模式了。";
+
+/* Recap Action Items */
+"recap.action.declining" = "这周遇到困难的想法时，试试 CBT 三栏模板。它能帮助转换视角。";
+"recap.action.work" = "工作一直是你的主要话题。考虑这周设定一个工作界限。";
+"recap.action.selfDoubt" = "你的日记中出现了自我怀疑。试着列出3个最近的成就，不管多小。";
+"recap.action.default" = "继续保持你的写日记连续天数！坚持能提升自我认知。";
+
 /* Sort */
 "sort.title" = "排序";
 "sort.dateDesc" = "最新优先";

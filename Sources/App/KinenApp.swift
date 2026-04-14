@@ -8,20 +8,29 @@ private let logger = Logger(subsystem: "com.jasonye.kinen", category: "App")
 @main
 struct KinenApp: App {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
-    @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = true
+    @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = false
+    @AppStorage("appearanceMode") private var appearanceMode = 0  // 0=system, 1=light, 2=dark
     @State private var appLock = AppLockService.shared
     @State private var containerError: String?
+
+    private var colorScheme: ColorScheme? {
+        switch appearanceMode {
+        case 1: return .light
+        case 2: return .dark
+        default: return nil
+        }
+    }
+
+    let container: ModelContainer
 
     init() {
         UserDefaults.standard.register(defaults: [
             "enableAutoSentiment": true,
             "enableAutoTags": true,
             "defaultMoodEnabled": true,
-            "iCloudSyncEnabled": true,
+            "iCloudSyncEnabled": false,
         ])
-    }
 
-    var sharedModelContainer: ModelContainer {
         let schema = Schema([
             JournalEntry.self,
             Tag.self,
@@ -29,25 +38,24 @@ struct KinenApp: App {
             WritingSession.self,
             Journal.self,
         ])
+        // CloudKit disabled — entitlements not configured in Developer Portal yet
         let config = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
-            cloudKitDatabase: iCloudSyncEnabled ? .automatic : .none
+            cloudKitDatabase: .none
         )
         do {
-            return try ModelContainer(for: schema, configurations: [config])
+            self.container = try ModelContainer(for: schema, configurations: [config])
         } catch {
-            logger.error("CloudKit ModelContainer failed: \(error). Falling back to local-only storage.")
-            let localConfig = ModelConfiguration(
+            logger.error("ModelContainer creation failed: \(error)")
+            // Last-resort in-memory fallback to avoid crash-on-launch
+            let memoryConfig = ModelConfiguration(
                 schema: schema,
-                isStoredInMemoryOnly: false,
+                isStoredInMemoryOnly: true,
                 cloudKitDatabase: .none
             )
-            do {
-                return try ModelContainer(for: schema, configurations: [localConfig])
-            } catch {
-                fatalError("Could not create ModelContainer: \(error)")
-            }
+            self.container = try! ModelContainer(for: schema, configurations: [memoryConfig])
+            _containerError = State(initialValue: "Database error: \(error.localizedDescription)")
         }
     }
 
@@ -75,18 +83,20 @@ struct KinenApp: App {
             }
             #endif
             .task { updateWidgetData() }
+            .preferredColorScheme(colorScheme)
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(container)
 
         #if os(macOS)
         Settings {
             SettingsView()
+                .preferredColorScheme(colorScheme)
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(container)
         #endif
     }
 
     private func updateWidgetData() {
-        WidgetDataProvider.syncAndReload(from: sharedModelContainer.mainContext)
+        WidgetDataProvider.syncAndReload(from: container.mainContext)
     }
 }

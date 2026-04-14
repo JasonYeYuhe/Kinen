@@ -6,7 +6,7 @@ extension Date {
     }
 
     var endOfDay: Date {
-        Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: self)!
+        Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: self) ?? self
     }
 
     var isToday: Bool {
@@ -38,14 +38,16 @@ extension Date {
     }
 
     static func daysAgo(_ days: Int) -> Date {
-        Calendar.current.date(byAdding: .day, value: -days, to: Date())!
+        Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
     }
 
     /// All dates in a given month
     static func datesInMonth(of date: Date) -> [Date] {
         let calendar = Calendar.current
-        let range = calendar.range(of: .day, in: .month, for: date)!
-        let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date))!
+        guard let range = calendar.range(of: .day, in: .month, for: date),
+              let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) else {
+            return []
+        }
         return range.compactMap { day in
             calendar.date(byAdding: .day, value: day - 1, to: startOfMonth)
         }
@@ -58,7 +60,8 @@ extension Date {
         var check = self.startOfDay
         while dates.contains(check) {
             count += 1
-            check = calendar.date(byAdding: .day, value: -1, to: check)!
+            guard let previous = calendar.date(byAdding: .day, value: -1, to: check) else { break }
+            check = previous
         }
         return count
     }

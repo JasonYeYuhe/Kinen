@@ -79,9 +79,9 @@ actor AIJournalingLoop {
 
         // Sentiment insight
         if sentiment > 0.3 {
-            entry.addInsight(EntryInsight(type: .sentiment, content: "This entry radiates positivity! Noting what brings you joy helps you recreate it."))
+            entry.addInsight(EntryInsight(type: .sentiment, content: String(localized: "ai.insight.positive")))
         } else if sentiment < -0.3 {
-            entry.addInsight(EntryInsight(type: .sentiment, content: "Tough feelings are valid. Writing about them is already a healthy step. Be kind to yourself."))
+            entry.addInsight(EntryInsight(type: .sentiment, content: String(localized: "ai.insight.negative")))
         }
 
         logger.info("AI Loop complete: sentiment=\(sentiment, format: .fixed(precision: 2)), themes=\(themes), distortions=\(distortions.count)")
@@ -156,44 +156,44 @@ actor AIJournalingLoop {
 
     private let cbtExperiments: [CBTReflection.CognitiveDistortion: [String]] = [
         .catastrophizing: [
-            "Try this: Write down the worst case, best case, and most likely case. Focus on the most likely.",
-            "Set a 5-minute worry timer. When it rings, shift to one action you can take right now.",
+            String(localized: "ai.cbt.catastrophizing.1"),
+            String(localized: "ai.cbt.catastrophizing.2"),
         ],
         .allOrNothing: [
-            "Challenge: Rate the situation on a 1-10 scale instead of pass/fail.",
-            "Find one exception to the 'always' or 'never' pattern you noticed.",
+            String(localized: "ai.cbt.allOrNothing.1"),
+            String(localized: "ai.cbt.allOrNothing.2"),
         ],
         .shouldStatements: [
-            "Replace each 'should' with 'I'd like to' or 'It would be nice if'. Notice how it changes the pressure.",
+            String(localized: "ai.cbt.shouldStatements.1"),
         ],
         .personalization: [
-            "List 3 factors outside your control that contributed to this situation.",
+            String(localized: "ai.cbt.personalization.1"),
         ],
         .mindReading: [
-            "Instead of assuming what they think, consider asking them directly. What's the worst that could happen?",
+            String(localized: "ai.cbt.mindReading.1"),
         ],
         .overgeneralization: [
-            "Can you think of one time when this didn't happen? Write it down.",
+            String(localized: "ai.cbt.overgeneralization.1"),
         ],
         .emotionalReasoning: [
-            "Separate feeling from fact: 'I feel anxious' vs 'Something bad will happen'. They're not the same.",
+            String(localized: "ai.cbt.emotionalReasoning.1"),
         ],
         .labeling: [
-            "Replace the label with specific behavior: Instead of 'I'm lazy', try 'I didn't finish the report today'.",
+            String(localized: "ai.cbt.labeling.1"),
         ],
     ]
 
     private let themeExperiments: [String: [String]] = [
-        "work": ["Take a 5-minute break to step outside. Fresh air resets focus."],
-        "relationships": ["Send a short message to someone you appreciate. Connection matters."],
-        "health": ["Do 3 deep breaths right now: 4 seconds in, 7 hold, 8 out."],
-        "self-doubt": ["Write down one thing you did well today, no matter how small."],
-        "growth": ["Spend 10 minutes on something you're learning. Small steps compound."],
-        "creativity": ["Doodle or freewrite for 5 minutes. No judgment, just flow."],
+        "work": [String(localized: "ai.theme.work")],
+        "relationships": [String(localized: "ai.theme.relationships")],
+        "health": [String(localized: "ai.theme.health")],
+        "self-doubt": [String(localized: "ai.theme.selfDoubt")],
+        "growth": [String(localized: "ai.theme.growth")],
+        "creativity": [String(localized: "ai.theme.creativity")],
     ]
 
     private let positiveExperiments = [
-        "You're in a good place. Consider sharing this positive energy with someone who might need it.",
-        "Capture what made today good so you can intentionally recreate it.",
+        String(localized: "ai.experiment.positive.1"),
+        String(localized: "ai.experiment.positive.2"),
     ]
 }

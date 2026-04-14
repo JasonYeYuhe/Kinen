@@ -219,21 +219,35 @@ struct RecapScreen: View {
     }
 
     private var exportCard: some View {
-        Button(action: {
-            let text = RecapGenerator.formatForExport(recap)
-            #if os(macOS)
-            NSPasteboard.general.clearContents()
-            NSPasteboard.general.setString(text, forType: .string)
-            #else
-            UIPasteboard.general.string = text
-            #endif
-        }) {
-            Label(String(localized: "recap.copy"), systemImage: "doc.on.clipboard")
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
+        VStack(spacing: 10) {
+            ShareLink(
+                item: RecapGenerator.formatForExport(recap),
+                subject: Text("Kinen — \(recap.period)"),
+                message: Text(String(localized: "recap.share.message"))
+            ) {
+                Label(String(localized: "recap.share"), systemImage: "square.and.arrow.up")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+            }
+            .buttonStyle(.bordered)
+            .tint(.purple)
+
+            Button(action: {
+                let text = RecapGenerator.formatForExport(recap)
+                #if os(macOS)
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(text, forType: .string)
+                #else
+                UIPasteboard.general.string = text
+                #endif
+            }) {
+                Label(String(localized: "recap.copy"), systemImage: "doc.on.clipboard")
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+            }
+            .buttonStyle(.bordered)
+            .tint(.secondary)
         }
-        .buttonStyle(.bordered)
-        .tint(.purple)
     }
 
     // MARK: - Card Template

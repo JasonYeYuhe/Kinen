@@ -6,6 +6,7 @@ struct EntryDetailScreen: View {
     @State private var showingEditor = false
     @State private var isReanalyzing = false
     @State private var showReanalyzeConfirm = false
+    @State private var showRevertConfirm = false
     @AppStorage("enableAutoSentiment") private var enableAutoSentiment = true
     @AppStorage("enableAutoTags") private var enableAutoTags = true
 
@@ -112,6 +113,14 @@ struct EntryDetailScreen: View {
                 }
             }
             ToolbarItem {
+                if entry.previousContent != nil {
+                    Button(action: { showRevertConfirm = true }) {
+                        Label(String(localized: "detail.revert"), systemImage: "arrow.uturn.backward")
+                    }
+                    .help(String(localized: "detail.revert.help"))
+                }
+            }
+            ToolbarItem {
                 Button(action: { showReanalyzeConfirm = true }) {
                     if isReanalyzing {
                         ProgressView()
@@ -132,9 +141,25 @@ struct EntryDetailScreen: View {
         } message: {
             Text(String(localized: "detail.reanalyze.message"))
         }
+        .alert(String(localized: "detail.revert.title"), isPresented: $showRevertConfirm) {
+            Button(String(localized: "general.cancel"), role: .cancel) {}
+            Button(String(localized: "detail.revert.confirm"), role: .destructive) {
+                revertEntry()
+            }
+        } message: {
+            Text(String(localized: "detail.revert.message"))
+        }
         .sheet(isPresented: $showingEditor) {
             EntryEditorSheet(entry: entry)
         }
+    }
+
+    private func revertEntry() {
+        guard let previous = entry.previousContent else { return }
+        entry.previousContent = entry.content // allow re-revert
+        entry.content = previous
+        entry.wordCount = previous.split(separator: " ").count
+        entry.updatedAt = Date()
     }
 
     private func reanalyze() {

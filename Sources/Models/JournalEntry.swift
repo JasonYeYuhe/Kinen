@@ -20,6 +20,8 @@ final class JournalEntry {
     var template: JournalTemplate?
     var writingDuration: TimeInterval = 0
     var isHidden: Bool = false
+    var isPinned: Bool = false
+    var previousContent: String?
 
     @Attribute(.externalStorage)
     var photoData: Data?
@@ -66,12 +68,12 @@ final class JournalEntry {
 
     /// Safe append to optional tags array
     func addTag(_ tag: Tag) {
-        if tags != nil { tags!.append(tag) } else { tags = [tag] }
+        if tags != nil { tags?.append(tag) } else { tags = [tag] }
     }
 
     /// Safe append to optional insights array
     func addInsight(_ insight: EntryInsight) {
-        if insights != nil { insights!.append(insight) } else { insights = [insight] }
+        if insights != nil { insights?.append(insight) } else { insights = [insight] }
     }
 
     var preview: String {
@@ -82,11 +84,20 @@ final class JournalEntry {
         return firstLine
     }
 
+    private static let displayTitleFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        f.timeStyle = .short
+        return f
+    }()
+
     var displayTitle: String {
         if let title, !title.isEmpty { return title }
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter.string(from: createdAt)
+        return Self.displayTitleFormatter.string(from: createdAt)
+    }
+
+    /// Save current content as previous version before overwriting.
+    func snapshotForUndo() {
+        previousContent = content
     }
 }

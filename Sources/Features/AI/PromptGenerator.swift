@@ -5,6 +5,8 @@ import SwiftData
 /// All generation is local — no network calls.
 struct PromptGenerator {
 
+    private static let fallbackPrompt = "What's on your mind today?"
+
     /// Generate a writing prompt based on current context.
     static func generatePrompt(
         currentMood: Mood?,
@@ -20,7 +22,7 @@ struct PromptGenerator {
             return historicalPrompt
         }
 
-        return generalPrompts.randomElement()!
+        return generalPrompts.randomElement() ?? fallbackPrompt
     }
 
     /// Generate multiple prompt suggestions.
@@ -36,16 +38,16 @@ struct PromptGenerator {
         }
 
         // Add gratitude prompt
-        prompts.append(gratitudePrompts.randomElement()!)
+        if let p = gratitudePrompts.randomElement() { prompts.append(p) }
 
         // Add reflection prompt
-        prompts.append(reflectionPrompts.randomElement()!)
+        if let p = reflectionPrompts.randomElement() { prompts.append(p) }
 
         // Add CBT prompt if recent entries show negative sentiment
         let recentSentiment = recentEntries.prefix(3).compactMap { $0.sentimentScore }
         let avgSentiment = recentSentiment.isEmpty ? 0 : recentSentiment.reduce(0, +) / Double(recentSentiment.count)
         if avgSentiment < -0.2 {
-            prompts.append(cbtPrompts.randomElement()!)
+            if let p = cbtPrompts.randomElement() { prompts.append(p) }
         }
 
         return Array(prompts.prefix(count))
@@ -54,18 +56,15 @@ struct PromptGenerator {
     // MARK: - Mood-Based Prompts
 
     private static func moodBasedPrompt(mood: Mood) -> String {
+        let prompts: [String]
         switch mood {
-        case .great:
-            return greatMoodPrompts.randomElement()!
-        case .good:
-            return goodMoodPrompts.randomElement()!
-        case .neutral:
-            return neutralMoodPrompts.randomElement()!
-        case .bad:
-            return badMoodPrompts.randomElement()!
-        case .terrible:
-            return terribleMoodPrompts.randomElement()!
+        case .great: prompts = greatMoodPrompts
+        case .good: prompts = goodMoodPrompts
+        case .neutral: prompts = neutralMoodPrompts
+        case .bad: prompts = badMoodPrompts
+        case .terrible: prompts = terribleMoodPrompts
         }
+        return prompts.randomElement() ?? fallbackPrompt
     }
 
     // MARK: - Historical Prompts
@@ -74,14 +73,14 @@ struct PromptGenerator {
         let calendar = Calendar.current
 
         // "One year ago today..."
-        let oneYearAgo = calendar.date(byAdding: .year, value: -1, to: today)!
-        if let yearOldEntry = entries.first(where: { calendar.isDate($0.createdAt, inSameDayAs: oneYearAgo) }) {
+        if let oneYearAgo = calendar.date(byAdding: .year, value: -1, to: today),
+           let yearOldEntry = entries.first(where: { calendar.isDate($0.createdAt, inSameDayAs: oneYearAgo) }) {
             return "One year ago, you wrote about: \"\(yearOldEntry.preview)\". How have things changed since then?"
         }
 
         // "One month ago..."
-        let oneMonthAgo = calendar.date(byAdding: .month, value: -1, to: today)!
-        if let monthOldEntry = entries.first(where: { calendar.isDate($0.createdAt, inSameDayAs: oneMonthAgo) }) {
+        if let oneMonthAgo = calendar.date(byAdding: .month, value: -1, to: today),
+           let monthOldEntry = entries.first(where: { calendar.isDate($0.createdAt, inSameDayAs: oneMonthAgo) }) {
             return "A month ago, you reflected on: \"\(monthOldEntry.preview)\". Where are you with that now?"
         }
 

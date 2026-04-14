@@ -59,10 +59,17 @@ struct EntryRow: View {
 
             Spacer()
 
-            if entry.isBookmarked {
-                Image(systemName: "bookmark.fill")
-                    .foregroundStyle(.purple)
-                    .font(.caption)
+            VStack(spacing: 4) {
+                if entry.isPinned {
+                    Image(systemName: "pin.fill")
+                        .foregroundStyle(.orange)
+                        .font(.caption2)
+                }
+                if entry.isBookmarked {
+                    Image(systemName: "bookmark.fill")
+                        .foregroundStyle(.purple)
+                        .font(.caption)
+                }
             }
         }
         .padding(.vertical, 4)

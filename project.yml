@@ -15,8 +15,8 @@ settings:
     DEVELOPMENT_TEAM: KHMK6Q3L3K
     CODE_SIGN_IDENTITY: "Apple Development"
     CODE_SIGN_STYLE: Automatic
-    MARKETING_VERSION: "0.1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "0.2.0"
+    CURRENT_PROJECT_VERSION: "3"
     SWIFT_STRICT_CONCURRENCY: complete
 
 targets:
@@ -69,8 +69,13 @@ targets:
       - HealthKit:
     dependencies:
       - target: KinenWidgetExtension
+      - target: KinenWatch
     entitlements:
       path: Resources/Kinen-iOS.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.jasonye.kinen
+        com.apple.developer.healthkit: true
 
   KinenWatch:
     type: application
@@ -87,6 +92,9 @@ targets:
         TARGETED_DEVICE_FAMILY: "4"
         WATCHOS_DEPLOYMENT_TARGET: "11.0"
         SKIP_INSTALL: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_KEY_CFBundleDisplayName: Kinen
+        INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.jasonye.kinen
     entitlements:
       path: KinenWatch/KinenWatch.entitlements
       properties:
@@ -103,13 +111,15 @@ targets:
         PRODUCT_NAME: KinenWidgetExtension
         PRODUCT_BUNDLE_IDENTIFIER: com.jasonye.kinen.widget
         IPHONEOS_DEPLOYMENT_TARGET: "18.0"
-        GENERATE_INFOPLIST_FILE: true
-        INFOPLIST_KEY_CFBundleDisplayName: Kinen Widget
-        INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        INFOPLIST_FILE: KinenWidget/Info.plist
+        GENERATE_INFOPLIST_FILE: false
         TARGETED_DEVICE_FAMILY: "1,2"
         SKIP_INSTALL: YES
     entitlements:
       path: KinenWidget/KinenWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.jasonye.kinen
 
   KinenTests:
     type: bundle.unit-test

@@ -22,7 +22,11 @@ struct EntryEditorSheet: View {
     @AppStorage("defaultMoodEnabled") private var defaultMoodEnabled = true
     @AppStorage("enableAutoSentiment") private var enableAutoSentiment = true
     @AppStorage("enableAutoTags") private var enableAutoTags = true
+    @AppStorage("dailyWordGoal") private var dailyWordGoal = 0
     @State private var entryTags: [Tag] = []
+    @State private var suggestedMood: Mood?
+    @State private var moodSuggestionTask: Task<Void, Never>?
+    @State private var showDuplicateAlert = false
     @State private var selectedJournal: Journal?
     @Query(sort: \Journal.createdAt) private var journals: [Journal]
     @State private var crisisAlert: CrisisDetector.CrisisAlert?
@@ -209,7 +213,14 @@ struct EntryEditorSheet: View {
                 }
             }
             .onChange(of: mood) { generateNewPrompt() }
-            .onDisappear { stopTimer() }
+            .onChange(of: content) { debounceMoodSuggestion() }
+            .onDisappear { stopTimer(); moodSuggestionTask?.cancel() }
+            .alert(String(localized: "editor.duplicate.title"), isPresented: $showDuplicateAlert) {
+                Button(String(localized: "general.cancel"), role: .cancel) {}
+                Button(String(localized: "editor.duplicate.saveAnyway")) { save() }
+            } message: {
+                Text(String(localized: "editor.duplicate.message"))
+            }
             .toast($toastMessage)
             .overlay {
                 if showCrisisAlert, let alert = crisisAlert {
@@ -248,6 +259,30 @@ struct EntryEditorSheet: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             MoodPicker(selectedMood: $mood)
+
+            // AI mood suggestion
+            if mood == nil, let suggested = suggestedMood {
+                Button {
+                    withAnimation(.spring(duration: 0.3)) { mood = suggested }
+                    suggestedMood = nil
+                    HapticManager.selection()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "sparkles")
+                            .font(.caption2)
+                        Text(String(format: String(localized: "editor.mood.suggestion"), suggested.emoji, suggested.label))
+                            .font(.caption)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(.purple.opacity(0.1))
+                    .foregroundStyle(.purple)
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .transition(.scale.combined(with: .opacity))
+                .accessibilityLabel(String(format: String(localized: "editor.mood.suggestion.a11y"), suggested.label))
+            }
         }
     }
 
@@ -429,7 +464,8 @@ struct EntryEditorSheet: View {
     // MARK: - Footer Stats
 
     private var footerStats: some View {
-        HStack {
+        let currentWords = effectiveContent.split(separator: " ").count
+        return HStack {
             // Writing timer
             HStack(spacing: 4) {
                 Image(systemName: "timer")
@@ -442,10 +478,31 @@ struct EntryEditorSheet: View {
 
             Spacer()
 
-            // Word count
-            Text("\(effectiveContent.split(separator: " ").count) \(String(localized: "general.words"))")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+            // Word count goal progress
+            if dailyWordGoal > 0 {
+                let progress = min(Double(currentWords) / Double(dailyWordGoal), 1.0)
+                HStack(spacing: 6) {
+                    ZStack {
+                        Circle()
+                            .stroke(.gray.opacity(0.2), lineWidth: 2)
+                        Circle()
+                            .trim(from: 0, to: progress)
+                            .stroke(progress >= 1.0 ? Color.green : Color.purple, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                    }
+                    .frame(width: 16, height: 16)
+                    Text("\(currentWords)/\(dailyWordGoal)")
+                        .font(.caption2)
+                        .monospacedDigit()
+                        .foregroundStyle(progress >= 1.0 ? .green : .secondary)
+                }
+                .sensoryFeedback(.success, trigger: currentWords >= dailyWordGoal)
+            } else {
+                // Just word count
+                Text("\(currentWords) \(String(localized: "general.words"))")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
         }
     }
 
@@ -513,6 +570,80 @@ struct EntryEditorSheet: View {
         return String(format: "%d:%02d", minutes, seconds)
     }
 
+    // MARK: - Mood Suggestion
+
+    private func debounceMoodSuggestion() {
+        moodSuggestionTask?.cancel()
+        let text = effectiveContent
+        guard mood == nil, enableAutoSentiment, text.count >= 50 else {
+            suggestedMood = nil
+            return
+        }
+        moodSuggestionTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            let score = await SentimentAnalyzer.shared.analyzeSentiment(text)
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                suggestedMood = moodFromSentiment(score)
+            }
+        }
+    }
+
+    private func moodFromSentiment(_ score: Double) -> Mood {
+        if score < -0.4 { return .terrible }
+        if score < -0.1 { return .bad }
+        if score < 0.1 { return .neutral }
+        if score < 0.4 { return .good }
+        return .great
+    }
+
+    // MARK: - Duplicate Detection
+
+    /// Normalize text for similarity comparison: strip template markers and formatting.
+    private static func normalizeForComparison(_ text: String) -> String {
+        var result = text
+        // Remove template markers like <!-- promptId -->
+        result = result.replacingOccurrences(of: "<!--[^>]*-->", with: "", options: .regularExpression)
+        // Remove bold markers **text**
+        result = result.replacingOccurrences(of: "\\*\\*[^*]*\\*\\*", with: "", options: .regularExpression)
+        return result.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func checkForDuplicate(_ trimmed: String) -> Bool {
+        guard entry == nil else { return false } // only for new entries
+        let normalized = String(Self.normalizeForComparison(trimmed).prefix(200))
+        guard !normalized.isEmpty else { return false }
+
+        let oneHourAgo = Date().addingTimeInterval(-3600)
+        let recentEntries = (try? modelContext.fetch(
+            FetchDescriptor<JournalEntry>(predicate: #Predicate { $0.createdAt > oneHourAgo })
+        )) ?? []
+
+        for existing in recentEntries {
+            let existingNorm = String(Self.normalizeForComparison(existing.content).prefix(200))
+            guard !existingNorm.isEmpty else { continue }
+            let similarity = Self.similarity(normalized, existingNorm)
+            if similarity > 0.9 { return true }
+        }
+        return false
+    }
+
+    /// Simple character-level similarity (Dice coefficient on bigrams).
+    private static func similarity(_ a: String, _ b: String) -> Double {
+        let aBigrams = bigrams(a)
+        let bBigrams = bigrams(b)
+        guard !aBigrams.isEmpty && !bBigrams.isEmpty else { return 0 }
+        let intersection = aBigrams.intersection(bBigrams).count
+        return 2.0 * Double(intersection) / Double(aBigrams.count + bBigrams.count)
+    }
+
+    private static func bigrams(_ s: String) -> Set<String> {
+        let chars = Array(s.lowercased())
+        guard chars.count >= 2 else { return [] }
+        return Set((0..<chars.count - 1).map { String(chars[$0]) + String(chars[$0 + 1]) })
+    }
+
     // MARK: - Save
 
     private func save() {
@@ -546,7 +677,17 @@ struct EntryEditorSheet: View {
         let trimmed = finalContent.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
+        // Duplicate detection for new entries
+        if entry == nil && !showDuplicateAlert && checkForDuplicate(trimmed) {
+            showDuplicateAlert = true
+            return // will re-enter save() if user confirms
+        }
+
         if let entry {
+            // Snapshot current content for undo before overwriting
+            if entry.content != trimmed {
+                entry.snapshotForUndo()
+            }
             entry.content = trimmed
             entry.title = title.isEmpty ? nil : title
             entry.mood = mood

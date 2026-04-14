@@ -43,7 +43,7 @@ struct RecapGenerator {
     static func weeklyRecap(entries: [JournalEntry], weekOf: Date) -> Recap {
         let calendar = Calendar.current
         let startOfWeek = calendar.dateInterval(of: .weekOfYear, for: weekOf)?.start ?? weekOf
-        let endOfWeek = calendar.date(byAdding: .day, value: 7, to: startOfWeek)!
+        let endOfWeek = calendar.date(byAdding: .day, value: 7, to: startOfWeek) ?? startOfWeek
 
         let weekEntries = entries.filter { $0.createdAt >= startOfWeek && $0.createdAt < endOfWeek }
             .sorted { $0.createdAt < $1.createdAt }
@@ -59,8 +59,8 @@ struct RecapGenerator {
     static func monthlyRecap(entries: [JournalEntry], monthOf: Date) -> Recap {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.year, .month], from: monthOf)
-        let startOfMonth = calendar.date(from: components)!
-        let endOfMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth)!
+        let startOfMonth = calendar.date(from: components) ?? monthOf
+        let endOfMonth = calendar.date(byAdding: .month, value: 1, to: startOfMonth) ?? startOfMonth
 
         let monthEntries = entries.filter { $0.createdAt >= startOfMonth && $0.createdAt < endOfMonth }
             .sorted { $0.createdAt < $1.createdAt }
@@ -159,39 +159,40 @@ struct RecapGenerator {
         var checkDate = dates.max() ?? Date()
         while dates.contains(calendar.startOfDay(for: checkDate)) {
             streak += 1
-            checkDate = calendar.date(byAdding: .day, value: -1, to: checkDate)!
+            guard let prev = calendar.date(byAdding: .day, value: -1, to: checkDate) else { break }
+            checkDate = prev
         }
         return streak
     }
 
     private static func generateGrowthNote(avgMood: Double?, trend: MoodTrend, entryCount: Int) -> String {
-        if entryCount == 0 { return "Start writing to unlock your personal growth insights." }
+        if entryCount == 0 { return String(localized: "recap.growth.empty") }
         switch trend {
         case .improving:
-            return "Your mood has been trending upward. You're building positive momentum — keep going!"
+            return String(localized: "recap.growth.improving")
         case .declining:
-            return "It's been a tough stretch. Remember that acknowledging difficult feelings is a sign of emotional intelligence, not weakness."
+            return String(localized: "recap.growth.declining")
         case .stable:
             if let avg = avgMood, avg >= 3.5 {
-                return "You've maintained a consistently positive outlook. What's working well for you?"
+                return String(localized: "recap.growth.stablePositive")
             }
-            return "Consistency is powerful. Even on neutral days, showing up for yourself through journaling matters."
+            return String(localized: "recap.growth.stableNeutral")
         case .insufficient:
-            return "Write a few more entries this week and I'll start showing you personalized patterns."
+            return String(localized: "recap.growth.insufficient")
         }
     }
 
     private static func generateActionItem(topThemes: [String], trend: MoodTrend, challenges: [String]) -> String {
         if trend == .declining && !challenges.isEmpty {
-            return "This week, try the CBT Three-Column template when difficult thoughts come up. It can help shift perspective."
+            return String(localized: "recap.action.declining")
         }
         if topThemes.contains("work") {
-            return "Work has been a major theme. Consider setting one work boundary this week."
+            return String(localized: "recap.action.work")
         }
         if topThemes.contains("self-doubt") {
-            return "Self-doubt appeared in your entries. Try listing 3 recent accomplishments, no matter how small."
+            return String(localized: "recap.action.selfDoubt")
         }
-        return "Keep your journaling streak going! Consistency builds self-awareness."
+        return String(localized: "recap.action.default")
     }
 
     /// Format recap as exportable text (for therapist sharing).

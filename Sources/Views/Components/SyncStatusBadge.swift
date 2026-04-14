@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SyncStatusBadge: View {
-    @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = true
+    @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = false
 
     var body: some View {
         HStack(spacing: 4) {
@@ -15,6 +15,6 @@ struct SyncStatusBadge: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .help(iCloudSyncEnabled ? "iCloud Sync enabled" : "iCloud Sync disabled")
+        .help(iCloudSyncEnabled ? String(localized: "sync.status.enabled") : String(localized: "sync.status.disabled"))
     }
 }

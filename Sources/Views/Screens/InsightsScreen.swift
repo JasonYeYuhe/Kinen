@@ -228,6 +228,17 @@ struct InsightsScreen: View {
             }
             .font(.caption)
             .foregroundStyle(.secondary)
+
+            if let bestDay = mostProductiveDay {
+                HStack(spacing: 6) {
+                    Image(systemName: "star.fill")
+                        .foregroundStyle(.yellow)
+                        .font(.caption2)
+                    Text(String(format: String(localized: "insights.bestDay"), bestDay))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
         .padding()
         .background(.ultraThinMaterial)
@@ -483,6 +494,15 @@ struct InsightsScreen: View {
     private var averageWordsPerEntry: Int {
         guard !entries.isEmpty else { return 0 }
         return entries.reduce(0) { $0 + $1.wordCount } / entries.count
+    }
+
+    private var mostProductiveDay: String? {
+        guard entries.count >= 7 else { return nil }
+        let calendar = Calendar.current
+        let dayCounts = Dictionary(grouping: entries) { calendar.component(.weekday, from: $0.createdAt) }
+            .mapValues { $0.count }
+        guard let best = dayCounts.max(by: { $0.value < $1.value }) else { return nil }
+        return calendar.weekdaySymbols[best.key - 1]
     }
 
     // MARK: - Helpers

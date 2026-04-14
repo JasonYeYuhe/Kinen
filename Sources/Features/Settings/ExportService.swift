@@ -86,6 +86,9 @@ struct ExportService {
             md += "tags: [\(entry.safeTags.map { $0.name }.joined(separator: ", "))]\n"
         }
         md += "words: \(entry.wordCount)\n"
+        if entry.isPinned {
+            md += "pinned: true\n"
+        }
         md += "---\n\n"
 
         // Title
@@ -138,6 +141,7 @@ private struct ExportableEntry: Codable {
     let moodValue: Int?
     let sentimentScore: Double?
     let wordCount: Int
+    let isPinned: Bool
     let tags: [String]
     let insights: [ExportableInsight]
 
@@ -151,6 +155,7 @@ private struct ExportableEntry: Codable {
         self.moodValue = entry.mood?.rawValue
         self.sentimentScore = entry.sentimentScore
         self.wordCount = entry.wordCount
+        self.isPinned = entry.isPinned
         self.tags = entry.safeTags.map { $0.name }
         self.insights = entry.safeInsights.map { ExportableInsight(type: $0.type.rawValue, content: $0.content) }
     }

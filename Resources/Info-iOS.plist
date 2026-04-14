@@ -45,9 +45,13 @@
 	<string>Kinen lets you add photos to your journal entries.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Kinen reads sleep, steps, and heart rate to correlate with your mood. All data stays on your device.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Kinen may save mood data to Apple Health so you can view it alongside other health metrics. All data stays on your device.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Kinen can tag your journal entries with your location. Location data stays on your device.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright 2026 Jason Ye. All rights reserved.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

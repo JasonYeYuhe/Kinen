@@ -35,14 +35,14 @@ struct SemanticSearch {
         // Time-scoped questions
         let filteredEntries: [JournalEntry]
         if lowered.contains("this week") || lowered.contains("本周") {
-            let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+            let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
             filteredEntries = entries.filter { $0.createdAt >= weekAgo }
         } else if lowered.contains("this month") || lowered.contains("本月") || lowered.contains("这个月") {
-            let monthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date())!
+            let monthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
             filteredEntries = entries.filter { $0.createdAt >= monthAgo }
         } else if lowered.contains("last month") || lowered.contains("上个月") {
-            let twoMonthsAgo = Calendar.current.date(byAdding: .month, value: -2, to: Date())!
-            let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date())!
+            let twoMonthsAgo = Calendar.current.date(byAdding: .month, value: -2, to: Date()) ?? Date()
+            let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
             filteredEntries = entries.filter { $0.createdAt >= twoMonthsAgo && $0.createdAt < oneMonthAgo }
         } else {
             filteredEntries = entries
@@ -141,7 +141,9 @@ struct SemanticSearch {
         guard !withMood.isEmpty else { return nil }
 
         let sorted = withMood.sorted {
-            best ? ($0.mood!.rawValue > $1.mood!.rawValue) : ($0.mood!.rawValue < $1.mood!.rawValue)
+            let lhs = $0.mood?.rawValue ?? 0
+            let rhs = $1.mood?.rawValue ?? 0
+            return best ? (lhs > rhs) : (lhs < rhs)
         }
         guard let top = sorted.first else { return nil }
 

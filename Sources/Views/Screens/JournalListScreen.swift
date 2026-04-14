@@ -18,6 +18,7 @@ struct JournalListScreen: View {
     @State private var showJournalManagement = false
     @State private var isInitialLoad = true
     @State private var sortOption: SortOption = .dateDesc
+    @State private var pinLimitToast: String?
 
     enum SortOption: String, CaseIterable {
         case dateDesc, dateAsc, moodDesc, wordCountDesc
@@ -141,6 +142,26 @@ struct JournalListScreen: View {
                         .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
                 }
 
+                // Pinned entries section
+                if !pinnedEntries.isEmpty {
+                    Section(header: Label(String(localized: "journal.pinned"), systemImage: "pin.fill")) {
+                        ForEach(pinnedEntries) { entry in
+                            NavigationLink(value: entry) {
+                                EntryRow(entry: entry, highlightText: searchText)
+                            }
+                            .tag(entry)
+                            .swipeActions(edge: .leading) {
+                                Button {
+                                    withAnimation { entry.isPinned = false }
+                                } label: {
+                                    Label(String(localized: "journal.unpin"), systemImage: "pin.slash")
+                                }
+                                .tint(.gray)
+                            }
+                        }
+                    }
+                }
+
                 ForEach(groupedByDate, id: \.key) { date, dayEntries in
                     Section(header: Text(date, style: .date)) {
                         ForEach(dayEntries) { entry in
@@ -148,6 +169,27 @@ struct JournalListScreen: View {
                                 EntryRow(entry: entry, highlightText: searchText)
                             }
                             .tag(entry)
+                            .swipeActions(edge: .leading) {
+                                Button {
+                                    togglePin(entry)
+                                } label: {
+                                    Label(
+                                        entry.isPinned ? String(localized: "journal.unpin") : String(localized: "journal.pin"),
+                                        systemImage: entry.isPinned ? "pin.slash" : "pin"
+                                    )
+                                }
+                                .tint(.orange)
+                            }
+                            .contextMenu {
+                                Button {
+                                    togglePin(entry)
+                                } label: {
+                                    Label(
+                                        entry.isPinned ? String(localized: "journal.unpin") : String(localized: "journal.pin"),
+                                        systemImage: entry.isPinned ? "pin.slash" : "pin"
+                                    )
+                                }
+                            }
                         }
                         .onDelete { offsets in
                             deleteEntries(dayEntries: dayEntries, at: offsets)
@@ -157,6 +199,12 @@ struct JournalListScreen: View {
             }
         }
         .searchable(text: $searchText, prompt: String(localized: "journal.search"))
+        #if os(iOS)
+        .refreshable {
+            WidgetDataProvider.syncAndReload(from: modelContext)
+            HapticManager.notification(.success)
+        }
+        #endif
         .navigationTitle(String(localized: "journal.title"))
         .onAppear { isInitialLoad = false }
         .toolbar {
@@ -166,6 +214,15 @@ struct JournalListScreen: View {
                 }
                 .keyboardShortcut("n", modifiers: .command)
             }
+            #if os(macOS)
+            ToolbarItem {
+                Button {
+                    WidgetDataProvider.syncAndReload(from: modelContext)
+                } label: {
+                    Label(String(localized: "journal.refresh"), systemImage: "arrow.clockwise")
+                }
+            }
+            #endif
             ToolbarItem {
                 Menu {
                     ForEach(SortOption.allCases, id: \.self) { option in
@@ -205,14 +262,41 @@ struct JournalListScreen: View {
                 }
             }
         }
+        .toast($pinLimitToast, style: .info)
+    }
+
+    private var pinnedEntries: [JournalEntry] {
+        filteredEntries.filter { $0.isPinned }
+    }
+
+    private var unpinnedEntries: [JournalEntry] {
+        filteredEntries.filter { !$0.isPinned }
     }
 
     private var groupedByDate: [(key: Date, value: [JournalEntry])] {
         let calendar = Calendar.current
-        let grouped = Dictionary(grouping: filteredEntries) { entry in
+        let grouped = Dictionary(grouping: unpinnedEntries) { entry in
             calendar.startOfDay(for: entry.createdAt)
         }
         return grouped.sorted { $0.key > $1.key }
+    }
+
+    private func togglePin(_ entry: JournalEntry) {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            if entry.isPinned {
+                entry.isPinned = false
+            } else {
+                // Max 3 pinned entries
+                let currentPinned = entries.filter { $0.isPinned }.count
+                if currentPinned < 3 {
+                    entry.isPinned = true
+                } else {
+                    // Show toast message if pin limit is reached
+                    pinLimitToast = String(localized: "journal.pin.limitReached")
+                }
+            }
+        }
+        HapticManager.selection()
     }
 
     private func journalFilterChip(_ journal: Journal?, label: String) -> some View {

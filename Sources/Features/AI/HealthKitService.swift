@@ -128,7 +128,7 @@ final class HealthKitService {
 
     private func fetchSleep() async -> TimeInterval? {
         let type = HKCategoryType(.sleepAnalysis)
-        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Calendar.current.startOfDay(for: Date()))!
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Calendar.current.startOfDay(for: Date())) ?? Date()
         let predicate = HKQuery.predicateForSamples(withStart: yesterday, end: Date())
 
         do {

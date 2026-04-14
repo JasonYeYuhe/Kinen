@@ -121,5 +121,31 @@ final class ReminderService {
         center.add(request)
     }
 
+    /// Schedule an On This Day notification if entries exist from exactly 1 year ago.
+    func scheduleOnThisDayIfNeeded(entries: [Any], preview: String) {
+        guard UserDefaults.standard.bool(forKey: "onThisDayEnabled") else { return }
+        let center = UNUserNotificationCenter.current()
+        let id = "com.jasonye.kinen.onthisday"
+        center.removePendingNotificationRequests(withIdentifiers: [id])
+
+        guard !preview.isEmpty else { return }
+
+        let content = UNMutableNotificationContent()
+        content.title = String(localized: "onThisDay.notification.title")
+        content.body = String(format: String(localized: "onThisDay.notification.body"), String(preview.prefix(100)))
+        content.sound = .default
+
+        // Schedule for 9 AM tomorrow
+        var dateComponents = DateComponents()
+        dateComponents.hour = 9
+        dateComponents.minute = 0
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+        center.add(request) { [logger] error in
+            if let error { logger.error("On This Day notification failed: \(error)") }
+            else { logger.info("On This Day notification scheduled") }
+        }
+    }
+
     private init() {}
 }
