@@ -57,6 +57,11 @@ struct ContentView: View {
                 .tag(AppTab.recap)
             Label(String(localized: "tab.calendar"), systemImage: "calendar")
                 .tag(AppTab.calendar)
+
+            Divider()
+
+            Label(String(localized: "tab.settings"), systemImage: "gearshape")
+                .tag(AppTab.settings)
         }
         .listStyle(.sidebar)
         .frame(minWidth: 180)

@@ -21,7 +21,7 @@ struct SettingsView: View {
     @State private var showJournalManagement = false
     @State private var exportFormat: ExportService.ExportFormat = .markdown
     @State private var exportMessage: String?
-    @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = true
+    @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = false
     @State private var backupPassword = ""
     @State private var backupMessage: String?
     @State private var showBackupPassword = false
@@ -57,6 +57,9 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                Text(String(localized: "settings.icloud.note"))
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
             }
 
             Section(String(localized: "settings.ai")) {

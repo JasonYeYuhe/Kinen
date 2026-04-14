@@ -3,6 +3,7 @@ import SwiftUI
 /// Reusable Pro feature gate. Shows locked overlay with upgrade prompt.
 struct ProGate<Content: View>: View {
     let feature: String
+    var description: String? = nil
     @ViewBuilder let content: () -> Content
     @State private var showPaywall = false
 
@@ -19,6 +20,13 @@ struct ProGate<Content: View>: View {
                 Text(String(format: String(localized: "pro.requires"), feature))
                     .font(.subheadline)
                     .fontWeight(.medium)
+                if let description {
+                    Text(description)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 16)
+                }
                 Button(String(localized: "pro.unlock.button")) { showPaywall = true }
                     .buttonStyle(.borderedProminent)
                     .tint(.purple)

@@ -24,7 +24,7 @@ struct RecapScreen: View {
     }
 
     var body: some View {
-        ProGate(feature: String(localized: "recap.proFeature")) {
+        ProGate(feature: String(localized: "recap.proFeature"), description: String(localized: "recap.proFeature.desc")) {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {

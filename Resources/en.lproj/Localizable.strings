@@ -136,6 +136,7 @@
 "recap.empty" = "Write some entries to see your recap";
 "recap.empty.title" = "No Entries";
 "recap.proFeature" = "Weekly & Monthly Recaps";
+"recap.proFeature.desc" = "Get AI-powered weekly and monthly summaries of your journaling journey, mood trends, and growth insights.";
 "recap.mood" = "Mood";
 "recap.average" = "Average: %@";
 "recap.topFeelings" = "Top feelings:";
@@ -180,6 +181,7 @@
 "settings.icloud.connected" = "Connected to iCloud";
 "settings.icloud.syncing" = "%d entries syncing";
 "settings.icloud.disabled" = "Your entries are stored locally only. Enable sync to access them across your devices.";
+"settings.icloud.note" = "AI analysis runs 100% on your device. iCloud sync is optional and only syncs the data you choose.";
 "settings.ai" = "AI Analysis";
 "settings.ai.sentiment" = "Auto-analyze sentiment";
 "settings.ai.tags" = "Auto-suggest tags";
@@ -232,6 +234,10 @@
 "onboarding.ai" = "AI That Understands You";
 "onboarding.ai.subtitle" = "On-device intelligence";
 "onboarding.ai.description" = "Mood analysis, pattern discovery, and CBT-based reflections — all powered by on-device AI.\nNo internet required. No API calls.";
+"onboarding.sync" = "iCloud Sync";
+"onboarding.sync.description" = "iCloud Sync is completely optional. Your entries are always stored locally first. Enable sync to access them across your Apple devices.";
+"onboarding.sync.toggle" = "Enable iCloud Sync";
+"onboarding.sync.note" = "AI analysis always runs 100% on your device. iCloud only syncs the data you choose.";
 "onboarding.disclaimer" = "Important Note";
 "onboarding.disclaimer.text" = "Kinen is a self-reflection and journaling tool.\n\nIt is not a substitute for professional mental health care, therapy, or crisis intervention.\n\nIf you're experiencing a mental health crisis, please reach out to a professional or call your local crisis line.";
 "onboarding.start" = "I Understand — Start Journaling";
@@ -421,3 +427,10 @@
 "general.day" = "day";
 "general.entries" = "entries";
 "general.words" = "words";
+
+/* Sort */
+"sort.title" = "Sort";
+"sort.dateDesc" = "Newest First";
+"sort.dateAsc" = "Oldest First";
+"sort.moodDesc" = "Best Mood First";
+"sort.wordCountDesc" = "Longest First";

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OnboardingView: View {
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = false
     @State private var currentPage = 0
 
     var body: some View {
@@ -9,7 +10,8 @@ struct OnboardingView: View {
             welcomePage.tag(0)
             privacyPage.tag(1)
             aiPage.tag(2)
-            disclaimerPage.tag(3)
+            syncPage.tag(3)
+            disclaimerPage.tag(4)
         }
         .tabViewStyle(.automatic)
         #if os(macOS)
@@ -55,6 +57,49 @@ struct OnboardingView: View {
             buttonTitle: String(localized: "general.next"),
             action: { withAnimation { currentPage = 3 } }
         )
+    }
+
+    private var syncPage: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            Image(systemName: "icloud.fill")
+                .font(.system(size: 48))
+                .foregroundStyle(.cyan)
+
+            Text(String(localized: "onboarding.sync"))
+                .font(.title)
+                .fontWeight(.bold)
+
+            Text(String(localized: "onboarding.sync.description"))
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 24)
+
+            Toggle(String(localized: "onboarding.sync.toggle"), isOn: $iCloudSyncEnabled)
+                .padding(.horizontal, 32)
+
+            Text(String(localized: "onboarding.sync.note"))
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+
+            Spacer()
+
+            Button(action: { withAnimation { currentPage = 4 } }) {
+                Text(String(localized: "general.next"))
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.purple)
+            .padding(.horizontal, 32)
+
+            Spacer().frame(height: 20)
+        }
     }
 
     private var disclaimerPage: some View {

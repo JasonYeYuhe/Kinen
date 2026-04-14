@@ -17,6 +17,29 @@ struct JournalListScreen: View {
     @Query(sort: \Journal.createdAt) private var journals: [Journal]
     @State private var showJournalManagement = false
     @State private var isInitialLoad = true
+    @State private var sortOption: SortOption = .dateDesc
+
+    enum SortOption: String, CaseIterable {
+        case dateDesc, dateAsc, moodDesc, wordCountDesc
+
+        var label: String {
+            switch self {
+            case .dateDesc: String(localized: "sort.dateDesc")
+            case .dateAsc: String(localized: "sort.dateAsc")
+            case .moodDesc: String(localized: "sort.moodDesc")
+            case .wordCountDesc: String(localized: "sort.wordCountDesc")
+            }
+        }
+
+        var icon: String {
+            switch self {
+            case .dateDesc: "arrow.down.circle"
+            case .dateAsc: "arrow.up.circle"
+            case .moodDesc: "face.smiling"
+            case .wordCountDesc: "text.word.spacing"
+            }
+        }
+    }
 
     private var filteredEntries: [JournalEntry] {
         var result = entries
@@ -57,6 +80,18 @@ struct JournalListScreen: View {
         // Journal filter
         if let journal = selectedJournal {
             result = result.filter { $0.journal?.id == journal.id }
+        }
+
+        // Sort
+        switch sortOption {
+        case .dateDesc:
+            result.sort { $0.createdAt > $1.createdAt }
+        case .dateAsc:
+            result.sort { $0.createdAt < $1.createdAt }
+        case .moodDesc:
+            result.sort { ($0.mood?.rawValue ?? 0) > ($1.mood?.rawValue ?? 0) }
+        case .wordCountDesc:
+            result.sort { $0.wordCount > $1.wordCount }
         }
 
         return result
@@ -130,6 +165,19 @@ struct JournalListScreen: View {
                     Label(String(localized: "journal.new"), systemImage: "square.and.pencil")
                 }
                 .keyboardShortcut("n", modifiers: .command)
+            }
+            ToolbarItem {
+                Menu {
+                    ForEach(SortOption.allCases, id: \.self) { option in
+                        Button {
+                            sortOption = option
+                        } label: {
+                            Label(option.label, systemImage: option.icon)
+                        }
+                    }
+                } label: {
+                    Label(String(localized: "sort.title"), systemImage: "arrow.up.arrow.down")
+                }
             }
         }
         .sheet(isPresented: $showingEditor) {
