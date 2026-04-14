@@ -158,6 +158,8 @@
 "calendar.entriesYear" = "%d entries this year";
 "calendar.less" = "Less";
 "calendar.more" = "More";
+"calendar.empty.title" = "No Entries Yet";
+"calendar.empty.description" = "Your calendar will fill with mood colors as you journal.";
 "calendar.previousMonth" = "Previous month";
 "calendar.nextMonth" = "Next month";
 "calendar.previousYear" = "Previous year";

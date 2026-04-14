@@ -16,6 +16,7 @@ struct JournalListScreen: View {
     @State private var selectedJournal: Journal?
     @Query(sort: \Journal.createdAt) private var journals: [Journal]
     @State private var showJournalManagement = false
+    @State private var isInitialLoad = true
 
     private var filteredEntries: [JournalEntry] {
         var result = entries
@@ -121,7 +122,8 @@ struct JournalListScreen: View {
             }
         }
         .searchable(text: $searchText, prompt: String(localized: "journal.search"))
-        .navigationTitle("Journal (\(filteredEntries.count))")
+        .navigationTitle(String(localized: "journal.title"))
+        .onAppear { isInitialLoad = false }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(action: { showingEditor = true }) {
@@ -140,7 +142,10 @@ struct JournalListScreen: View {
             EntryDetailScreen(entry: entry)
         }
         .overlay {
-            if entries.isEmpty {
+            if isInitialLoad {
+                ProgressView()
+                    .controlSize(.large)
+            } else if entries.isEmpty {
                 ContentUnavailableView {
                     Label(String(localized: "journal.empty.title"), systemImage: "book.closed")
                 } description: {

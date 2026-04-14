@@ -9,6 +9,7 @@ private let logger = Logger(subsystem: "com.jasonye.kinen", category: "VoiceReco
 /// All processing happens on-device.
 struct VoiceRecorderButton: View {
     @Binding var transcribedText: String
+    var onError: ((String) -> Void)?
     @StateObject private var recorder = SpeechRecorder()
 
     var body: some View {
@@ -28,6 +29,9 @@ struct VoiceRecorderButton: View {
         .buttonStyle(.borderless)
         .help(recorder.isRecording ? "Stop recording" : "Start voice input")
         .accessibilityLabel(recorder.isRecording ? "Stop recording" : "Start voice input")
+        .onChange(of: recorder.errorMessage) { _, msg in
+            if let msg { onError?(msg) }
+        }
         .alert("Microphone Access Required", isPresented: $recorder.showPermissionAlert) {
             Button("Open Settings") {
                 #if os(macOS)
@@ -48,6 +52,7 @@ final class SpeechRecorder: ObservableObject {
     @Published var isRecording = false
     @Published var transcript = ""
     @Published var showPermissionAlert = false
+    @Published var errorMessage: String?
 
     private var audioEngine: AVAudioEngine?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -72,6 +77,7 @@ final class SpeechRecorder: ObservableObject {
         let speechRecognizer = SFSpeechRecognizer()
         guard let speechRecognizer, speechRecognizer.isAvailable else {
             logger.error("Speech recognizer not available")
+            errorMessage = "Speech recognition is not available on this device."
             return
         }
 
@@ -111,6 +117,7 @@ final class SpeechRecorder: ObservableObject {
             logger.info("Recording started (on-device)")
         } catch {
             logger.error("Failed to start audio engine: \(error)")
+            errorMessage = error.localizedDescription
             cleanupRecording()
         }
     }

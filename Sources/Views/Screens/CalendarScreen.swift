@@ -43,6 +43,15 @@ struct CalendarScreen: View {
                 .padding()
             }
             .navigationTitle(String(localized: "calendar.title"))
+            .overlay {
+                if entries.isEmpty {
+                    ContentUnavailableView {
+                        Label(String(localized: "calendar.empty.title"), systemImage: "calendar")
+                    } description: {
+                        Text(String(localized: "calendar.empty.description"))
+                    }
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     NavigationLink(destination: MapScreen()) {
@@ -247,6 +256,8 @@ struct CalendarScreen: View {
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .padding(.horizontal)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(String(format: String(localized: "calendar.entriesYear"), yearEntryCount))
     }
 
     private struct HeatmapCell {

@@ -26,9 +26,12 @@ struct ProGate<Content: View>: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(.ultraThinMaterial)
-                .sheet(isPresented: $showPaywall) {
-                    ProPaywallView()
-                }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(format: String(localized: "pro.requires"), feature))
+            .accessibilityHint(String(localized: "pro.unlock.button"))
+            .sheet(isPresented: $showPaywall) {
+                ProPaywallView()
+            }
         }
     }
 }

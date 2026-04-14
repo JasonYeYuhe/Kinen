@@ -158,6 +158,8 @@
 "calendar.entriesYear" = "今年 %d 篇日记";
 "calendar.less" = "少";
 "calendar.more" = "多";
+"calendar.empty.title" = "暂无日记";
+"calendar.empty.description" = "开始写日记后，日历会用情绪颜色填充。";
 "calendar.previousMonth" = "上个月";
 "calendar.nextMonth" = "下个月";
 "calendar.previousYear" = "上一年";

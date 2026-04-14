@@ -27,6 +27,7 @@ struct EntryEditorSheet: View {
     @Query(sort: \Journal.createdAt) private var journals: [Journal]
     @State private var crisisAlert: CrisisDetector.CrisisAlert?
     @State private var showCrisisAlert = false
+    @State private var toastMessage: String?
     @State private var writingStartTime: Date?
     @State private var elapsedTime: TimeInterval = 0
     @State private var timer: Timer?
@@ -209,6 +210,7 @@ struct EntryEditorSheet: View {
             }
             .onChange(of: mood) { generateNewPrompt() }
             .onDisappear { stopTimer() }
+            .toast($toastMessage)
             .overlay {
                 if showCrisisAlert, let alert = crisisAlert {
                     Color.black.opacity(0.4)
@@ -318,7 +320,9 @@ struct EntryEditorSheet: View {
 
             Spacer()
 
-            VoiceRecorderButton(transcribedText: $content)
+            VoiceRecorderButton(transcribedText: $content) { error in
+                toastMessage = error
+            }
         }
     }
 

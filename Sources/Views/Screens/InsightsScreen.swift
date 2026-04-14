@@ -6,6 +6,7 @@ struct InsightsScreen: View {
     @Query(sort: \JournalEntry.createdAt, order: .reverse) private var entries: [JournalEntry]
     @State private var chartRange: ChartRange = .week
     @State private var appeared = false
+    @State private var isInitialLoad = true
     @AppStorage("enableHealthKit") private var enableHealthKit = false
     @State private var healthKit = HealthKitService.shared
 
@@ -66,7 +67,11 @@ struct InsightsScreen: View {
                 .padding()
             }
             .navigationTitle(String(localized: "insights.title"))
-            .onAppear { withAnimation(.easeOut(duration: 0.4)) { appeared = true } }
+            .overlay { if isInitialLoad { ProgressView().controlSize(.large) } }
+            .onAppear {
+                isInitialLoad = false
+                withAnimation(.easeOut(duration: 0.4)) { appeared = true }
+            }
         }
     }
 
@@ -165,6 +170,8 @@ struct InsightsScreen: View {
         .padding()
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(String(localized: "insights.moodTrend"))
     }
 
     // MARK: - Sentiment Trend
@@ -194,6 +201,8 @@ struct InsightsScreen: View {
         .padding()
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(String(localized: "insights.sentiment"))
     }
 
     // MARK: - Writing Activity Heatmap
@@ -223,6 +232,8 @@ struct InsightsScreen: View {
         .padding()
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(String(localized: "insights.activity"))
     }
 
     // MARK: - Weekly Stats
@@ -246,6 +257,8 @@ struct InsightsScreen: View {
         .padding()
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(String(localized: "insights.thisWeek"))
     }
 
     // MARK: - Top Tags
@@ -283,6 +296,8 @@ struct InsightsScreen: View {
         .padding()
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(String(localized: "insights.topTopics"))
     }
 
     // MARK: - Health Data Card
@@ -346,6 +361,8 @@ struct InsightsScreen: View {
         .padding()
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(String(localized: "insights.health"))
         .task { await healthKit.fetchTodayData() }
     }
 
@@ -385,6 +402,8 @@ struct InsightsScreen: View {
             .padding()
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 16))
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "insights.smart"))
         }
     }
 
