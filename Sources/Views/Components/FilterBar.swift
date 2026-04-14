@@ -21,7 +21,7 @@ struct FilterBar: View {
                 // Clear all
                 if isActive {
                     Button(action: clearAll) {
-                        Label("Clear", systemImage: "xmark.circle.fill")
+                        Label(String(localized: "filter.clear"), systemImage: "xmark.circle.fill")
                             .font(.caption)
                     }
                     .buttonStyle(.bordered)

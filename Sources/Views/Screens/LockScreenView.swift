@@ -21,7 +21,7 @@ struct LockScreenView: View {
             Button(action: {
                 Task { await appLock.unlock() }
             }) {
-                Label("Unlock with \(appLock.biometricType.name)", systemImage: appLock.biometricType.icon)
+                Label(String(format: String(localized: "lock.unlock"), appLock.biometricType.name), systemImage: appLock.biometricType.icon)
                     .fontWeight(.semibold)
                     .frame(maxWidth: 240)
                     .padding(.vertical, 12)

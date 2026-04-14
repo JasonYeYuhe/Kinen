@@ -44,7 +44,7 @@ struct CrisisDetector {
             if lowered.contains(pattern) {
                 return CrisisAlert(
                     severity: .high,
-                    message: "It sounds like you might be going through something really difficult. You don't have to face this alone.",
+                    message: String(localized: "crisis.message.high"),
                     resources: crisisResources
                 )
             }
@@ -61,7 +61,7 @@ struct CrisisDetector {
         if moderateCount >= 2 {
             return CrisisAlert(
                 severity: .moderate,
-                message: "I notice some difficult feelings in your writing. Remember, it's okay to ask for support.",
+                message: String(localized: "crisis.message.moderate"),
                 resources: crisisResources
             )
         }
@@ -184,7 +184,7 @@ struct CrisisAlertView: View {
                 .font(.system(size: 40))
                 .foregroundStyle(.red)
 
-            Text("You Matter")
+            Text(String(localized: "crisis.title"))
                 .font(.title2)
                 .fontWeight(.bold)
 
@@ -196,7 +196,7 @@ struct CrisisAlertView: View {
             Divider()
 
             VStack(alignment: .leading, spacing: 12) {
-                Text("Reach out for support:")
+                Text(String(localized: "crisis.support"))
                     .font(.subheadline)
                     .fontWeight(.semibold)
 
@@ -227,12 +227,12 @@ struct CrisisAlertView: View {
 
             Divider()
 
-            Text("Kinen is a self-reflection tool, not a substitute for professional mental health care.")
+            Text(String(localized: "crisis.disclaimer"))
                 .font(.caption)
                 .foregroundStyle(.tertiary)
                 .multilineTextAlignment(.center)
 
-            Button("I Understand") {
+            Button(String(localized: "crisis.understand")) {
                 onDismiss()
             }
             .buttonStyle(.borderedProminent)

@@ -24,7 +24,7 @@ struct RecapScreen: View {
     }
 
     var body: some View {
-        ProGate(feature: "Weekly & Monthly Recaps") {
+        ProGate(feature: String(localized: "recap.proFeature")) {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
@@ -39,7 +39,7 @@ struct RecapScreen: View {
 
                     if recap.entryCount == 0 {
                         ContentUnavailableView {
-                            Label("No Entries", systemImage: "doc.text")
+                            Label(String(localized: "recap.empty.title"), systemImage: "doc.text")
                         } description: {
                             Text(String(localized: "recap.empty"))
                         }
@@ -55,7 +55,7 @@ struct RecapScreen: View {
                 }
                 .padding()
             }
-            .navigationTitle("Recap")
+            .navigationTitle(String(localized: "recap.title"))
         }
         } // ProGate
     }

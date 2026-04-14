@@ -42,7 +42,7 @@ struct CalendarScreen: View {
                 }
                 .padding()
             }
-            .navigationTitle("Calendar")
+            .navigationTitle(String(localized: "calendar.title"))
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     NavigationLink(destination: MapScreen()) {
@@ -63,7 +63,7 @@ struct CalendarScreen: View {
                     Image(systemName: "chevron.left")
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel("Previous month")
+                .accessibilityLabel(String(localized: "calendar.previousMonth"))
 
                 Text(displayedMonth, format: .dateTime.year().month(.wide))
                     .font(.headline)
@@ -73,7 +73,7 @@ struct CalendarScreen: View {
                     Image(systemName: "chevron.right")
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel("Next month")
+                .accessibilityLabel(String(localized: "calendar.nextMonth"))
             }
 
             // Weekday headers
@@ -145,8 +145,10 @@ struct CalendarScreen: View {
     // MARK: - Helpers
 
     private func daysInMonth() -> [Date?] {
-        let range = calendar.range(of: .day, in: .month, for: displayedMonth)!
-        let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: displayedMonth))!
+        guard let range = calendar.range(of: .day, in: .month, for: displayedMonth),
+              let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: displayedMonth)) else {
+            return []
+        }
         let weekdayOfFirst = calendar.component(.weekday, from: firstDay) - calendar.firstWeekday
         let offset = (weekdayOfFirst + 7) % 7
 
@@ -185,7 +187,7 @@ struct CalendarScreen: View {
                     Image(systemName: "chevron.left")
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel("Previous year")
+                .accessibilityLabel(String(localized: "calendar.previousYear"))
 
                 Text(displayedMonth, format: .dateTime.year())
                     .font(.headline)
@@ -197,7 +199,7 @@ struct CalendarScreen: View {
                     Image(systemName: "chevron.right")
                 }
                 .buttonStyle(.borderless)
-                .accessibilityLabel("Next year")
+                .accessibilityLabel(String(localized: "calendar.nextYear"))
             }
 
             // Month labels
@@ -258,7 +260,7 @@ struct CalendarScreen: View {
 
         for month in 1...12 {
             let daysInMonth = calendar.range(of: .day, in: .month,
-                for: calendar.date(from: DateComponents(year: year, month: month))!)?.count ?? 30
+                for: calendar.date(from: DateComponents(year: year, month: month)) ?? Date())?.count ?? 30
 
             for day in 1...31 {
                 if day > daysInMonth {

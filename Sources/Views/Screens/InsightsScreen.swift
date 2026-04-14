@@ -65,7 +65,7 @@ struct InsightsScreen: View {
                 }
                 .padding()
             }
-            .navigationTitle("Insights")
+            .navigationTitle(String(localized: "insights.title"))
             .onAppear { withAnimation(.easeOut(duration: 0.4)) { appeared = true } }
         }
     }
@@ -111,7 +111,7 @@ struct InsightsScreen: View {
                 Text(String(localized: "insights.moodTrend"))
                     .font(.headline)
                 Spacer()
-                Picker("Range", selection: $chartRange) {
+                Picker(String(localized: "insights.range"), selection: $chartRange) {
                     ForEach(ChartRange.allCases) { range in
                         Text(range.label).tag(range)
                     }
@@ -431,7 +431,7 @@ struct InsightsScreen: View {
         let cutoff = Date.daysAgo(chartRange.days)
         return entries
             .filter { $0.createdAt >= cutoff && $0.sentimentScore != nil }
-            .map { ChartPoint(date: $0.createdAt, value: $0.sentimentScore!) }
+            .map { ChartPoint(date: $0.createdAt, value: $0.sentimentScore ?? 0) }
             .sorted { $0.date < $1.date }
     }
 
@@ -457,7 +457,7 @@ struct InsightsScreen: View {
     }
 
     private var totalWordsThisMonth: Int {
-        let startOfMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date()))!
+        let startOfMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date())) ?? Date()
         return entries.filter { $0.createdAt >= startOfMonth }.reduce(0) { $0 + $1.wordCount }
     }
 

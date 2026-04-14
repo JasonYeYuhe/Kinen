@@ -126,6 +126,7 @@
 "insights.time" = "时长";
 "insights.wordsMonth" = "本月 %d 字";
 "insights.avgPerEntry" = "平均 %d 字/篇";
+"insights.range" = "范围";
 
 /* Recap */
 "recap.title" = "回顾";
@@ -133,6 +134,8 @@
 "recap.thisWeek" = "本周";
 "recap.thisMonth" = "本月";
 "recap.empty" = "写几篇日记后就能看到你的回顾";
+"recap.empty.title" = "暂无日记";
+"recap.proFeature" = "周报与月报回顾";
 "recap.mood" = "情绪";
 "recap.average" = "平均：%@";
 "recap.topFeelings" = "主要感受：";
@@ -155,6 +158,18 @@
 "calendar.entriesYear" = "今年 %d 篇日记";
 "calendar.less" = "少";
 "calendar.more" = "多";
+"calendar.previousMonth" = "上个月";
+"calendar.nextMonth" = "下个月";
+"calendar.previousYear" = "上一年";
+"calendar.nextYear" = "下一年";
+
+/* Crisis */
+"crisis.title" = "你很重要";
+"crisis.support" = "寻求帮助：";
+"crisis.disclaimer" = "Kinen 是自我反思工具，不能替代专业心理健康服务。";
+"crisis.understand" = "我了解了";
+"crisis.message.high" = "你可能正在经历非常艰难的时刻。你不必独自面对。";
+"crisis.message.moderate" = "我注意到你的文字中有一些困难的情绪。请记得，寻求帮助是完全可以的。";
 
 /* Settings */
 "settings.title" = "设置";

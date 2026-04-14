@@ -126,6 +126,7 @@
 "insights.time" = "Time";
 "insights.wordsMonth" = "%d words this month";
 "insights.avgPerEntry" = "%d avg/entry";
+"insights.range" = "Range";
 
 /* Recap */
 "recap.title" = "Recap";
@@ -133,6 +134,8 @@
 "recap.thisWeek" = "This Week";
 "recap.thisMonth" = "This Month";
 "recap.empty" = "Write some entries to see your recap";
+"recap.empty.title" = "No Entries";
+"recap.proFeature" = "Weekly & Monthly Recaps";
 "recap.mood" = "Mood";
 "recap.average" = "Average: %@";
 "recap.topFeelings" = "Top feelings:";
@@ -155,6 +158,18 @@
 "calendar.entriesYear" = "%d entries this year";
 "calendar.less" = "Less";
 "calendar.more" = "More";
+"calendar.previousMonth" = "Previous month";
+"calendar.nextMonth" = "Next month";
+"calendar.previousYear" = "Previous year";
+"calendar.nextYear" = "Next year";
+
+/* Crisis */
+"crisis.title" = "You Matter";
+"crisis.support" = "Reach out for support:";
+"crisis.disclaimer" = "Kinen is a self-reflection tool, not a substitute for professional mental health care.";
+"crisis.understand" = "I Understand";
+"crisis.message.high" = "It sounds like you might be going through something really difficult. You don't have to face this alone.";
+"crisis.message.moderate" = "I notice some difficult feelings in your writing. Remember, it's okay to ask for support.";
 
 /* Settings */
 "settings.title" = "Settings";
