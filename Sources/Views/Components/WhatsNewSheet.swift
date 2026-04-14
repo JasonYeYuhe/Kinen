@@ -4,7 +4,7 @@ struct WhatsNewSheet: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("lastSeenVersion") private var lastSeenVersion = ""
 
-    static let currentVersion = "0.1.0"
+    static let currentVersion = "0.2.0"
 
     static var shouldShow: Bool {
         UserDefaults.standard.string(forKey: "lastSeenVersion") != currentVersion
