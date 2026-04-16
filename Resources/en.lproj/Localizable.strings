@@ -525,3 +525,10 @@
 "sort.dateAsc" = "Oldest First";
 "sort.moodDesc" = "Best Mood First";
 "sort.wordCountDesc" = "Longest First";
+
+/* Recap Periods */
+"recap.period.week" = "Week of %@";
+
+/* AI Insights */
+"ai.insight.topics" = "Main topics: %@";
+"insights.longestStreak" = "Best";
