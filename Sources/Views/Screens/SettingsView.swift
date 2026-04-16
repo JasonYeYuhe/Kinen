@@ -15,6 +15,7 @@ struct SettingsView: View {
     @AppStorage("enableLocationWeather") private var enableLocationWeather = false
     @AppStorage("enableHealthKit") private var enableHealthKit = false
     @AppStorage("dailyWordGoal") private var dailyWordGoal = 0
+    @AppStorage("onThisDayEnabled") private var onThisDayEnabled = false
     @State private var healthKit = HealthKitService.shared
     @State private var appLock = AppLockService.shared
     @State private var reminder = ReminderService.shared
@@ -158,10 +159,7 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                Toggle(String(localized: "settings.reminders.onThisDay"), isOn: Binding(
-                    get: { UserDefaults.standard.bool(forKey: "onThisDayEnabled") },
-                    set: { UserDefaults.standard.set($0, forKey: "onThisDayEnabled") }
-                ))
+                Toggle(String(localized: "settings.reminders.onThisDay"), isOn: $onThisDayEnabled)
                 Text(String(localized: "settings.reminders.onThisDay.desc"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
