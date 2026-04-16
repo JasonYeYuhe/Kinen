@@ -525,3 +525,10 @@
 "sort.dateAsc" = "最旧优先";
 "sort.moodDesc" = "最佳情绪优先";
 "sort.wordCountDesc" = "最长优先";
+
+/* Recap Periods */
+"recap.period.week" = "第 %@ 周";
+
+/* AI Insights */
+"ai.insight.topics" = "主要话题：%@";
+"insights.longestStreak" = "最佳";

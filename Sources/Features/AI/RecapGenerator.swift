@@ -50,7 +50,7 @@ struct RecapGenerator {
 
         return generateRecap(
             entries: weekEntries,
-            period: "Week of \(startOfWeek.formatted(.dateTime.month().day()))",
+            period: String(format: String(localized: "recap.period.week"), startOfWeek.formatted(.dateTime.month().day())),
             allEntries: entries
         )
     }

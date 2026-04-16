@@ -66,7 +66,7 @@ actor AIJournalingLoop {
         let topics = await SentimentAnalyzer.shared.extractTopics(content)
         if !topics.isEmpty {
             let topicList = topics.prefix(5).joined(separator: ", ")
-            let insight = EntryInsight(type: .topicExtraction, content: "Main topics: \(topicList)")
+            let insight = EntryInsight(type: .topicExtraction, content: String(format: String(localized: "ai.insight.topics"), topicList))
             entry.addInsight(insight)
         }
 

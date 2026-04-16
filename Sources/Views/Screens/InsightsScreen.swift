@@ -87,6 +87,11 @@ struct InsightsScreen: View {
                     .font(.system(size: 48, weight: .bold))
                 Text(currentStreak == 1 ? String(localized: "general.day") : String(localized: "general.days"))
                     .foregroundStyle(.secondary)
+                if longestStreak > 0 {
+                    Text(String(localized: "insights.longestStreak") + " \(longestStreak)")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
             }
 
             Spacer()
@@ -480,11 +485,14 @@ struct InsightsScreen: View {
         }
     }
 
-    private var currentStreak: Int {
+    private var streakInfo: StreakCalculator.StreakInfo {
         let calendar = Calendar.current
         let dates = Set(entries.map { calendar.startOfDay(for: $0.createdAt) })
-        return Date().startOfDay.consecutiveDays(in: dates)
+        return StreakCalculator.calculate(from: dates)
     }
+
+    private var currentStreak: Int { streakInfo.current }
+    private var longestStreak: Int { streakInfo.longest }
 
     private var totalWordsThisMonth: Int {
         let startOfMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date())) ?? Date()
