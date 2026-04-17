@@ -30,12 +30,12 @@ struct VoiceRecorderButton: View {
                 .symbolEffect(.pulse, isActive: recorder.isRecording)
         }
         .buttonStyle(.borderless)
-        .help(recorder.isRecording ? "Stop recording" : "Start voice input")
-        .accessibilityLabel(recorder.isRecording ? "Stop recording" : "Start voice input")
+        .help(recorder.isRecording ? String(localized: "voice.a11y.stop") : String(localized: "voice.a11y.start"))
+        .accessibilityLabel(recorder.isRecording ? String(localized: "voice.a11y.stop") : String(localized: "voice.a11y.start"))
         .onChange(of: recorder.errorMessage) { _, msg in
             if let msg { onError?(msg) }
         }
-        .alert("Microphone Access Required", isPresented: $recorder.showPermissionAlert) {
+        .alert(String(localized: "voice.permission.title"), isPresented: $recorder.showPermissionAlert) {
             Button("Open Settings") {
                 #if os(macOS)
                 NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone")!)
@@ -45,7 +45,7 @@ struct VoiceRecorderButton: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Kinen needs microphone access for voice journaling. All speech recognition happens on your device.")
+            Text(String(localized: "voice.permission.message"))
         }
     }
 }
