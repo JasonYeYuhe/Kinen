@@ -543,3 +543,62 @@
 /* AI Insights */
 "ai.insight.topics" = "主要话题：%@";
 "insights.longestStreak" = "最佳";
+
+/* Writing Prompts — PromptGenerator */
+"prompt.fallback" = "今天有什么在你脑海中萦绕？";
+"prompt.historical.yearAgo" = "一年前，你写过：「%@」。那时和现在有什么变化？";
+"prompt.historical.monthAgo" = "一个月前，你写过：「%@」。现在你有新的想法了吗？";
+
+/* Great mood prompts */
+"prompt.great.1" = "是什么让今天如此美好？把这种感觉记录下来，以后可以重温。";
+"prompt.great.2" = "今天谁让你感到快乐？你要怎么感谢他们？";
+"prompt.great.3" = "你会对未来的自己说些什么来描述这个时刻？";
+"prompt.great.4" = "是什么习惯或选择造就了这美好的一天？如何多做些这样的事？";
+
+/* Good mood prompts */
+"prompt.good.1" = "今天有什么进展顺利、你想记住的事？";
+"prompt.good.2" = "你对本周有什么期待？";
+"prompt.good.3" = "描述一下今天某个让你感到平静的时刻。";
+"prompt.good.4" = "今天有什么成就，无论大小？";
+
+/* Neutral mood prompts */
+"prompt.neutral.1" = "此刻你在想什么？有时平凡的日子最能揭示内心。";
+"prompt.neutral.2" = "如果今天有一件事可以改变，你会改变什么？";
+"prompt.neutral.3" = "有什么你一直在拖延的事，可以今天着手去做？";
+"prompt.neutral.4" = "描述一下你现在的周围环境，你注意到了什么？";
+
+/* Bad mood prompts */
+"prompt.bad.1" = "什么在困扰着你？把它写出来或许能减轻一些负担。";
+"prompt.bad.2" = "有什么你需要却没有开口要求的吗？现在什么能帮到你？";
+"prompt.bad.3" = "如果朋友有和你一样的感受，你会对他们说什么？";
+"prompt.bad.4" = "你能找到一件小事，让明天好过一点点吗？";
+
+/* Terrible mood prompts */
+"prompt.terrible.1" = "深呼吸。你还在，这已经很重要了。你现在需要什么？";
+"prompt.terrible.2" = "最艰难的日子有时教给我们最多。这一天想让你看见什么？";
+"prompt.terrible.3" = "把让你痛苦的事写出来。不需要解决它，只是让它流淌出来。";
+"prompt.terrible.4" = "列出三件即使在糟糕的一天里依然还好的事。";
+
+/* Gratitude prompts */
+"prompt.gratitude.1" = "有什么你一直感激却常常视而不见的事？";
+"prompt.gratitude.2" = "最近谁让你的生活好过了一点？";
+"prompt.gratitude.3" = "今天你享受了什么小小的乐趣？";
+"prompt.gratitude.4" = "你有什么值得感激的能力或技能？";
+
+/* Reflection prompts */
+"prompt.reflection.1" = "一年前你持有的某个看法，现在已经改变了吗？";
+"prompt.reflection.2" = "最近你学到的最重要的一课是什么？";
+"prompt.reflection.3" = "如果可以给六个月前的自己一个建议，你会说什么？";
+"prompt.reflection.4" = "你理想中的普通一天是什么样子的？";
+
+/* CBT prompts */
+"prompt.cbt.1" = "写下今天的一个负面想法。有什么证据反驳它吗？";
+"prompt.cbt.2" = "你是否在「灾难化」某件事？最可能的结果（而非最坏的）是什么？";
+"prompt.cbt.3" = "你的低落情绪有什么规律性触发因素吗？你注意到了什么？";
+"prompt.cbt.4" = "挑战一个「非此即彼」的想法：中间地带在哪里？";
+
+/* General prompts */
+"prompt.general.1" = "今天有什么让你感到惊喜的事？";
+"prompt.general.2" = "如果今天有个标题，会是什么？";
+"prompt.general.3" = "最近你一直在思考什么问题？";
+"prompt.general.4" = "描述一段最近让你印象深刻的对话。";

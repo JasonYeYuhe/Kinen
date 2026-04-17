@@ -5,7 +5,7 @@ import SwiftData
 /// All generation is local — no network calls.
 struct PromptGenerator {
 
-    private static let fallbackPrompt = "What's on your mind today?"
+    private static var fallbackPrompt: String { String(localized: "prompt.fallback") }
 
     /// Generate a writing prompt based on current context.
     static func generatePrompt(
@@ -75,13 +75,13 @@ struct PromptGenerator {
         // "One year ago today..."
         if let oneYearAgo = calendar.date(byAdding: .year, value: -1, to: today),
            let yearOldEntry = entries.first(where: { calendar.isDate($0.createdAt, inSameDayAs: oneYearAgo) }) {
-            return "One year ago, you wrote about: \"\(yearOldEntry.preview)\". How have things changed since then?"
+            return String(format: String(localized: "prompt.historical.yearAgo"), yearOldEntry.preview)
         }
 
         // "One month ago..."
         if let oneMonthAgo = calendar.date(byAdding: .month, value: -1, to: today),
            let monthOldEntry = entries.first(where: { calendar.isDate($0.createdAt, inSameDayAs: oneMonthAgo) }) {
-            return "A month ago, you reflected on: \"\(monthOldEntry.preview)\". Where are you with that now?"
+            return String(format: String(localized: "prompt.historical.monthAgo"), monthOldEntry.preview)
         }
 
         return nil
@@ -89,66 +89,66 @@ struct PromptGenerator {
 
     // MARK: - Prompt Libraries
 
-    private static let greatMoodPrompts = [
-        "What made today so wonderful? Capture this feeling so you can revisit it.",
-        "Who contributed to your happiness today? How might you thank them?",
-        "What would you tell your future self about this moment?",
-        "What habits or choices led to this great day? How can you do more of that?",
-    ]
+    private static var greatMoodPrompts: [String] {[
+        String(localized: "prompt.great.1"),
+        String(localized: "prompt.great.2"),
+        String(localized: "prompt.great.3"),
+        String(localized: "prompt.great.4"),
+    ]}
 
-    private static let goodMoodPrompts = [
-        "What's one thing that went well today that you want to remember?",
-        "What are you looking forward to this week?",
-        "Describe a moment today when you felt at peace.",
-        "What's something you accomplished today, no matter how small?",
-    ]
+    private static var goodMoodPrompts: [String] {[
+        String(localized: "prompt.good.1"),
+        String(localized: "prompt.good.2"),
+        String(localized: "prompt.good.3"),
+        String(localized: "prompt.good.4"),
+    ]}
 
-    private static let neutralMoodPrompts = [
-        "What's on your mind right now? Sometimes the ordinary days reveal the most.",
-        "If you could change one thing about today, what would it be?",
-        "What's something you've been putting off that you could tackle today?",
-        "Describe your surroundings right now. What do you notice?",
-    ]
+    private static var neutralMoodPrompts: [String] {[
+        String(localized: "prompt.neutral.1"),
+        String(localized: "prompt.neutral.2"),
+        String(localized: "prompt.neutral.3"),
+        String(localized: "prompt.neutral.4"),
+    ]}
 
-    private static let badMoodPrompts = [
-        "What's weighing on you? Writing it down can help lighten the load.",
-        "Is there something you need but haven't asked for? What would help right now?",
-        "What would you tell a friend who felt the way you do right now?",
-        "Can you identify one small thing that might make tomorrow a little better?",
-    ]
+    private static var badMoodPrompts: [String] {[
+        String(localized: "prompt.bad.1"),
+        String(localized: "prompt.bad.2"),
+        String(localized: "prompt.bad.3"),
+        String(localized: "prompt.bad.4"),
+    ]}
 
-    private static let terribleMoodPrompts = [
-        "Take a deep breath. You're here, and that counts. What do you need right now?",
-        "Sometimes the hardest days teach us the most. What is this day trying to show you?",
-        "Write about what's hurting. You don't need to fix it, just let it out.",
-        "Name three things that are still okay, even on a terrible day.",
-    ]
+    private static var terribleMoodPrompts: [String] {[
+        String(localized: "prompt.terrible.1"),
+        String(localized: "prompt.terrible.2"),
+        String(localized: "prompt.terrible.3"),
+        String(localized: "prompt.terrible.4"),
+    ]}
 
-    private static let gratitudePrompts = [
-        "What's one thing you're grateful for that you usually take for granted?",
-        "Who made your life a little better recently?",
-        "What's a simple pleasure you enjoyed today?",
-        "What ability or skill are you thankful to have?",
-    ]
+    private static var gratitudePrompts: [String] {[
+        String(localized: "prompt.gratitude.1"),
+        String(localized: "prompt.gratitude.2"),
+        String(localized: "prompt.gratitude.3"),
+        String(localized: "prompt.gratitude.4"),
+    ]}
 
-    private static let reflectionPrompts = [
-        "What's a belief you held a year ago that you no longer hold?",
-        "What's the most important lesson you've learned recently?",
-        "If you could give advice to yourself from 6 months ago, what would it be?",
-        "What does your ideal ordinary day look like?",
-    ]
+    private static var reflectionPrompts: [String] {[
+        String(localized: "prompt.reflection.1"),
+        String(localized: "prompt.reflection.2"),
+        String(localized: "prompt.reflection.3"),
+        String(localized: "prompt.reflection.4"),
+    ]}
 
-    private static let cbtPrompts = [
-        "Write about a negative thought you had today. Now, what evidence exists against it?",
-        "Are you 'catastrophizing' about something? What's the most likely outcome (not the worst)?",
-        "Is there a pattern in what triggers your low moods? What do you notice?",
-        "Challenge an 'all-or-nothing' thought: where's the middle ground?",
-    ]
+    private static var cbtPrompts: [String] {[
+        String(localized: "prompt.cbt.1"),
+        String(localized: "prompt.cbt.2"),
+        String(localized: "prompt.cbt.3"),
+        String(localized: "prompt.cbt.4"),
+    ]}
 
-    private static let generalPrompts = [
-        "What's one thing that surprised you today?",
-        "If today had a title, what would it be?",
-        "What's a question you've been sitting with lately?",
-        "Describe a recent conversation that stuck with you.",
-    ]
+    private static var generalPrompts: [String] {[
+        String(localized: "prompt.general.1"),
+        String(localized: "prompt.general.2"),
+        String(localized: "prompt.general.3"),
+        String(localized: "prompt.general.4"),
+    ]}
 }
