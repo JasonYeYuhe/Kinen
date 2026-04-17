@@ -50,7 +50,13 @@ actor AIJournalingLoop {
         }
         for theme in themes.prefix(3) {
             let descriptor = FetchDescriptor<Tag>(predicate: #Predicate { $0.name == theme })
-            let existing = (try? context.fetch(descriptor)) ?? []
+            let existing: [Tag]
+            do {
+                existing = try context.fetch(descriptor)
+            } catch {
+                logger.error("Failed to fetch tag '\(theme)': \(error)")
+                existing = []
+            }
             if let tag = existing.first {
                 if !entry.safeTags.contains(where: { $0.id == tag.id }) {
                     entry.addTag(tag)

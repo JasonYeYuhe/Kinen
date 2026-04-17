@@ -25,7 +25,13 @@ actor SentimentAnalyzer {
         let topics = await extractTopics(content)
         for topic in topics.prefix(5) {
             let descriptor = FetchDescriptor<Tag>(predicate: #Predicate { $0.name == topic })
-            let existingTags = (try? context.fetch(descriptor)) ?? []
+            let existingTags: [Tag]
+            do {
+                existingTags = try context.fetch(descriptor)
+            } catch {
+                logger.error("Failed to fetch tag '\(topic)': \(error)")
+                existingTags = []
+            }
 
             if let existingTag = existingTags.first {
                 if !entry.safeTags.contains(where: { $0.id == existingTag.id }) {
