@@ -36,14 +36,14 @@ struct VoiceRecorderButton: View {
             if let msg { onError?(msg) }
         }
         .alert(String(localized: "voice.permission.title"), isPresented: $recorder.showPermissionAlert) {
-            Button("Open Settings") {
+            Button(String(localized: "general.openSettings")) {
                 #if os(macOS)
                 NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone")!)
                 #else
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                 #endif
             }
-            Button("Cancel", role: .cancel) {}
+            Button(String(localized: "general.cancel"), role: .cancel) {}
         } message: {
             Text(String(localized: "voice.permission.message"))
         }
@@ -104,7 +104,7 @@ final class SpeechRecorder: ObservableObject {
     private func beginRecordingSession() {
         guard let speechRecognizer = SFSpeechRecognizer(), speechRecognizer.isAvailable else {
             logger.error("Speech recognizer not available")
-            errorMessage = "Speech recognition is not available on this device."
+            errorMessage = String(localized: "voice.error.speechUnavailable")
             return
         }
 
@@ -116,7 +116,7 @@ final class SpeechRecorder: ObservableObject {
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
             logger.error("Audio session configuration failed: \(error)")
-            errorMessage = "Could not configure audio session."
+            errorMessage = String(localized: "voice.error.audioSession")
             return
         }
 
@@ -124,15 +124,15 @@ final class SpeechRecorder: ObservableObject {
         // On iPad without a connected mic, accessing engine.inputNode below throws
         // an uncatchable ObjC NSException. Detecting this early is essential.
         guard let availableInputs = audioSession.availableInputs, !availableInputs.isEmpty else {
-            errorMessage = "No audio input available on this device."
+            errorMessage = String(localized: "voice.error.noInputDevice")
             return
         }
         guard !audioSession.currentRoute.inputs.isEmpty else {
-            errorMessage = "No audio input route available."
+            errorMessage = String(localized: "voice.error.noInputRoute")
             return
         }
         guard audioSession.sampleRate > 0 else {
-            errorMessage = "No audio input available."
+            errorMessage = String(localized: "voice.error.noInput")
             return
         }
         #endif
@@ -157,7 +157,7 @@ final class SpeechRecorder: ObservableObject {
             inputNode = node
         } catch {
             logger.error("inputNode threw NSException: \(error)")
-            errorMessage = "Audio input is not available on this device."
+            errorMessage = String(localized: "voice.error.noInputDevice")
             self.audioEngine = nil
             return
         }

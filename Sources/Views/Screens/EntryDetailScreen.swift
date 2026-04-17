@@ -108,7 +108,7 @@ struct EntryDetailScreen: View {
                 Button(action: {
                     entry.isBookmarked.toggle()
                 }) {
-                    Label("Bookmark",
+                    Label(String(localized: "detail.bookmark"),
                           systemImage: entry.isBookmarked ? "bookmark.fill" : "bookmark")
                 }
             }

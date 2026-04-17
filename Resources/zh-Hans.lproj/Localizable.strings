@@ -302,6 +302,8 @@
 "settings.journal.notebooks" = "管理日记本";
 
 /* Tags */
+"tags.rename.placeholder" = "标签名称";
+"tag.a11y.remove.%@" = "移除标签 %@";
 "tags.empty.title" = "暂无标签";
 "tags.empty.description" = "AI 会在你写日记时自动创建标签，你也可以在编辑器中手动添加。";
 "tags.rename" = "重命名";
@@ -323,6 +325,7 @@
 "filter.3months" = "近三个月";
 
 /* Entry Detail */
+"detail.bookmark" = "书签";
 "detail.aiInsights" = "AI 洞察";
 "detail.reanalyze.title" = "重新分析日记？";
 "detail.reanalyze.message" = "当前的 AI 洞察将被替换为新的分析结果。";
@@ -644,12 +647,18 @@
 "handoff.error.renderFailed" = "无法生成 PDF。";
 "handoff.error.writeFailed.%@" = "无法写入文件：%@";
 "general.ok" = "好的";
+"general.openSettings" = "打开设置";
 
 /* Voice Recorder */
 "voice.a11y.stop" = "停止录音";
 "voice.a11y.start" = "开始语音输入";
 "voice.permission.title" = "需要麦克风权限";
 "voice.permission.message" = "Kinen 需要麦克风权限以进行语音日记。所有语音识别均在您的设备上完成。";
+"voice.error.speechUnavailable" = "此设备不支持语音识别。";
+"voice.error.audioSession" = "无法配置音频会话。";
+"voice.error.noInputDevice" = "此设备没有可用的音频输入。";
+"voice.error.noInputRoute" = "没有可用的音频输入通道。";
+"voice.error.noInput" = "没有可用的音频输入。";
 
 /* Therapist Handoff PDF — header / footer */
 "handoff.pdf.generated.%@" = "由 Kinen 于 %@ 生成 — 所有数据保留在设备上。";

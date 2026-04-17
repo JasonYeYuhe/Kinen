@@ -30,7 +30,7 @@ struct TagManagementSheet: View {
                                 .frame(width: 12, height: 12)
 
                             if editingTag?.id == tag.id {
-                                TextField("Tag name", text: $newName)
+                                TextField(String(localized: "tags.rename.placeholder"), text: $newName)
                                     .textFieldStyle(.plain)
                                     .onSubmit { finishEditing(tag: tag) }
                                 Button(String(localized: "general.done")) { finishEditing(tag: tag) }
