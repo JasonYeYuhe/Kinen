@@ -305,8 +305,8 @@ struct EntryEditorSheet: View {
                         .font(.caption)
                 }
                 .buttonStyle(.borderless)
-                .help("Get a different suggestion")
-                .accessibilityLabel("Get a different suggestion")
+                .help(String(localized: "editor.aiprompt.regenerate.accessibility"))
+                .accessibilityLabel(String(localized: "editor.aiprompt.regenerate.accessibility"))
             }
             .padding(10)
             .background(.purple.opacity(0.06))

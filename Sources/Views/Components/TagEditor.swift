@@ -32,7 +32,7 @@ struct TagEditor: View {
                                     .font(.system(size: 8, weight: .bold))
                             }
                             .buttonStyle(.borderless)
-                            .accessibilityLabel("Remove tag \(tag.name)")
+                            .accessibilityLabel(String(format: String(localized: "tag.a11y.remove.%@"), tag.name))
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
@@ -47,7 +47,7 @@ struct TagEditor: View {
                 Image(systemName: "tag")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                TextField("Add tag...", text: $inputText)
+                TextField(String(localized: "editor.tags.add"), text: $inputText)
                     .textFieldStyle(.plain)
                     .font(.subheadline)
                     .onSubmit { addCurrentTag() }
