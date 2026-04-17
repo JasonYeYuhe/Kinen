@@ -2,6 +2,9 @@ import SwiftUI
 import Speech
 import AVFoundation
 import OSLog
+#if canImport(UIKit)
+import UIKit
+#endif
 
 private let logger = Logger(subsystem: "com.jasonye.kinen", category: "VoiceRecorder")
 
@@ -18,7 +21,7 @@ struct VoiceRecorderButton: View {
                 recorder.stopRecording()
                 transcribedText += (transcribedText.isEmpty ? "" : "\n\n") + recorder.transcript
             } else {
-                recorder.startRecording()
+                Task { await recorder.startRecording() }
             }
         }) {
             Image(systemName: recorder.isRecording ? "stop.circle.fill" : "mic.circle.fill")
@@ -58,47 +61,116 @@ final class SpeechRecorder: ObservableObject {
     private var recognitionTask: SFSpeechRecognitionTask?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
 
-    func startRecording() {
-        // Check permissions
-        SFSpeechRecognizer.requestAuthorization { [weak self] status in
-            Task { @MainActor [weak self] in
-                guard let self else { return }
-                switch status {
-                case .authorized:
-                    self.beginRecordingSession()
-                default:
-                    self.showPermissionAlert = true
+    /// Request microphone + speech permissions and start recording.
+    /// Crash-hardened for iPad / iPadOS 26.4 — checks every audio precondition
+    /// before touching `AVAudioEngine.inputNode`, which can throw an
+    /// uncatchable ObjC NSException when no input route exists.
+    func startRecording() async {
+        guard !isRecording else { return }
+        errorMessage = nil
+
+        // 1. Mic permission (separate from speech recognition)
+        #if os(iOS)
+        let micGranted: Bool
+        if #available(iOS 17.0, *) {
+            micGranted = await AVAudioApplication.requestRecordPermission()
+        } else {
+            micGranted = await withCheckedContinuation { continuation in
+                AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                    continuation.resume(returning: granted)
                 }
             }
         }
+        guard micGranted else {
+            showPermissionAlert = true
+            return
+        }
+        #endif
+
+        // 2. Speech recognition permission
+        let speechStatus = await withCheckedContinuation { continuation in
+            SFSpeechRecognizer.requestAuthorization { status in
+                continuation.resume(returning: status)
+            }
+        }
+        guard speechStatus == .authorized else {
+            showPermissionAlert = true
+            return
+        }
+
+        beginRecordingSession()
     }
 
     private func beginRecordingSession() {
-        let speechRecognizer = SFSpeechRecognizer()
-        guard let speechRecognizer, speechRecognizer.isAvailable else {
+        guard let speechRecognizer = SFSpeechRecognizer(), speechRecognizer.isAvailable else {
             logger.error("Speech recognizer not available")
             errorMessage = "Speech recognition is not available on this device."
             return
         }
 
-        // Request on-device recognition for privacy
+        // 3. Configure AVAudioSession (iOS only — macOS doesn't have AVAudioSession)
+        #if os(iOS)
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(.record, mode: .measurement)
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            logger.error("Audio session configuration failed: \(error)")
+            errorMessage = "Could not configure audio session."
+            return
+        }
+
+        // 4. Pre-checks: bail out gracefully if audio input isn't actually available.
+        // On iPad without a connected mic, accessing engine.inputNode below throws
+        // an uncatchable ObjC NSException. Detecting this early is essential.
+        guard let availableInputs = audioSession.availableInputs, !availableInputs.isEmpty else {
+            errorMessage = "No audio input available on this device."
+            return
+        }
+        guard !audioSession.currentRoute.inputs.isEmpty else {
+            errorMessage = "No audio input route available."
+            return
+        }
+        guard audioSession.sampleRate > 0 else {
+            errorMessage = "No audio input available."
+            return
+        }
+        #endif
+
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
         request.requiresOnDeviceRecognition = true
 
-        let audioEngine = AVAudioEngine()
-        let inputNode = audioEngine.inputNode
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        let engine = AVAudioEngine()
+        self.audioEngine = engine
 
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+        // 5. Wrap inputNode access in ObjC exception catcher.
+        // AVAudioEngine.inputNode can throw an uncatchable ObjC NSException on
+        // iPad when no audio input hardware route exists. Swift do-catch cannot
+        // intercept NSException, so we bridge through @try/@catch in ObjC.
+        let inputNode: AVAudioNode
+        do {
+            var node: AVAudioNode!
+            try ObjCExceptionCatcher.tryExecuting {
+                node = engine.inputNode
+            }
+            inputNode = node
+        } catch {
+            logger.error("inputNode threw NSException: \(error)")
+            errorMessage = "Audio input is not available on this device."
+            self.audioEngine = nil
+            return
+        }
+
+        // 6. Use format: nil so AVAudioEngine picks the native bus format —
+        //    avoids format mismatch crashes across different hardware.
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: nil) { buffer, _ in
             request.append(buffer)
         }
 
-        audioEngine.prepare()
-
+        engine.prepare()
         do {
-            try audioEngine.start()
-            self.audioEngine = audioEngine
+            try engine.start()
             self.recognitionRequest = request
             self.isRecording = true
             self.transcript = ""
@@ -128,8 +200,13 @@ final class SpeechRecorder: ObservableObject {
     }
 
     private func cleanupRecording() {
-        audioEngine?.stop()
-        audioEngine?.inputNode.removeTap(onBus: 0)
+        if let engine = audioEngine {
+            engine.stop()
+            // Protect inputNode access during cleanup — same ObjC exception risk as start.
+            try? ObjCExceptionCatcher.tryExecuting {
+                engine.inputNode.removeTap(onBus: 0)
+            }
+        }
         audioEngine = nil
         recognitionTask?.cancel()
         recognitionTask = nil
