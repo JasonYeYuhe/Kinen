@@ -644,3 +644,43 @@
 "handoff.error.renderFailed" = "无法生成 PDF。";
 "handoff.error.writeFailed.%@" = "无法写入文件：%@";
 "general.ok" = "好的";
+
+/* Voice Recorder */
+"voice.a11y.stop" = "停止录音";
+"voice.a11y.start" = "开始语音输入";
+"voice.permission.title" = "需要麦克风权限";
+"voice.permission.message" = "Kinen 需要麦克风权限以进行语音日记。所有语音识别均在您的设备上完成。";
+
+/* Therapist Handoff PDF — header / footer */
+"handoff.pdf.generated.%@" = "由 Kinen 于 %@ 生成 — 所有数据保留在设备上。";
+"handoff.pdf.disclaimer" = "本报告由设备上的日记数据生成。这不是临床诊断。Kinen 不能替代专业的心理健康护理。";
+
+/* Therapist Handoff PDF — section titles */
+"handoff.pdf.section.overview" = "概览";
+"handoff.pdf.section.cognitivePatterns" = "观察到的认知模式";
+"handoff.pdf.section.cognitivePatterns.subtitle" = "基于日记文本的智能检测，非临床诊断。";
+"handoff.pdf.section.crisisFlags" = "令人担忧的段落";
+"handoff.pdf.section.crisisFlags.subtitle" = "由设备内置危机检测标记。请与日记作者共同审阅。";
+
+/* Therapist Handoff PDF — overview stat rows */
+"handoff.pdf.stat.entries" = "日记条目";
+"handoff.pdf.stat.entries.value" = "%1$lld 条，跨 %2$lld 天（%3$lld 天写作）";
+"handoff.pdf.stat.totalWords" = "总字数";
+"handoff.pdf.stat.avgMood" = "平均情绪";
+"handoff.pdf.stat.avgSentiment" = "平均情感分";
+"handoff.pdf.stat.highestMood" = "情绪最高日";
+"handoff.pdf.stat.lowestMood" = "情绪最低日";
+"handoff.pdf.stat.longestSilence" = "最长中断";
+"handoff.pdf.stat.longestSilence.value.%lld" = "相隔 %lld 天";
+
+/* Therapist Handoff PDF — entry metadata */
+"handoff.pdf.entryCount.%lld" = "%lld 条日记";
+"handoff.pdf.moodOf5.%lld" = "情绪 %lld/5";
+"handoff.pdf.sentiment.%@" = "情感分 %@";
+
+/* Therapist Handoff PDF — highlight reason labels */
+"handoff.pdf.reason.lowestMood" = "最低情绪";
+"handoff.pdf.reason.highestMood" = "最高情绪";
+"handoff.pdf.reason.notable" = "显著变化";
+"handoff.pdf.reason.crisis" = "危机标记";
+"handoff.pdf.reason.pinned" = "已置顶";
