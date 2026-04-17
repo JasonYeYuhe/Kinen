@@ -124,8 +124,12 @@ struct ProPaywallView: View {
                 .multilineTextAlignment(.center)
 
             HStack(spacing: 16) {
-                Link(String(localized: "pro.terms"), destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/")!)
-                Link(String(localized: "pro.privacy"), destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/")!)
+                // Apple's Standard End User License Agreement (Schedule 1).
+                // Required by Guideline 3.1.2(c) for auto-renewable subscriptions.
+                Link(String(localized: "pro.terms"),
+                     destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                Link(String(localized: "pro.privacy"),
+                     destination: URL(string: "https://jasonyeyuhe.github.io/Kinen/privacy.html")!)
             }
             .font(.system(size: 10))
         }
