@@ -89,7 +89,7 @@ struct RecapScreen: View {
             VStack(spacing: 4) {
                 Text("\(recap.moodTrend.emoji)")
                     .font(.system(size: 36))
-                Text(recap.moodTrend.rawValue)
+                Text(recap.moodTrend.displayName)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

@@ -37,6 +37,15 @@ struct RecapGenerator {
             case .insufficient: "❓"
             }
         }
+
+        var displayName: String {
+            switch self {
+            case .improving: String(localized: "recap.trend.improving")
+            case .declining: String(localized: "recap.trend.declining")
+            case .stable: String(localized: "recap.trend.stable")
+            case .insufficient: String(localized: "recap.trend.insufficient")
+            }
+        }
     }
 
     /// Generate a weekly recap for the given week.

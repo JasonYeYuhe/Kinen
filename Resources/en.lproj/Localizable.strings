@@ -602,3 +602,45 @@
 "prompt.general.2" = "If today had a title, what would it be?";
 "prompt.general.3" = "What's a question you've been sitting with lately?";
 "prompt.general.4" = "Describe a recent conversation that stuck with you.";
+
+/* MoodTrend display names */
+"recap.trend.improving" = "Improving";
+"recap.trend.declining" = "Declining";
+"recap.trend.stable" = "Stable";
+"recap.trend.insufficient" = "Not enough data";
+
+/* Therapist Handoff Sheet */
+"handoff.title" = "Therapist Handoff";
+"handoff.generate" = "Generate";
+"handoff.disclaimer" = "Generates a structured summary you can share with a clinician. All processing happens on this device — nothing leaves Kinen until you export.";
+"handoff.section.timeRange" = "Time range";
+"handoff.picker.range" = "Range";
+"handoff.range.last7" = "Last 7 days";
+"handoff.range.last30" = "Last 30 days";
+"handoff.range.last90" = "Last 90 days";
+"handoff.range.allTime" = "All time";
+"handoff.section.include" = "Include";
+"handoff.toggle.overview" = "Overview statistics";
+"handoff.toggle.moodData" = "Mood data";
+"handoff.toggle.themes" = "Recurring themes";
+"handoff.toggle.patterns" = "Cognitive patterns";
+"handoff.toggle.entries" = "Selected entries";
+"handoff.toggle.crisis" = "Crisis flags";
+"handoff.topics.header" = "Topics I'd like to discuss";
+"handoff.topics.footer" = "Optional. These appear at the top of the report so the clinician knows what's most on your mind.";
+"handoff.topics.placeholder" = "e.g. Work stress, sleep, relationship with my brother…";
+"handoff.section.preview" = "Preview";
+"handoff.preview.entries" = "Entries";
+"handoff.preview.writingDays" = "Writing days";
+"handoff.preview.avgMood" = "Avg mood";
+"handoff.preview.topThemes" = "Top themes";
+"handoff.preview.patterns" = "Patterns";
+"handoff.preview.patterns.count.%lld" = "%lld detected";
+"handoff.preview.crisisFlags" = "Crisis flags";
+"handoff.exportPDF" = "Export as PDF";
+"handoff.exportPDF.pro" = "Export as PDF (Pro)";
+"handoff.exportMarkdown" = "Export as Markdown";
+"handoff.alert.exportFailed" = "Export failed";
+"handoff.error.renderFailed" = "Could not render PDF.";
+"handoff.error.writeFailed.%@" = "Could not write file: %@";
+"general.ok" = "OK";

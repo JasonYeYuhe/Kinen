@@ -602,3 +602,45 @@
 "prompt.general.2" = "如果今天有个标题，会是什么？";
 "prompt.general.3" = "最近你一直在思考什么问题？";
 "prompt.general.4" = "描述一段最近让你印象深刻的对话。";
+
+/* MoodTrend display names */
+"recap.trend.improving" = "上升中";
+"recap.trend.declining" = "下降中";
+"recap.trend.stable" = "平稳";
+"recap.trend.insufficient" = "数据不足";
+
+/* Therapist Handoff Sheet */
+"handoff.title" = "治疗师交接包";
+"handoff.generate" = "生成";
+"handoff.disclaimer" = "生成一份结构化摘要，可分享给临床医生。所有处理均在此设备上进行——导出前不会离开 Kinen。";
+"handoff.section.timeRange" = "时间范围";
+"handoff.picker.range" = "范围";
+"handoff.range.last7" = "最近 7 天";
+"handoff.range.last30" = "最近 30 天";
+"handoff.range.last90" = "最近 90 天";
+"handoff.range.allTime" = "全部时间";
+"handoff.section.include" = "包含内容";
+"handoff.toggle.overview" = "概览统计";
+"handoff.toggle.moodData" = "情绪数据";
+"handoff.toggle.themes" = "反复出现的主题";
+"handoff.toggle.patterns" = "认知模式";
+"handoff.toggle.entries" = "精选日记";
+"handoff.toggle.crisis" = "危机标记";
+"handoff.topics.header" = "我想讨论的话题";
+"handoff.topics.footer" = "可选。这些内容会显示在报告顶部，让临床医生了解您最关心的问题。";
+"handoff.topics.placeholder" = "例如：工作压力、睡眠、与哥哥的关系……";
+"handoff.section.preview" = "预览";
+"handoff.preview.entries" = "日记条目";
+"handoff.preview.writingDays" = "写作天数";
+"handoff.preview.avgMood" = "平均情绪";
+"handoff.preview.topThemes" = "主要主题";
+"handoff.preview.patterns" = "认知模式";
+"handoff.preview.patterns.count.%lld" = "检测到 %lld 个";
+"handoff.preview.crisisFlags" = "危机标记";
+"handoff.exportPDF" = "导出为 PDF";
+"handoff.exportPDF.pro" = "导出为 PDF（专业版）";
+"handoff.exportMarkdown" = "导出为 Markdown";
+"handoff.alert.exportFailed" = "导出失败";
+"handoff.error.renderFailed" = "无法生成 PDF。";
+"handoff.error.writeFailed.%@" = "无法写入文件：%@";
+"general.ok" = "好的";

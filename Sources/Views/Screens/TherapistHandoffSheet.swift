@@ -23,6 +23,15 @@ struct TherapistHandoffSheet: View {
 
         var id: String { rawValue }
 
+        var displayName: String {
+            switch self {
+            case .last7: String(localized: "handoff.range.last7")
+            case .last30: String(localized: "handoff.range.last30")
+            case .last90: String(localized: "handoff.range.last90")
+            case .allTime: String(localized: "handoff.range.allTime")
+            }
+        }
+
         /// Free users can only pick last7
         var requiresPro: Bool { self != .last7 }
 
@@ -66,22 +75,22 @@ struct TherapistHandoffSheet: View {
                 }
             }
             .formStyle(.grouped)
-            .navigationTitle("Therapist Handoff")
+            .navigationTitle(String(localized: "handoff.title"))
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
+                    Button(String(localized: "general.done")) { dismiss() }
                 }
                 ToolbarItemGroup(placement: .primaryAction) {
-                    Button("Generate") { generate() }
+                    Button(String(localized: "handoff.generate")) { generate() }
                         .buttonStyle(.borderedProminent)
                         .tint(.purple)
                 }
             }
-            .alert("Export failed", isPresented: .constant(exportError != nil)) {
-                Button("OK") { exportError = nil }
+            .alert(String(localized: "handoff.alert.exportFailed"), isPresented: .constant(exportError != nil)) {
+                Button(String(localized: "general.ok")) { exportError = nil }
             } message: {
                 Text(exportError ?? "")
             }
@@ -106,7 +115,7 @@ struct TherapistHandoffSheet: View {
     private var disclaimerSection: some View {
         Section {
             Label {
-                Text("Generates a structured summary you can share with a clinician. All processing happens on this device — nothing leaves Kinen until you export.")
+                Text(String(localized: "handoff.disclaimer"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } icon: {
@@ -117,11 +126,11 @@ struct TherapistHandoffSheet: View {
     }
 
     private var configurationSection: some View {
-        Section("Time range") {
-            Picker("Range", selection: $rangeOption) {
+        Section(String(localized: "handoff.section.timeRange")) {
+            Picker(String(localized: "handoff.picker.range"), selection: $rangeOption) {
                 ForEach(RangeOption.allCases) { option in
                     HStack {
-                        Text(option.rawValue)
+                        Text(option.displayName)
                         if option.requiresPro && !isPro {
                             Image(systemName: "lock.fill")
                                 .font(.caption2)
@@ -141,24 +150,24 @@ struct TherapistHandoffSheet: View {
     }
 
     private var contentsSection: some View {
-        Section("Include") {
-            Toggle("Overview statistics", isOn: $sections.overview)
-            Toggle("Mood data", isOn: $sections.moodTrend)
-            Toggle("Recurring themes", isOn: $sections.topThemes)
-            Toggle("Cognitive patterns", isOn: $sections.cognitiveDistortions)
-            Toggle("Selected entries", isOn: $sections.highlightedEntries)
-            Toggle("Crisis flags", isOn: $sections.crisisFlags)
+        Section(String(localized: "handoff.section.include")) {
+            Toggle(String(localized: "handoff.toggle.overview"), isOn: $sections.overview)
+            Toggle(String(localized: "handoff.toggle.moodData"), isOn: $sections.moodTrend)
+            Toggle(String(localized: "handoff.toggle.themes"), isOn: $sections.topThemes)
+            Toggle(String(localized: "handoff.toggle.patterns"), isOn: $sections.cognitiveDistortions)
+            Toggle(String(localized: "handoff.toggle.entries"), isOn: $sections.highlightedEntries)
+            Toggle(String(localized: "handoff.toggle.crisis"), isOn: $sections.crisisFlags)
         }
     }
 
     private var topicsSection: some View {
         Section {
-            TextField("e.g. Work stress, sleep, relationship with my brother…", text: $userTopics, axis: .vertical)
+            TextField(String(localized: "handoff.topics.placeholder"), text: $userTopics, axis: .vertical)
                 .lineLimit(3...6)
         } header: {
-            Text("Topics I'd like to discuss")
+            Text(String(localized: "handoff.topics.header"))
         } footer: {
-            Text("Optional. These appear at the top of the report so the clinician knows what's most on your mind.")
+            Text(String(localized: "handoff.topics.footer"))
         }
     }
 
@@ -166,25 +175,25 @@ struct TherapistHandoffSheet: View {
     private func previewSection(_ report: HandoffReport) -> some View {
         Section {
             VStack(alignment: .leading, spacing: 12) {
-                summaryRow("Entries", "\(report.overview.totalEntries)")
-                summaryRow("Writing days", "\(report.overview.writingDays)")
+                summaryRow(String(localized: "handoff.preview.entries"), "\(report.overview.totalEntries)")
+                summaryRow(String(localized: "handoff.preview.writingDays"), "\(report.overview.writingDays)")
                 if let avg = report.overview.averageMood {
-                    summaryRow("Avg mood", String(format: "%.1f / 5", avg))
+                    summaryRow(String(localized: "handoff.preview.avgMood"), String(format: "%.1f / 5", avg))
                 }
                 if !report.topThemes.isEmpty {
-                    summaryRow("Top themes", report.topThemes.prefix(3).map(\.name).joined(separator: ", "))
+                    summaryRow(String(localized: "handoff.preview.topThemes"), report.topThemes.prefix(3).map(\.name).joined(separator: ", "))
                 }
                 if !report.cognitiveDistortions.isEmpty {
-                    summaryRow("Patterns", "\(report.cognitiveDistortions.count) detected")
+                    summaryRow(String(localized: "handoff.preview.patterns"), String(format: String(localized: "handoff.preview.patterns.count.%lld"), report.cognitiveDistortions.count))
                 }
                 if !report.crisisFlags.isEmpty {
-                    summaryRow("Crisis flags", "\(report.crisisFlags.count)")
+                    summaryRow(String(localized: "handoff.preview.crisisFlags"), "\(report.crisisFlags.count)")
                         .foregroundStyle(.red)
                 }
             }
             .padding(.vertical, 4)
         } header: {
-            Text("Preview")
+            Text(String(localized: "handoff.section.preview"))
         }
 
         Section {
@@ -195,13 +204,13 @@ struct TherapistHandoffSheet: View {
                     showPaywall = true
                 }
             } label: {
-                Label(isPro ? "Export as PDF" : "Export as PDF (Pro)",
+                Label(isPro ? String(localized: "handoff.exportPDF") : String(localized: "handoff.exportPDF.pro"),
                       systemImage: isPro ? "doc.fill" : "lock.fill")
             }
             Button {
                 exportMarkdown(report)
             } label: {
-                Label("Export as Markdown", systemImage: "doc.text")
+                Label(String(localized: "handoff.exportMarkdown"), systemImage: "doc.text")
             }
         }
     }
@@ -230,7 +239,7 @@ struct TherapistHandoffSheet: View {
 
     private func exportPDF(_ report: HandoffReport) {
         guard let url = HandoffPDFRenderer.renderToTemporaryURL(report) else {
-            exportError = "Could not render PDF."
+            exportError = String(localized: "handoff.error.renderFailed")
             return
         }
         revealOrShare(url)
@@ -244,7 +253,7 @@ struct TherapistHandoffSheet: View {
             try md.write(to: url, atomically: true, encoding: .utf8)
             revealOrShare(url)
         } catch {
-            exportError = "Could not write file: \(error.localizedDescription)"
+            exportError = String(format: String(localized: "handoff.error.writeFailed.%@"), error.localizedDescription)
         }
     }
 
