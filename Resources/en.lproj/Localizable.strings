@@ -543,3 +543,62 @@
 /* AI Insights */
 "ai.insight.topics" = "Main topics: %@";
 "insights.longestStreak" = "Best";
+
+/* Writing Prompts — PromptGenerator */
+"prompt.fallback" = "What's on your mind today?";
+"prompt.historical.yearAgo" = "One year ago, you wrote about: \"%@\". How have things changed since then?";
+"prompt.historical.monthAgo" = "A month ago, you reflected on: \"%@\". Where are you with that now?";
+
+/* Great mood prompts */
+"prompt.great.1" = "What made today so wonderful? Capture this feeling so you can revisit it.";
+"prompt.great.2" = "Who contributed to your happiness today? How might you thank them?";
+"prompt.great.3" = "What would you tell your future self about this moment?";
+"prompt.great.4" = "What habits or choices led to this great day? How can you do more of that?";
+
+/* Good mood prompts */
+"prompt.good.1" = "What's one thing that went well today that you want to remember?";
+"prompt.good.2" = "What are you looking forward to this week?";
+"prompt.good.3" = "Describe a moment today when you felt at peace.";
+"prompt.good.4" = "What's something you accomplished today, no matter how small?";
+
+/* Neutral mood prompts */
+"prompt.neutral.1" = "What's on your mind right now? Sometimes the ordinary days reveal the most.";
+"prompt.neutral.2" = "If you could change one thing about today, what would it be?";
+"prompt.neutral.3" = "What's something you've been putting off that you could tackle today?";
+"prompt.neutral.4" = "Describe your surroundings right now. What do you notice?";
+
+/* Bad mood prompts */
+"prompt.bad.1" = "What's weighing on you? Writing it down can help lighten the load.";
+"prompt.bad.2" = "Is there something you need but haven't asked for? What would help right now?";
+"prompt.bad.3" = "What would you tell a friend who felt the way you do right now?";
+"prompt.bad.4" = "Can you identify one small thing that might make tomorrow a little better?";
+
+/* Terrible mood prompts */
+"prompt.terrible.1" = "Take a deep breath. You're here, and that counts. What do you need right now?";
+"prompt.terrible.2" = "Sometimes the hardest days teach us the most. What is this day trying to show you?";
+"prompt.terrible.3" = "Write about what's hurting. You don't need to fix it, just let it out.";
+"prompt.terrible.4" = "Name three things that are still okay, even on a terrible day.";
+
+/* Gratitude prompts */
+"prompt.gratitude.1" = "What's one thing you're grateful for that you usually take for granted?";
+"prompt.gratitude.2" = "Who made your life a little better recently?";
+"prompt.gratitude.3" = "What's a simple pleasure you enjoyed today?";
+"prompt.gratitude.4" = "What ability or skill are you thankful to have?";
+
+/* Reflection prompts */
+"prompt.reflection.1" = "What's a belief you held a year ago that you no longer hold?";
+"prompt.reflection.2" = "What's the most important lesson you've learned recently?";
+"prompt.reflection.3" = "If you could give advice to yourself from 6 months ago, what would it be?";
+"prompt.reflection.4" = "What does your ideal ordinary day look like?";
+
+/* CBT prompts */
+"prompt.cbt.1" = "Write about a negative thought you had today. Now, what evidence exists against it?";
+"prompt.cbt.2" = "Are you 'catastrophizing' about something? What's the most likely outcome (not the worst)?";
+"prompt.cbt.3" = "Is there a pattern in what triggers your low moods? What do you notice?";
+"prompt.cbt.4" = "Challenge an 'all-or-nothing' thought: where's the middle ground?";
+
+/* General prompts */
+"prompt.general.1" = "What's one thing that surprised you today?";
+"prompt.general.2" = "If today had a title, what would it be?";
+"prompt.general.3" = "What's a question you've been sitting with lately?";
+"prompt.general.4" = "Describe a recent conversation that stuck with you.";
