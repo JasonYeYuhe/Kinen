@@ -280,7 +280,7 @@ struct SettingsView: View {
                 HStack {
                     Text(String(localized: "settings.version"))
                     Spacer()
-                    Text("0.2.0")
+                    Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")
                         .foregroundStyle(.secondary)
                 }
                 HStack {
