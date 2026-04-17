@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — Kinen</title>
+    <meta name="description" content="Kinen privacy policy: what data the app collects, how HealthKit data is used, and your rights.">
+    <meta name="theme-color" content="#8B5CF6">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #8B5CF6;
+            --purple-dark: #7C3AED;
+            --bg: #0F0F0F;
+            --bg-card: #1A1A1A;
+            --text: #FAFAFA;
+            --text-muted: #A1A1AA;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .container { max-width: 760px; margin: 0 auto; padding: 60px 24px 80px; }
+        h1 { font-size: 38px; margin-bottom: 8px; font-weight: 800; }
+        h2 { font-size: 22px; margin: 36px 0 12px; color: var(--purple); font-weight: 700; }
+        h3 { font-size: 17px; margin: 20px 0 8px; font-weight: 600; }
+        p, li { color: var(--text-muted); margin-bottom: 12px; font-size: 15px; }
+        ul { padding-left: 24px; margin-bottom: 16px; }
+        strong { color: var(--text); }
+        .meta { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; }
+        .back { color: var(--purple); text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 32px; }
+        .back:hover { text-decoration: underline; }
+        a { color: var(--purple); }
+        .summary {
+            background: var(--bg-card);
+            border-left: 3px solid var(--purple);
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 24px 0 36px;
+        }
+        .summary p { color: var(--text); margin: 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/Kinen/" class="back">&larr; Back to Kinen</a>
+        <h1>Privacy Policy</h1>
+        <p class="meta">Last updated: April 17, 2026 · Effective immediately</p>
+
+        <div class="summary">
+            <p><strong>One-line summary:</strong> Kinen is built so your journal entries, mood data, and HealthKit data never leave your device. The only optional exceptions are iCloud sync (Apple’s end-to-end encrypted CloudKit) and StoreKit purchases.</p>
+        </div>
+
+        <h2>Who we are</h2>
+        <p>Kinen (記念) is a personal journaling app published by Jason Ye (the “Developer”). This policy describes what information the app handles, how it is processed, and your rights as a user.</p>
+
+        <h2>What data Kinen collects</h2>
+
+        <h3>1. Journal content (titles, body text, photos, voice recordings, tags, mood selections)</h3>
+        <p>Stored locally on your device using Apple SwiftData. If you enable iCloud sync, this content is replicated to your private CloudKit container, encrypted in transit and at rest by Apple. The Developer never has access to your CloudKit data.</p>
+
+        <h3>2. HealthKit data (sleep, steps, resting heart rate)</h3>
+        <p>Kinen reads three HealthKit data points <strong>only if you explicitly grant permission in Settings → HealthKit Integration</strong>. The data is used to correlate your physical state with daily mood entries you write in Kinen. Kinen never writes to HealthKit, and HealthKit data is <strong>never transmitted off your device</strong> — it is read on-demand and discarded after each insight is generated. HealthKit data is not synced to iCloud, never sent to any server, and never shared with third parties or advertisers.</p>
+
+        <h3>3. Location and weather (optional)</h3>
+        <p>If you enable “Auto-record location & weather” in Settings, Kinen uses CoreLocation to fetch your current city name and a one-line weather summary, attached only to journal entries you create while the option is enabled. This data is stored locally with the entry. If iCloud sync is enabled, it is included in the entry payload Apple syncs.</p>
+
+        <h3>4. Sentiment analysis, theme detection, CBT distortion analysis</h3>
+        <p>Performed entirely on-device using Apple’s NaturalLanguage framework. The text of your entries is processed locally; the inferred mood scores and tags are stored alongside the entry. <strong>No journal text or AI inference output is sent to any server, OpenAI, Anthropic, or any other third-party AI service.</strong></p>
+
+        <h3>5. In-App Purchases</h3>
+        <p>Subscription and purchase verification is handled directly between your device and Apple’s StoreKit. The Developer receives anonymized purchase events from Apple solely to grant Pro access on your devices. No payment information ever passes through the Developer.</p>
+
+        <h3>6. Diagnostic and crash data</h3>
+        <p>If you opt-in via Apple’s system-wide “Share with App Developers” setting, Apple sends the Developer aggregated, anonymized crash reports. This data is not linked to your identity.</p>
+
+        <h2>What Kinen does NOT do</h2>
+        <ul>
+            <li>No analytics SDKs (no Google Analytics, no Firebase, no Mixpanel, no Sentry, no Amplitude).</li>
+            <li>No advertising SDKs and no ads.</li>
+            <li>No tracking across other apps or websites.</li>
+            <li>No selling or sharing of any user data with third parties.</li>
+            <li>No transmission of journal content, HealthKit data, mood data, photos, or voice recordings to any server controlled by the Developer.</li>
+            <li>No use of third-party AI services for any feature.</li>
+        </ul>
+
+        <h2>Your rights and controls</h2>
+        <ul>
+            <li><strong>Disable HealthKit:</strong> Settings → HealthKit Integration → toggle off. You can also revoke individual permissions in iOS Settings → Privacy & Security → Health → Kinen.</li>
+            <li><strong>Disable iCloud sync:</strong> Settings → iCloud Sync → toggle off, or sign out of iCloud. Local data remains.</li>
+            <li><strong>Export all your data:</strong> Settings → Export → choose Markdown, JSON, or plain text.</li>
+            <li><strong>Encrypted backup:</strong> Settings → Backup & Restore → Create Encrypted Backup. AES-256 encrypted with a password only you know.</li>
+            <li><strong>Delete all data:</strong> Uninstalling Kinen removes all local data. To remove iCloud-synced data, sign in to <a href="https://www.icloud.com/settings">iCloud Settings</a> and delete the Kinen container.</li>
+            <li><strong>Account deletion:</strong> Kinen does not require an account to use. Pro purchases are tied to your Apple ID; to disassociate them, contact Apple support.</li>
+        </ul>
+
+        <h2>Children</h2>
+        <p>Kinen is rated 13+ on the App Store. The app does not knowingly collect data from children under 13.</p>
+
+        <h2>Changes to this policy</h2>
+        <p>If material changes are made, the “Last updated” date above will be updated and a notice will be shown in the app on next launch.</p>
+
+        <h2>Contact</h2>
+        <p>Questions or requests: <a href="mailto:yyyyy.yeyuhe@gmail.com">yyyyy.yeyuhe@gmail.com</a></p>
+
+        <h2>Jurisdiction</h2>
+        <p>This policy is governed by the laws of Japan. Users in the EU/UK have rights under GDPR/UK GDPR; users in California have rights under CCPA. To exercise these rights, contact the email above.</p>
+    </div>
+</body>
+</html>
