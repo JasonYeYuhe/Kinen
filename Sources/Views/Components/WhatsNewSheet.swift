@@ -4,7 +4,7 @@ struct WhatsNewSheet: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("lastSeenVersion") private var lastSeenVersion = ""
 
-    static let currentVersion = "0.2.0"
+    static let currentVersion = "0.3.0"
 
     static var shouldShow: Bool {
         UserDefaults.standard.string(forKey: "lastSeenVersion") != currentVersion
@@ -31,12 +31,11 @@ struct WhatsNewSheet: View {
                     Divider()
 
                     // Features
-                    ChangelogItem(icon: "icloud.fill", color: .cyan, title: String(localized: "whatsnew.icloud.title"), description: String(localized: "whatsnew.icloud.desc"))
-                    ChangelogItem(icon: "crown.fill", color: .purple, title: String(localized: "whatsnew.pro.title"), description: String(localized: "whatsnew.pro.desc"))
-                    ChangelogItem(icon: "lock.doc.fill", color: .green, title: String(localized: "whatsnew.backup.title"), description: String(localized: "whatsnew.backup.desc"))
-                    ChangelogItem(icon: "tag.fill", color: .blue, title: String(localized: "whatsnew.tags.title"), description: String(localized: "whatsnew.tags.desc"))
-                    ChangelogItem(icon: "line.3.horizontal.decrease.circle", color: .orange, title: String(localized: "whatsnew.filters.title"), description: String(localized: "whatsnew.filters.desc"))
-                    ChangelogItem(icon: "calendar.badge.clock", color: .pink, title: String(localized: "whatsnew.heatmap.title"), description: String(localized: "whatsnew.heatmap.desc"))
+                    ChangelogItem(icon: "heart.text.square", color: .purple, title: String(localized: "whatsnew.therapistPack.title"), description: String(localized: "whatsnew.therapistPack.desc"))
+                    ChangelogItem(icon: "sparkles", color: .pink, title: String(localized: "whatsnew.moodAI.title"), description: String(localized: "whatsnew.moodAI.desc"))
+                    ChangelogItem(icon: "pin.fill", color: .orange, title: String(localized: "whatsnew.pin.title"), description: String(localized: "whatsnew.pin.desc"))
+                    ChangelogItem(icon: "moon.stars.fill", color: .indigo, title: String(localized: "whatsnew.appearance.title"), description: String(localized: "whatsnew.appearance.desc"))
+                    ChangelogItem(icon: "flame.fill", color: .red, title: String(localized: "whatsnew.streak2.title"), description: String(localized: "whatsnew.streak2.desc"))
                 }
                 .padding()
             }

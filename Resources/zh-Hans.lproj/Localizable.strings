@@ -412,6 +412,16 @@
 "whatsnew.filters.desc" = "按情绪、标签、日期范围或收藏过滤日记。";
 "whatsnew.heatmap.title" = "年度热力图";
 "whatsnew.heatmap.desc" = "GitHub 风格的年度视图，一眼看清你的写作规律。";
+"whatsnew.therapistPack.title" = "心理咨询师摘要";
+"whatsnew.therapistPack.desc" = "一键生成结构化的 PDF 或 Markdown 摘要，包含心情趋势、主题和模式，可分享给心理咨询师——全部在设备上处理。";
+"whatsnew.moodAI.title" = "AI 心情建议";
+"whatsnew.moodAI.desc" = "写作时，Kinen 会根据你写的内容轻声建议一个心情。";
+"whatsnew.pin.title" = "置顶你的精选";
+"whatsnew.pin.desc" = "最多置顶 3 篇日记，让它们始终显示在最上方。";
+"whatsnew.appearance.title" = "外观控制";
+"whatsnew.appearance.desc" = "选择跟随系统、浅色或深色模式，独立于设备设置。";
+"whatsnew.streak2.title" = "连续记录里程碑";
+"whatsnew.streak2.desc" = "追踪历史最长连续记录，庆祝沿途的每个里程碑。";
 
 /* Accessibility */
 "accessibility.selected" = "已选中";

@@ -412,6 +412,16 @@
 "whatsnew.filters.desc" = "Filter entries by mood, tags, date range, or bookmarks.";
 "whatsnew.heatmap.title" = "Year Heatmap";
 "whatsnew.heatmap.desc" = "GitHub-style year view shows your journaling patterns at a glance.";
+"whatsnew.therapistPack.title" = "Therapist Handoff Pack";
+"whatsnew.therapistPack.desc" = "Generate a structured PDF or Markdown summary of your mood trends, themes, and patterns to share with a clinician — all on-device.";
+"whatsnew.moodAI.title" = "AI Mood Suggestions";
+"whatsnew.moodAI.desc" = "As you write, Kinen quietly suggests a mood based on what you've written.";
+"whatsnew.pin.title" = "Pin Your Best Entries";
+"whatsnew.pin.desc" = "Pin up to 3 entries to keep them at the top of your journal.";
+"whatsnew.appearance.title" = "Appearance Control";
+"whatsnew.appearance.desc" = "Choose System, Light, or Dark mode independently of your device setting.";
+"whatsnew.streak2.title" = "Streak Milestones";
+"whatsnew.streak2.desc" = "Track your longest streak ever and celebrate milestones along the way.";
 
 /* Accessibility */
 "accessibility.selected" = "Selected";
