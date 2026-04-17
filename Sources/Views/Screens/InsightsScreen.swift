@@ -7,6 +7,7 @@ struct InsightsScreen: View {
     @State private var chartRange: ChartRange = .week
     @State private var appeared = false
     @State private var isInitialLoad = true
+    @State private var showHandoffSheet = false
     @AppStorage("enableHealthKit") private var enableHealthKit = false
     @State private var healthKit = HealthKitService.shared
 
@@ -63,6 +64,26 @@ struct InsightsScreen: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     .buttonStyle(.plain)
+
+                    // Therapist Handoff Pack
+                    Button {
+                        showHandoffSheet = true
+                    } label: {
+                        HStack {
+                            Label(String(localized: "insights.therapistHandoff"), systemImage: "heart.text.square")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.purple)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding()
+                        .background(.purple.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding()
             }
@@ -71,6 +92,9 @@ struct InsightsScreen: View {
             .onAppear {
                 isInitialLoad = false
                 withAnimation(.easeOut(duration: 0.4)) { appeared = true }
+            }
+            .sheet(isPresented: $showHandoffSheet) {
+                TherapistHandoffSheet()
             }
         }
     }

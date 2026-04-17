@@ -120,6 +120,7 @@
 "insights.topTopics" = "热门话题";
 "insights.topTopics.empty" = "多写日记后标签会出现在这里";
 "insights.viewRecap" = "查看周报";
+"insights.therapistHandoff" = "心理咨询师摘要";
 "insights.entries" = "日记";
 "insights.words" = "字数";
 "insights.avgMood" = "平均情绪";
