@@ -183,22 +183,28 @@ final class HealthKitService {
     }
     /// Merge overlapping time intervals and return total non-overlapping duration in seconds.
     private static func mergedDuration(_ samples: [HKCategorySample]) -> TimeInterval {
-        guard !samples.isEmpty else { return 0 }
-        let sorted = samples.sorted { $0.startDate < $1.startDate }
+        let intervals = samples.map { (start: $0.startDate, end: $0.endDate) }
+        return mergedDuration(intervals: intervals)
+    }
+    #endif
+
+    /// Pure-function variant exposed for testing: merge overlapping (start, end) intervals
+    /// and return total non-overlapping duration in seconds.
+    static func mergedDuration(intervals: [(start: Date, end: Date)]) -> TimeInterval {
+        guard !intervals.isEmpty else { return 0 }
+        let sorted = intervals.sorted { $0.start < $1.start }
         var merged: [(start: Date, end: Date)] = []
 
-        for sample in sorted {
-            if let last = merged.last, sample.startDate <= last.end {
-                // Overlapping — extend the end
-                merged[merged.count - 1].end = max(last.end, sample.endDate)
+        for interval in sorted {
+            if let last = merged.last, interval.start <= last.end {
+                merged[merged.count - 1].end = max(last.end, interval.end)
             } else {
-                merged.append((start: sample.startDate, end: sample.endDate))
+                merged.append(interval)
             }
         }
 
         return merged.reduce(0) { $0 + $1.end.timeIntervalSince($1.start) }
     }
-    #endif
 
     private init() {}
 }
