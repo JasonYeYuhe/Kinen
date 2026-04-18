@@ -1,6 +1,9 @@
 import Foundation
+import OSLog
 import SwiftData
 import WidgetKit
+
+private let logger = Logger(subsystem: "com.jasonye.kinen", category: "WidgetDataProvider")
 
 /// Provides data to widgets via App Group shared container.
 struct WidgetDataProvider {
@@ -24,11 +27,15 @@ struct WidgetDataProvider {
         data.averageMoodEmoji = defaults.string(forKey: "widget.averageMoodEmoji") ?? "😐"
 
         // Decode recent moods
-        if let moodData = defaults.data(forKey: "widget.recentMoods"),
-           let decoded = try? JSONDecoder().decode([[String: Double]].self, from: moodData) {
-            data.recentMoods = decoded.compactMap { dict in
-                guard let timestamp = dict["date"], let value = dict["value"] else { return nil }
-                return (date: Date(timeIntervalSince1970: timestamp), value: value)
+        if let moodData = defaults.data(forKey: "widget.recentMoods") {
+            do {
+                let decoded = try JSONDecoder().decode([[String: Double]].self, from: moodData)
+                data.recentMoods = decoded.compactMap { dict in
+                    guard let timestamp = dict["date"], let value = dict["value"] else { return nil }
+                    return (date: Date(timeIntervalSince1970: timestamp), value: value)
+                }
+            } catch {
+                logger.error("WidgetDataProvider: failed to decode recentMoods from AppGroup: \(error)")
             }
         }
 
@@ -39,7 +46,13 @@ struct WidgetDataProvider {
     @MainActor
     static func syncAndReload(from context: ModelContext) {
         let descriptor = FetchDescriptor<JournalEntry>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
-        guard let entries = try? context.fetch(descriptor) else { return }
+        let entries: [JournalEntry]
+        do {
+            entries = try context.fetch(descriptor)
+        } catch {
+            logger.error("WidgetDataProvider: failed to fetch entries: \(error)")
+            return
+        }
 
         let calendar = Calendar.current
         let dates = Set(entries.map { calendar.startOfDay(for: $0.createdAt) })
@@ -74,8 +87,11 @@ struct WidgetDataProvider {
         let encoded: [[String: Double]] = recentMoods.map {
             ["date": $0.date.timeIntervalSince1970, "value": $0.value]
         }
-        if let data = try? JSONEncoder().encode(encoded) {
+        do {
+            let data = try JSONEncoder().encode(encoded)
             defaults.set(data, forKey: "widget.recentMoods")
+        } catch {
+            logger.error("WidgetDataProvider: failed to encode recentMoods: \(error)")
         }
     }
 }
