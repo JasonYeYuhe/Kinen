@@ -35,4 +35,19 @@ final class CBTReflectionTests: XCTestCase {
         )
         XCTAssertFalse(analysis.isEmpty)
     }
+
+    func testPersonalization() {
+        let result = CBTReflection.analyze("It's my fault everything went wrong. I caused this mess.")
+        XCTAssertTrue(result.contains { $0.type == .personalization })
+    }
+
+    func testEmotionalReasoning() {
+        let result = CBTReflection.analyze("I feel like I'm failing at everything. It feels true so it must be real.")
+        XCTAssertTrue(result.contains { $0.type == .emotionalReasoning })
+    }
+
+    func testLabeling() {
+        let result = CBTReflection.analyze("I'm a loser. I'm worthless and will never amount to anything.")
+        XCTAssertTrue(result.contains { $0.type == .labeling })
+    }
 }
