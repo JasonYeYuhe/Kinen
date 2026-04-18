@@ -17,29 +17,42 @@ struct CBTReflection {
         case emotionalReasoning = "Emotional Reasoning"
         case labeling = "Labeling"
 
+        var localizedName: String {
+            switch self {
+            case .catastrophizing: String(localized: "cbt.distortion.catastrophizing.name")
+            case .allOrNothing: String(localized: "cbt.distortion.allOrNothing.name")
+            case .overgeneralization: String(localized: "cbt.distortion.overgeneralization.name")
+            case .mindReading: String(localized: "cbt.distortion.mindReading.name")
+            case .shouldStatements: String(localized: "cbt.distortion.shouldStatements.name")
+            case .personalization: String(localized: "cbt.distortion.personalization.name")
+            case .emotionalReasoning: String(localized: "cbt.distortion.emotionalReasoning.name")
+            case .labeling: String(localized: "cbt.distortion.labeling.name")
+            }
+        }
+
         var description: String {
             switch self {
-            case .catastrophizing: "Expecting the worst possible outcome"
-            case .allOrNothing: "Seeing things in black-or-white with no middle ground"
-            case .overgeneralization: "Making broad conclusions from a single event"
-            case .mindReading: "Assuming you know what others think"
-            case .shouldStatements: "Rigid rules about how things 'should' be"
-            case .personalization: "Blaming yourself for things outside your control"
-            case .emotionalReasoning: "Believing something is true because it feels true"
-            case .labeling: "Attaching a fixed label to yourself or others"
+            case .catastrophizing: String(localized: "cbt.distortion.catastrophizing.description")
+            case .allOrNothing: String(localized: "cbt.distortion.allOrNothing.description")
+            case .overgeneralization: String(localized: "cbt.distortion.overgeneralization.description")
+            case .mindReading: String(localized: "cbt.distortion.mindReading.description")
+            case .shouldStatements: String(localized: "cbt.distortion.shouldStatements.description")
+            case .personalization: String(localized: "cbt.distortion.personalization.description")
+            case .emotionalReasoning: String(localized: "cbt.distortion.emotionalReasoning.description")
+            case .labeling: String(localized: "cbt.distortion.labeling.description")
             }
         }
 
         var reframingSuggestion: String {
             switch self {
-            case .catastrophizing: "What's the most likely outcome? What happened last time you feared the worst?"
-            case .allOrNothing: "Is there a middle ground? Can both things be partly true?"
-            case .overgeneralization: "Is this truly 'always' or 'never'? Can you think of exceptions?"
-            case .mindReading: "What evidence do you have? Could there be another explanation?"
-            case .shouldStatements: "What if you replaced 'should' with 'I'd prefer'? How does that feel?"
-            case .personalization: "What factors were outside your control? Would you blame a friend for this?"
-            case .emotionalReasoning: "Just because you feel it doesn't make it true. What are the facts?"
-            case .labeling: "One action doesn't define a whole person. What's a more balanced description?"
+            case .catastrophizing: String(localized: "cbt.distortion.catastrophizing.reframe")
+            case .allOrNothing: String(localized: "cbt.distortion.allOrNothing.reframe")
+            case .overgeneralization: String(localized: "cbt.distortion.overgeneralization.reframe")
+            case .mindReading: String(localized: "cbt.distortion.mindReading.reframe")
+            case .shouldStatements: String(localized: "cbt.distortion.shouldStatements.reframe")
+            case .personalization: String(localized: "cbt.distortion.personalization.reframe")
+            case .emotionalReasoning: String(localized: "cbt.distortion.emotionalReasoning.reframe")
+            case .labeling: String(localized: "cbt.distortion.labeling.reframe")
             }
         }
 
@@ -103,10 +116,11 @@ struct CBTReflection {
 
         if !distortions.isEmpty {
             let primary = distortions[0]
-            analysis += "I notice a pattern of **\(primary.type.rawValue)** — \(primary.type.description).\n\n"
-            analysis += "Try this reframe: \(primary.reframing)"
+            analysis += String(format: String(localized: "cbt.analysis.pattern"), primary.type.localizedName, primary.type.description)
+            analysis += "\n\n"
+            analysis += String(format: String(localized: "cbt.analysis.reframe"), primary.reframing)
         } else {
-            analysis += "Your thoughts seem balanced. If something still feels off, try asking: \"What would I tell a friend in this situation?\""
+            analysis += String(localized: "cbt.analysis.balanced")
         }
 
         return analysis

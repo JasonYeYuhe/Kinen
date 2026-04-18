@@ -37,7 +37,7 @@ actor AIJournalingLoop {
         if let primary = distortions.first, primary.confidence > 0.3 {
             let insight = EntryInsight(
                 type: .pattern,
-                content: "Noticed **\(primary.type.rawValue)**: \(primary.type.description). \(primary.reframing)"
+                content: "Noticed **\(primary.type.localizedName)**: \(primary.type.description). \(primary.reframing)"
             )
             entry.addInsight(insight)
         }
