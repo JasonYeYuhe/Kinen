@@ -47,6 +47,43 @@ final class InsightEngineTests: XCTestCase {
         XCTAssertNotNil(consistencyInsight, "Should detect high consistency")
     }
 
+    // MARK: - Sporadic Writer
+
+    func testInconsistencyInsightForSporadicWriter() {
+        // 12 entries on only 2 unique days — uniqueDays (2) ≤ 5 + count (12) ≥ 10
+        let day1 = daysAgo(5)
+        let day2 = daysAgo(6)
+        let entries = (0..<6).map { _ in makeEntry(mood: .good, createdAt: day1) } +
+                      (0..<6).map { _ in makeEntry(mood: .neutral, createdAt: day2) }
+        let insights = InsightEngine.generateInsights(from: entries)
+        let streakInsight = insights.first { $0.type == .streak }
+        XCTAssertNotNil(streakInsight, "Should detect sporadic writing pattern for user writing in bursts")
+    }
+
+    // MARK: - Word Count / Mood Correlation
+
+    func testWordCountCorrelationLongerEntriesBetterMood() {
+        // 6 one-word (terrible) + 6 ten-word (great) → longerBetter writingHabit
+        let shortContent = "brief"
+        let longContent = "one two three four five six seven eight nine ten"
+        let entries = (0..<6).map { _ in makeEntry(content: shortContent, mood: .terrible) } +
+                      (0..<6).map { _ in makeEntry(content: longContent,  mood: .great) }
+        let insights = InsightEngine.generateInsights(from: entries)
+        let habitInsight = insights.first { $0.type == .writingHabit }
+        XCTAssertNotNil(habitInsight, "Should detect word count–mood correlation when longer entries have better mood")
+    }
+
+    func testWordCountCorrelationShorterEntriesBetterMood() {
+        // 6 one-word (great) + 6 ten-word (terrible) → shorterBetter writingHabit
+        let shortContent = "brief"
+        let longContent = "one two three four five six seven eight nine ten"
+        let entries = (0..<6).map { _ in makeEntry(content: shortContent, mood: .great) } +
+                      (0..<6).map { _ in makeEntry(content: longContent,  mood: .terrible) }
+        let insights = InsightEngine.generateInsights(from: entries)
+        let habitInsight = insights.first { $0.type == .writingHabit }
+        XCTAssertNotNil(habitInsight, "Should detect word count–mood correlation when shorter entries have better mood")
+    }
+
     // MARK: - Mood Values
 
     func testMoodNormalizedValues() {

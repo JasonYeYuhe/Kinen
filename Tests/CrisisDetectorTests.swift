@@ -35,4 +35,19 @@ final class CrisisDetectorTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(CrisisDetector.crisisResources.count, 3)
         XCTAssertTrue(CrisisDetector.crisisResources.contains { $0.number == "988" })
     }
+
+    // MARK: - Threshold boundary
+
+    func testSingleModeratePatternDoesNotTrigger() {
+        // Only one moderate keyword — threshold requires ≥ 2 to fire
+        let result = CrisisDetector.check("I feel hopeless today, but I'll push through it.")
+        XCTAssertNil(result, "A single moderate keyword should not reach the moderate-severity threshold")
+    }
+
+    func testChineseModeratePatternsTrigger() {
+        // "绝望" + "没有希望" are both in the moderate list → count = 2 ≥ 2 → fires
+        let result = CrisisDetector.check("我感到绝望，没有希望可言。")
+        XCTAssertNotNil(result, "Two Chinese moderate patterns should trigger crisis detection")
+        XCTAssertEqual(result?.severity, .moderate)
+    }
 }
