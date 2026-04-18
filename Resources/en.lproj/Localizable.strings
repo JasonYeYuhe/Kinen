@@ -693,3 +693,38 @@
 "handoff.pdf.reason.notable" = "Notable shift";
 "handoff.pdf.reason.crisis" = "Crisis flag";
 "handoff.pdf.reason.pinned" = "Pinned";
+
+/* CBT Cognitive Distortion — localized names */
+"cbt.distortion.catastrophizing.name" = "Catastrophizing";
+"cbt.distortion.allOrNothing.name" = "All-or-Nothing Thinking";
+"cbt.distortion.overgeneralization.name" = "Overgeneralization";
+"cbt.distortion.mindReading.name" = "Mind Reading";
+"cbt.distortion.shouldStatements.name" = "Should Statements";
+"cbt.distortion.personalization.name" = "Personalization";
+"cbt.distortion.emotionalReasoning.name" = "Emotional Reasoning";
+"cbt.distortion.labeling.name" = "Labeling";
+
+/* CBT Cognitive Distortion — descriptions */
+"cbt.distortion.catastrophizing.description" = "Expecting the worst possible outcome";
+"cbt.distortion.allOrNothing.description" = "Seeing things in black-or-white with no middle ground";
+"cbt.distortion.overgeneralization.description" = "Making broad conclusions from a single event";
+"cbt.distortion.mindReading.description" = "Assuming you know what others think";
+"cbt.distortion.shouldStatements.description" = "Rigid rules about how things 'should' be";
+"cbt.distortion.personalization.description" = "Blaming yourself for things outside your control";
+"cbt.distortion.emotionalReasoning.description" = "Believing something is true because it feels true";
+"cbt.distortion.labeling.description" = "Attaching a fixed label to yourself or others";
+
+/* CBT Cognitive Distortion — reframe suggestions */
+"cbt.distortion.catastrophizing.reframe" = "What's the most likely outcome? What happened last time you feared the worst?";
+"cbt.distortion.allOrNothing.reframe" = "Is there a middle ground? Can both things be partly true?";
+"cbt.distortion.overgeneralization.reframe" = "Is this truly 'always' or 'never'? Can you think of exceptions?";
+"cbt.distortion.mindReading.reframe" = "What evidence do you have? Could there be another explanation?";
+"cbt.distortion.shouldStatements.reframe" = "What if you replaced 'should' with 'I'd prefer'? How does that feel?";
+"cbt.distortion.personalization.reframe" = "What factors were outside your control? Would you blame a friend for this?";
+"cbt.distortion.emotionalReasoning.reframe" = "Just because you feel it doesn't make it true. What are the facts?";
+"cbt.distortion.labeling.reframe" = "One action doesn't define a whole person. What's a more balanced description?";
+
+/* CBT three-column analysis output */
+"cbt.analysis.pattern" = "I notice a pattern of **%@** — %@.";
+"cbt.analysis.reframe" = "Try this reframe: %@";
+"cbt.analysis.balanced" = "Your thoughts seem balanced. If something still feels off, try asking: \"What would I tell a friend in this situation?\"";

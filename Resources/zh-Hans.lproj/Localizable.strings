@@ -693,3 +693,38 @@
 "handoff.pdf.reason.notable" = "显著变化";
 "handoff.pdf.reason.crisis" = "危机标记";
 "handoff.pdf.reason.pinned" = "已置顶";
+
+/* CBT Cognitive Distortion — localized names */
+"cbt.distortion.catastrophizing.name" = "灾难化思维";
+"cbt.distortion.allOrNothing.name" = "非黑即白思维";
+"cbt.distortion.overgeneralization.name" = "过度概括";
+"cbt.distortion.mindReading.name" = "揣测他人想法";
+"cbt.distortion.shouldStatements.name" = "「应该」句式";
+"cbt.distortion.personalization.name" = "个人化";
+"cbt.distortion.emotionalReasoning.name" = "情绪化推理";
+"cbt.distortion.labeling.name" = "贴标签";
+
+/* CBT Cognitive Distortion — descriptions */
+"cbt.distortion.catastrophizing.description" = "预期最坏的结果";
+"cbt.distortion.allOrNothing.description" = "以非黑即白的方式看待事物，没有中间地带";
+"cbt.distortion.overgeneralization.description" = "从单一事件得出宽泛的结论";
+"cbt.distortion.mindReading.description" = "假设自己知道别人在想什么";
+"cbt.distortion.shouldStatements.description" = "对事情「应该」如何的僵化规则";
+"cbt.distortion.personalization.description" = "为控制之外的事情责怪自己";
+"cbt.distortion.emotionalReasoning.description" = "因为感觉是真的就相信它是真的";
+"cbt.distortion.labeling.description" = "给自己或他人贴上固定的标签";
+
+/* CBT Cognitive Distortion — reframe suggestions */
+"cbt.distortion.catastrophizing.reframe" = "最可能的结果是什么？上次你担心最坏情况时，实际发生了什么？";
+"cbt.distortion.allOrNothing.reframe" = "有没有中间地带？两件事都可以部分为真吗？";
+"cbt.distortion.overgeneralization.reframe" = "这真的是「总是」或「从不」吗？你能想到例外情况吗？";
+"cbt.distortion.mindReading.reframe" = "你有什么证据？有没有其他可能的解释？";
+"cbt.distortion.shouldStatements.reframe" = "如果把「应该」换成「我希望」会怎样？感觉如何？";
+"cbt.distortion.personalization.reframe" = "有哪些你无法控制的因素？你会因此责怪朋友吗？";
+"cbt.distortion.emotionalReasoning.reframe" = "感觉不等于事实。实际情况是什么？";
+"cbt.distortion.labeling.reframe" = "一次行为不代表整个人。有什么更平衡的描述？";
+
+/* CBT three-column analysis output */
+"cbt.analysis.pattern" = "我发现了**%@**的思维模式——%@。";
+"cbt.analysis.reframe" = "试着这样重构：%@";
+"cbt.analysis.balanced" = "你的思维看起来很平衡。如果仍感到不对劲，试着问问自己：「如果是朋友遇到这种情况，我会怎么跟他说？」";
