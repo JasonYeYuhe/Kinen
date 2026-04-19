@@ -46,16 +46,16 @@ actor SentimentAnalyzer {
 
         // 3. Generate insights
         if sentiment > 0.3 {
-            let insight = EntryInsight(type: .sentiment, content: "This entry has a positive tone. Keep noting what makes you feel good!")
+            let insight = EntryInsight(type: .sentiment, content: String(localized: "ai.insight.positive"))
             entry.addInsight(insight)
         } else if sentiment < -0.3 {
-            let insight = EntryInsight(type: .sentiment, content: "This entry reflects some difficult feelings. Remember, acknowledging emotions is a healthy practice.")
+            let insight = EntryInsight(type: .sentiment, content: String(localized: "ai.insight.negative"))
             entry.addInsight(insight)
         }
 
         if !topics.isEmpty {
             let topicList = topics.prefix(5).joined(separator: ", ")
-            let insight = EntryInsight(type: .topicExtraction, content: "Main topics: \(topicList)")
+            let insight = EntryInsight(type: .topicExtraction, content: String(format: String(localized: "ai.insight.topics"), topicList))
             entry.addInsight(insight)
         }
 
