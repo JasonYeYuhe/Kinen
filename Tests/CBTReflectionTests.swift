@@ -50,4 +50,85 @@ final class CBTReflectionTests: XCTestCase {
         let result = CBTReflection.analyze("I'm a loser. I'm worthless and will never amount to anything.")
         XCTAssertTrue(result.contains { $0.type == .labeling })
     }
+
+    // MARK: - CognitiveDistortion enum properties
+
+    func testAllDistortionCasesCount() {
+        XCTAssertEqual(CBTReflection.CognitiveDistortion.allCases.count, 8)
+    }
+
+    func testRawValues() {
+        XCTAssertEqual(CBTReflection.CognitiveDistortion.catastrophizing.rawValue, "Catastrophizing")
+        XCTAssertEqual(CBTReflection.CognitiveDistortion.allOrNothing.rawValue, "All-or-Nothing Thinking")
+        XCTAssertEqual(CBTReflection.CognitiveDistortion.labeling.rawValue, "Labeling")
+    }
+
+    func testTriggerPatternsNonEmpty() {
+        for distortion in CBTReflection.CognitiveDistortion.allCases {
+            XCTAssertFalse(distortion.triggerPatterns.isEmpty,
+                           "\(distortion.rawValue) should have at least one trigger pattern")
+        }
+    }
+
+    func testLocalizedNamesNonEmpty() {
+        for distortion in CBTReflection.CognitiveDistortion.allCases {
+            XCTAssertFalse(distortion.localizedName.isEmpty,
+                           "\(distortion.rawValue).localizedName should not be empty")
+        }
+    }
+
+    func testDescriptionsNonEmpty() {
+        for distortion in CBTReflection.CognitiveDistortion.allCases {
+            XCTAssertFalse(distortion.description.isEmpty,
+                           "\(distortion.rawValue).description should not be empty")
+        }
+    }
+
+    func testReframingSuggestionsNonEmpty() {
+        for distortion in CBTReflection.CognitiveDistortion.allCases {
+            XCTAssertFalse(distortion.reframingSuggestion.isEmpty,
+                           "\(distortion.rawValue).reframingSuggestion should not be empty")
+        }
+    }
+
+    // MARK: - analyze() logic
+
+    func testConfidenceCapAtOne() {
+        // "worst" + "disaster" + "never recover" + "terrible" = 4 catastrophizing matches → min(1.0, 4*0.4) = 1.0
+        let results = CBTReflection.analyze(
+            "This is the worst disaster ever. I will never recover from this terrible catastrophe.")
+        let catastrophizing = results.first { $0.type == .catastrophizing }
+        XCTAssertNotNil(catastrophizing)
+        XCTAssertEqual(catastrophizing?.confidence ?? 0, 1.0, accuracy: 0.001)
+    }
+
+    func testResultsSortedByConfidenceDescending() {
+        // shouldStatements: "i should" + "i must" + "i ought to" = 3 matches → confidence 1.0
+        // catastrophizing: "worst" = 1 match → confidence 0.4
+        let results = CBTReflection.analyze(
+            "I should study more, I must be perfect, I ought to do better. It was the worst.")
+        guard results.count >= 2 else {
+            XCTFail("Expected multiple distortions")
+            return
+        }
+        for i in 0..<results.count - 1 {
+            XCTAssertGreaterThanOrEqual(results[i].confidence, results[i + 1].confidence,
+                                       "Results should be sorted by confidence descending")
+        }
+    }
+
+    func testTriggerTextPopulatedWhenSentenceMatches() {
+        // "i should have done better" contains trigger "i should" — sentence is long enough (>10 chars)
+        let results = CBTReflection.analyze("I should have done better in today's meeting.")
+        let shouldMatch = results.first { $0.type == .shouldStatements }
+        XCTAssertNotNil(shouldMatch?.triggerText, "triggerText should be set when a matching sentence exists")
+    }
+
+    func testGenerateThreeColumnAnalysisReturnsBalancedForHealthyText() {
+        let result = CBTReflection.generateThreeColumnAnalysis(
+            situation: "Had a pleasant walk in the park",
+            automaticThought: "Today was a fine and relaxing day."
+        )
+        XCTAssertFalse(result.isEmpty, "generateThreeColumnAnalysis should return non-empty string even for healthy text")
+    }
 }
