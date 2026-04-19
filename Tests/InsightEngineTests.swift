@@ -186,4 +186,55 @@ final class InsightEngineTests: XCTestCase {
         XCTAssertFalse(insights.contains { $0.type == .writingHabit },
                        "writingTimePattern should not fire when fewer than 7 entries are present")
     }
+
+    func testAfternoonWritingPattern() {
+        // 8 entries at 14:00 (afternoon, 12–17) + 2 at 09:00 (morning)
+        // afternoonCount=8, total=10, ratio=0.8 > 0.5 → writingHabit insight
+        let afternoonEntries = (0..<8).map { i in makeEntry(createdAt: dateWithHour(14, daysAgo: i)) }
+        let morningEntries   = (0..<2).map { i in makeEntry(createdAt: dateWithHour(9,  daysAgo: i + 8)) }
+        let insights = InsightEngine.generateInsights(from: afternoonEntries + morningEntries)
+        XCTAssertTrue(insights.contains { $0.type == .writingHabit },
+                      "Should detect afternoon writing pattern when >50% of entries are written in the afternoon")
+    }
+
+    // MARK: - Word Count Mood Correlation Guards
+
+    func testWordCountMoodCorrelationRequiresTenEntries() {
+        // 9 entries with mood+wordcount: below the ≥10 threshold → wordCountMoodCorrelation returns nil
+        // Hours distributed 3+3+3 so writingTimePattern ratio ≤ 0.5 also doesn't fire
+        let hours = [9, 14, 22, 9, 14, 22, 9, 14, 22]
+        let entries = (0..<9).map { i in
+            makeEntry(content: "one two three", mood: .good, createdAt: dateWithHour(hours[i], daysAgo: i))
+        }
+        let insights = InsightEngine.generateInsights(from: entries)
+        XCTAssertFalse(insights.contains { $0.type == .writingHabit },
+                       "wordCountMoodCorrelation should not fire with fewer than 10 entries")
+    }
+
+    func testWordCountMoodCorrelationDiffTooSmall() {
+        // 12 entries: 6 short + 6 long, all Mood.neutral — both halves avg 0.5, diff = 0 ≤ 0.1 → nil
+        // Hours: 4 morning + 4 afternoon + 4 evening → ratio = 4/12 ≤ 0.5 so writingTimePattern won't fire
+        // 12 distinct days (daysAgo 0–11) → uniqueDays=12, not ≤5 so consistencyInsight won't fire
+        let shortContent = "brief"
+        let longContent = "one two three four five six seven eight nine ten"
+        let hours = [9, 14, 22, 9, 14, 22, 9, 14, 22, 9, 14, 22]
+        let entries =
+            (0..<6).map { i in makeEntry(content: shortContent, mood: .neutral, createdAt: dateWithHour(hours[i],     daysAgo: i)) } +
+            (0..<6).map { i in makeEntry(content: longContent,  mood: .neutral, createdAt: dateWithHour(hours[i + 6], daysAgo: i + 6)) }
+        let insights = InsightEngine.generateInsights(from: entries)
+        XCTAssertFalse(insights.contains { $0.type == .writingHabit },
+                       "wordCountMoodCorrelation should not fire when long vs short entry mood diff is ≤ 0.1")
+    }
+
+    // MARK: - Best Day of Week Guard
+
+    func testBestDayOfWeekRequiresThreeWeekdays() {
+        // Entries spaced exactly 7 days apart → all land on the same weekday
+        // dayMoods.count = 1 < 3 guard → bestDayOfWeek returns nil
+        // total = 5 < 7 so writingTimePattern also won't fire
+        let entries = [0, 7, 14, 21, 28].map { n in makeEntry(mood: .great, createdAt: daysAgo(n)) }
+        let insights = InsightEngine.generateInsights(from: entries)
+        XCTAssertFalse(insights.contains { $0.type == .timePattern },
+                       "bestDayOfWeek should not fire when entries span fewer than 3 distinct weekdays")
+    }
 }
