@@ -170,4 +170,87 @@ final class SemanticSearchTests: XCTestCase {
         let answer = SemanticSearch.answerQuestion("xyzzyqmwn", entries: entries)
         XCTAssertNil(answer)
     }
+
+    // MARK: - answerQuestion() Last Month Scoping
+
+    func testAnswerQuestionLastMonthScope() {
+        // 45 days ago falls in "last month" window (2 months–1 month ago)
+        let lastMonthEntry = makeEntry(content: "Last month great outing", mood: .great, createdAt: daysAgo(45))
+        // 20 days ago is "this month", not "last month"
+        let thisMonthEntry = makeEntry(content: "Recent okay trip", mood: .good, createdAt: daysAgo(20))
+        // 75 days ago is older than 2 months, excluded from "last month"
+        let oldEntry = makeEntry(content: "Very old terrible day", mood: .terrible, createdAt: daysAgo(75))
+        let answer = SemanticSearch.answerQuestion("best day last month", entries: [lastMonthEntry, thisMonthEntry, oldEntry])
+        XCTAssertNotNil(answer)
+        XCTAssertTrue(answer!.contains("Last month great outing"), "Only the entry from last month should be returned")
+    }
+
+    // MARK: - answerQuestion() Chinese Keywords
+
+    func testAnswerQuestionChineseHappiestKeyword() {
+        let entries = [
+            makeEntry(content: "Productive coding session", mood: .good),
+            makeEntry(content: "Amazing beach sunset trip", mood: .great),
+            makeEntry(content: "Stressful deadline", mood: .bad)
+        ]
+        let answer = SemanticSearch.answerQuestion("我最好的一天", entries: entries)
+        XCTAssertNotNil(answer)
+        XCTAssertTrue(answer!.contains("Amazing beach sunset trip"), "最好 should find highest-mood entry")
+    }
+
+    func testAnswerQuestionChineseWorstKeyword() {
+        let entries = [
+            makeEntry(content: "Wonderful family dinner", mood: .great),
+            makeEntry(content: "Missed deadline at work", mood: .terrible)
+        ]
+        let answer = SemanticSearch.answerQuestion("最差的一天是什么时候", entries: entries)
+        XCTAssertNotNil(answer)
+        XCTAssertTrue(answer!.contains("Missed deadline at work"), "最差 should find lowest-mood entry")
+    }
+
+    func testAnswerQuestionChineseThisMonthScope() {
+        // 这个月 = "this month"
+        let recentEntry = makeEntry(content: "Recent reading session", mood: .great, createdAt: daysAgo(5))
+        let oldEntry = makeEntry(content: "Long ago park walk", mood: .great, createdAt: daysAgo(45))
+        let answer = SemanticSearch.answerQuestion("这个月最好的事情", entries: [recentEntry, oldEntry])
+        XCTAssertNotNil(answer)
+        XCTAssertTrue(answer!.contains("Recent reading session"), "这个月 should scope to this month only")
+        XCTAssertFalse(answer!.contains("Long ago park walk"))
+    }
+
+    func testAnswerQuestionChineseLastMonthScope() {
+        // 上个月 = "last month" (2 months ago to 1 month ago)
+        let lastMonthEntry = makeEntry(content: "Last month quiet evening", mood: .great, createdAt: daysAgo(45))
+        let thisMonthEntry = makeEntry(content: "This month coffee chat", mood: .good, createdAt: daysAgo(10))
+        let answer = SemanticSearch.answerQuestion("上个月最好是哪天", entries: [lastMonthEntry, thisMonthEntry])
+        XCTAssertNotNil(answer)
+        XCTAssertTrue(answer!.contains("Last month quiet evening"), "上个月 should scope to last month only")
+    }
+
+    // MARK: - answerQuestion() Gratitude
+
+    func testAnswerQuestionGratitudeByTagReturnsMatch() {
+        let gratitudeTag = Tag(name: "gratitude")
+        let tagged = JournalEntry(content: "So grateful for my family today", tags: [gratitudeTag])
+        let unrelated = JournalEntry(content: "Normal work entry")
+        let answer = SemanticSearch.answerQuestion("What am I grateful for?", entries: [tagged, unrelated])
+        XCTAssertNotNil(answer)
+        XCTAssertTrue(answer!.contains("So grateful for my family today"), "Should return entry with 'gratitude' tag")
+    }
+
+    func testAnswerQuestionGratitudeByTemplateWhenNoTagMatch() {
+        // No tag named "gratitude", but entry uses .gratitude template
+        let templateEntry = JournalEntry(content: "Three good things today", template: .gratitude)
+        let unrelated = JournalEntry(content: "Normal coding session")
+        let answer = SemanticSearch.answerQuestion("gratitude", entries: [templateEntry, unrelated])
+        XCTAssertNotNil(answer)
+        XCTAssertTrue(answer!.contains("Three good things today"), "Should fall through to template match when no tag found")
+    }
+
+    func testAnswerQuestionGratitudeNoMatchReturnsNil() {
+        // Entry has neither "gratitude" tag nor .gratitude template
+        let entry = JournalEntry(content: "Regular journal entry without gratitude focus")
+        let answer = SemanticSearch.answerQuestion("grateful", entries: [entry])
+        XCTAssertNil(answer, "Should return nil when no 'gratitude' tag or template found")
+    }
 }
