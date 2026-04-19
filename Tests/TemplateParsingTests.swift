@@ -123,4 +123,94 @@ final class TemplateParsingTests: XCTestCase {
         XCTAssertTrue(result["daily-0"]!.contains("third line"))
         XCTAssertEqual(result["daily-1"], "Short response")
     }
+
+    // MARK: - Edge Cases (extended)
+
+    func testParseEmptyPromptsReturnsEmpty() {
+        let result = EntryEditorSheet.parseTemplateContent("<!-- daily-0 -->\nSome content", prompts: [])
+        XCTAssertTrue(result.isEmpty, "Empty prompts array should yield empty result")
+    }
+
+    func testParseUnicodeContentPreserved() {
+        let content = """
+        <!-- daily-0 -->
+        今日は最高だった 🎉
+
+        <!-- daily-1 -->
+        感謝の気持ち 😊
+        """
+        let prompts = [
+            TemplatePrompt(id: "daily-0", title: nil, placeholder: ""),
+            TemplatePrompt(id: "daily-1", title: nil, placeholder: ""),
+        ]
+        let result = EntryEditorSheet.parseTemplateContent(content, prompts: prompts)
+        XCTAssertEqual(result["daily-0"], "今日は最高だった 🎉")
+        XCTAssertEqual(result["daily-1"], "感謝の気持ち 😊")
+    }
+
+    func testParseDuplicateMarkerLastValueWins() {
+        let content = """
+        <!-- daily-0 -->
+        First value
+
+        <!-- daily-0 -->
+        Second value
+        """
+        let prompts = [TemplatePrompt(id: "daily-0", title: nil, placeholder: "")]
+        let result = EntryEditorSheet.parseTemplateContent(content, prompts: prompts)
+        XCTAssertEqual(result["daily-0"], "Second value", "Duplicate marker: last occurrence should win")
+    }
+
+    func testParseAdjacentMarkersGiveEmptyStrings() {
+        let content = """
+        <!-- daily-0 -->
+        <!-- daily-1 -->
+        """
+        let prompts = [
+            TemplatePrompt(id: "daily-0", title: nil, placeholder: ""),
+            TemplatePrompt(id: "daily-1", title: nil, placeholder: ""),
+        ]
+        let result = EntryEditorSheet.parseTemplateContent(content, prompts: prompts)
+        XCTAssertEqual(result["daily-0"] ?? "", "", "Adjacent markers should give empty string for first prompt")
+    }
+
+    func testParsePartialMarkersOnlyMatchedPromptInResult() {
+        let content = """
+        <!-- daily-0 -->
+        Only first section present
+        """
+        let prompts = [
+            TemplatePrompt(id: "daily-0", title: nil, placeholder: ""),
+            TemplatePrompt(id: "daily-1", title: nil, placeholder: ""),
+        ]
+        let result = EntryEditorSheet.parseTemplateContent(content, prompts: prompts)
+        XCTAssertEqual(result["daily-0"], "Only first section present")
+        XCTAssertNil(result["daily-1"], "Prompt without marker should be absent from result")
+    }
+
+    func testParseLegacyNilTitlePromptsFirstGetsAll() {
+        // Multiple nil-title prompts + no markers → first prompt gets entire content
+        let content = "Just some freeform text without markers or titles"
+        let prompts = [
+            TemplatePrompt(id: "q-0", title: nil, placeholder: ""),
+            TemplatePrompt(id: "q-1", title: nil, placeholder: ""),
+        ]
+        let result = EntryEditorSheet.parseTemplateContent(content, prompts: prompts)
+        XCTAssertEqual(result["q-0"], content, "First prompt should receive full content as fallback")
+        XCTAssertNil(result["q-1"], "Non-first nil-title prompt should not appear in result")
+    }
+
+    func testParseStableMarkerTakesPrecedenceOverLegacyTitle() {
+        // When stable markers are present, legacy title matching should NOT run
+        let prompts = [
+            TemplatePrompt(id: "daily-0", title: "Best moment", placeholder: ""),
+        ]
+        let content = """
+        <!-- daily-0 -->
+        Marker-based response (no bold title)
+        """
+        let result = EntryEditorSheet.parseTemplateContent(content, prompts: prompts)
+        XCTAssertEqual(result["daily-0"], "Marker-based response (no bold title)",
+                       "Stable marker path should take precedence over legacy title matching")
+    }
 }
