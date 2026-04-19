@@ -182,4 +182,114 @@ final class RecapGeneratorTests: XCTestCase {
         XCTAssertEqual(RecapGenerator.MoodTrend.insufficient.emoji, "❓")
         XCTAssertEqual(RecapGenerator.MoodTrend.improving.emoji, "📈")
     }
+
+    // MARK: - growthNote stable branches (avg >= 3.5 vs < 3.5)
+
+    func testGrowthNoteStableHighMoodDiffersFromLow() {
+        // great rawValue=5, avg=5.0 >= 3.5 → stablePositive
+        let highEntries = (0..<5).map { i in
+            makeEntry(mood: .great, sentimentScore: 0.1, createdAt: thisWeekDate(dayOffset: i))
+        }
+        // neutral rawValue=3, avg=3.0 < 3.5 → stableNeutral
+        let lowEntries = (0..<5).map { i in
+            makeEntry(mood: .neutral, sentimentScore: 0.1, createdAt: thisWeekDate(dayOffset: i))
+        }
+        let highRecap = RecapGenerator.weeklyRecap(entries: highEntries, weekOf: Date())
+        let lowRecap = RecapGenerator.weeklyRecap(entries: lowEntries, weekOf: Date())
+        XCTAssertEqual(highRecap.moodTrend, RecapGenerator.MoodTrend.stable)
+        XCTAssertEqual(lowRecap.moodTrend, RecapGenerator.MoodTrend.stable)
+        XCTAssertFalse(highRecap.growthNote.isEmpty)
+        XCTAssertFalse(lowRecap.growthNote.isEmpty)
+        XCTAssertNotEqual(highRecap.growthNote, lowRecap.growthNote,
+                          "stable+avg≥3.5 → stablePositive; stable+avg<3.5 → stableNeutral")
+    }
+
+    func testGrowthNoteBoundaryGoodVsBadMood() {
+        // good rawValue=4, avg=4.0 >= 3.5 → stablePositive
+        let goodEntries = (0..<5).map { i in
+            makeEntry(mood: .good, sentimentScore: 0.05, createdAt: thisWeekDate(dayOffset: i))
+        }
+        // bad rawValue=2, avg=2.0 < 3.5 → stableNeutral
+        let badEntries = (0..<5).map { i in
+            makeEntry(mood: .bad, sentimentScore: 0.05, createdAt: thisWeekDate(dayOffset: i))
+        }
+        let goodRecap = RecapGenerator.weeklyRecap(entries: goodEntries, weekOf: Date())
+        let badRecap = RecapGenerator.weeklyRecap(entries: badEntries, weekOf: Date())
+        XCTAssertEqual(goodRecap.moodTrend, RecapGenerator.MoodTrend.stable)
+        XCTAssertNotEqual(goodRecap.growthNote, badRecap.growthNote,
+                          "Mood.good avg=4.0 and Mood.bad avg=2.0 should produce different stable growth notes")
+    }
+
+    // MARK: - actionItem paths
+
+    func testActionItemDecliningWithChallengesUsesDecliningPath() {
+        // declining trend (first half positive → second half negative) + challenge entries
+        let entries = [
+            makeEntry(sentimentScore: 0.8, createdAt: thisWeekDate(dayOffset: 0)),
+            makeEntry(sentimentScore: 0.7, createdAt: thisWeekDate(dayOffset: 1)),
+            makeEntry(sentimentScore: 0.6, createdAt: thisWeekDate(dayOffset: 2)),
+            makeEntry(sentimentScore: -0.6, createdAt: thisWeekDate(dayOffset: 3)),
+            makeEntry(sentimentScore: -0.7, createdAt: thisWeekDate(dayOffset: 4)),
+            makeEntry(sentimentScore: -0.8, createdAt: thisWeekDate(dayOffset: 5)),
+        ]
+        let recap = RecapGenerator.weeklyRecap(entries: entries, weekOf: Date())
+        XCTAssertEqual(recap.moodTrend, .declining)
+        XCTAssertFalse(recap.challenges.isEmpty, "sentimentScore < -0.3 should populate challenges")
+        XCTAssertFalse(recap.actionItem.isEmpty)
+        // stable recap with no theme should produce a different actionItem
+        let stableRecap = RecapGenerator.weeklyRecap(
+            entries: (0..<5).map { i in makeEntry(sentimentScore: 0.05, createdAt: thisWeekDate(dayOffset: i)) },
+            weekOf: Date()
+        )
+        XCTAssertNotEqual(recap.actionItem, stableRecap.actionItem,
+                          "declining+challenges should hit the declining action path, not default")
+    }
+
+    func testActionItemWorkThemeDiffersFromDefault() {
+        let workTag = Tag(name: "work")
+        let workEntries = (0..<5).map { i -> JournalEntry in
+            let e = makeEntry(sentimentScore: 0.05, createdAt: thisWeekDate(dayOffset: i))
+            e.tags = [workTag]
+            return e
+        }
+        let noThemeEntries = (0..<5).map { i in
+            makeEntry(sentimentScore: 0.05, createdAt: thisWeekDate(dayOffset: i))
+        }
+        let workRecap = RecapGenerator.weeklyRecap(entries: workEntries, weekOf: Date())
+        let defaultRecap = RecapGenerator.weeklyRecap(entries: noThemeEntries, weekOf: Date())
+        XCTAssertFalse(workRecap.actionItem.isEmpty)
+        XCTAssertNotEqual(workRecap.actionItem, defaultRecap.actionItem,
+                          "work theme should hit the work action path")
+    }
+
+    func testActionItemSelfDoubtThemeDiffersFromWork() {
+        let selfDoubtTag = Tag(name: "self-doubt")
+        let selfDoubtEntries = (0..<5).map { i -> JournalEntry in
+            let e = makeEntry(sentimentScore: 0.05, createdAt: thisWeekDate(dayOffset: i))
+            e.tags = [selfDoubtTag]
+            return e
+        }
+        let workTag = Tag(name: "work")
+        let workEntries = (0..<5).map { i -> JournalEntry in
+            let e = makeEntry(sentimentScore: 0.05, createdAt: thisWeekDate(dayOffset: i))
+            e.tags = [workTag]
+            return e
+        }
+        let selfDoubtRecap = RecapGenerator.weeklyRecap(entries: selfDoubtEntries, weekOf: Date())
+        let workRecap = RecapGenerator.weeklyRecap(entries: workEntries, weekOf: Date())
+        XCTAssertFalse(selfDoubtRecap.actionItem.isEmpty)
+        XCTAssertNotEqual(selfDoubtRecap.actionItem, workRecap.actionItem,
+                          "self-doubt tag should hit the self-doubt action path")
+    }
+
+    func testActionItemDefaultNoThemeNoDecline() {
+        // No tags, stable trend → default path
+        let entries = (0..<5).map { i in
+            makeEntry(sentimentScore: 0.05, createdAt: thisWeekDate(dayOffset: i))
+        }
+        let recap = RecapGenerator.weeklyRecap(entries: entries, weekOf: Date())
+        XCTAssertEqual(recap.moodTrend, .stable)
+        XCTAssertTrue(recap.topThemes.isEmpty, "no-tag entries should have empty topThemes")
+        XCTAssertFalse(recap.actionItem.isEmpty, "default action path should still produce a non-empty string")
+    }
 }
