@@ -142,4 +142,73 @@ final class HealthKitServiceTests: XCTestCase {
         let entry = JournalEntry(content: "Tough day", mood: .bad)
         XCTAssertNil(service.generateCorrelationInsight(entries: [entry]))
     }
+
+    // MARK: - Boundary Values
+
+    func testCorrelationInsightSleepExactly6WithBadMoodIsNil() {
+        // sleep < 6 is the condition — exactly 6.0 must NOT trigger lowSleep insight
+        let service = HealthKitService.shared
+        service.todaySleep = 6.0
+        service.todaySteps = nil
+        service.todayRestingHR = nil
+        let entry = JournalEntry(content: "Bad day", mood: .bad)
+        XCTAssertNil(service.generateCorrelationInsight(entries: [entry]),
+                     "sleep == 6.0 should not trigger lowSleep insight (condition is < 6, not <= 6)")
+    }
+
+    func testCorrelationInsightSleepExactly75WithGoodMoodIsNil() {
+        // sleep > 7.5 is the condition — exactly 7.5 must NOT trigger goodSleep insight
+        let service = HealthKitService.shared
+        service.todaySleep = 7.5
+        service.todaySteps = nil
+        service.todayRestingHR = nil
+        let entry = JournalEntry(content: "Good day", mood: .good)
+        XCTAssertNil(service.generateCorrelationInsight(entries: [entry]),
+                     "sleep == 7.5 should not trigger goodSleep insight (condition is > 7.5, not >= 7.5)")
+    }
+
+    func testCorrelationInsightStepsExactly8000WithGoodMoodIsNil() {
+        // steps > 8000 is the condition — exactly 8000 must NOT trigger activeDay insight.
+        // todaySleep must be non-nil (neutral 7.0) to pass the guard.
+        let service = HealthKitService.shared
+        service.todaySleep = 7.0
+        service.todaySteps = 8000
+        service.todayRestingHR = nil
+        let entry = JournalEntry(content: "Good day", mood: .good)
+        XCTAssertNil(service.generateCorrelationInsight(entries: [entry]),
+                     "steps == 8000 should not trigger activeDay insight (condition is > 8000, not >= 8000)")
+    }
+
+    func testCorrelationInsightHighStepsWithTerribleMoodIsNil() {
+        // steps > 8000 but mood is .terrible — activeDay condition requires .good/.great
+        let service = HealthKitService.shared
+        service.todaySleep = 7.0
+        service.todaySteps = 12_000
+        service.todayRestingHR = nil
+        let entry = JournalEntry(content: "Terrible day despite walking", mood: .terrible)
+        XCTAssertNil(service.generateCorrelationInsight(entries: [entry]),
+                     "high step count with terrible mood should not trigger activeDay insight")
+    }
+
+    func testCorrelationInsightLowSleepWithGreatMoodIsNil() {
+        // sleep < 6 but mood is .great — lowSleep condition requires .bad/.terrible
+        let service = HealthKitService.shared
+        service.todaySleep = 4.0
+        service.todaySteps = nil
+        service.todayRestingHR = nil
+        let entry = JournalEntry(content: "Great day despite little sleep", mood: .great)
+        XCTAssertNil(service.generateCorrelationInsight(entries: [entry]),
+                     "low sleep with great mood should not trigger lowSleep insight (mood guard mismatch)")
+    }
+
+    func testCorrelationInsightNilSleepWithHighStepsIsNil() {
+        // todaySleep nil → guard returns nil immediately; steps are never evaluated
+        let service = HealthKitService.shared
+        service.todaySleep = nil
+        service.todaySteps = 15_000
+        service.todayRestingHR = nil
+        let entry = JournalEntry(content: "Walked all day", mood: .great)
+        XCTAssertNil(service.generateCorrelationInsight(entries: [entry]),
+                     "nil sleep guard forces nil regardless of step count")
+    }
 }
