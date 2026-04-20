@@ -360,6 +360,22 @@ final class RecapGeneratorTests: XCTestCase {
         XCTAssertFalse(recap.growthNote.isEmpty, "entryCount == 0 should produce a non-empty growthNote (empty branch)")
     }
 
+    // MARK: - streakDays
+
+    func testWeeklyRecapStreakDaysConsecutive() {
+        // 3 entries on consecutive days starting from the start of this week
+        let entries = (0..<3).map { i in
+            makeEntry(content: "day \(i)", createdAt: thisWeekDate(dayOffset: i))
+        }
+        let recap = RecapGenerator.weeklyRecap(entries: entries, weekOf: Date())
+        XCTAssertEqual(recap.streakDays, 3, "3 consecutive days should produce streakDays == 3")
+    }
+
+    func testWeeklyRecapStreakDaysEmpty() {
+        let recap = RecapGenerator.weeklyRecap(entries: [], weekOf: Date())
+        XCTAssertEqual(recap.streakDays, 0, "No entries should produce streakDays == 0")
+    }
+
     // MARK: - MoodTrend enum properties
 
     func testMoodTrendEmojiNonEmpty() {

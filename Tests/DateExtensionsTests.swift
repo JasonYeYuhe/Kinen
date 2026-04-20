@@ -130,4 +130,35 @@ final class DateExtensionsTests: XCTestCase {
         let dates: Set<Date> = []
         XCTAssertEqual(today.consecutiveDays(in: dates), 0)
     }
+
+    // MARK: - shortDate
+
+    func testShortDateIsNonEmpty() {
+        let s = Date().shortDate
+        XCTAssertFalse(s.isEmpty, "shortDate should produce a non-empty string")
+        XCTAssertFalse(s.trimmingCharacters(in: .whitespaces).isEmpty)
+    }
+
+    func testShortDateDiffersAcrossDays() {
+        let today = Date()
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
+        XCTAssertNotEqual(today.shortDate, yesterday.shortDate,
+                          "shortDate for different days should differ")
+    }
+
+    // MARK: - relativeDescription
+
+    func testRelativeDescriptionIsNonEmpty() {
+        XCTAssertFalse(Date().relativeDescription.isEmpty,
+                       "relativeDescription for now should be non-empty")
+    }
+
+    func testRelativeDescriptionPastDate() {
+        let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+        let desc = weekAgo.relativeDescription
+        XCTAssertFalse(desc.isEmpty, "relativeDescription for a past date should be non-empty")
+        // RelativeDateTimeFormatter always produces output; just verify it ran
+        XCTAssertNotEqual(desc, Date().relativeDescription,
+                          "Relative descriptions for different dates should differ")
+    }
 }
