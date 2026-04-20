@@ -494,6 +494,7 @@
 /* AI Insights */
 "ai.insight.positive" = "This entry radiates positivity! Noting what brings you joy helps you recreate it.";
 "ai.insight.negative" = "Tough feelings are valid. Writing about them is already a healthy step. Be kind to yourself.";
+"ai.insight.cbt.pattern" = "Noticed **%1$@**: %2$@. %3$@";
 
 /* AI CBT Experiments */
 "ai.cbt.catastrophizing.1" = "Try this: Write down the worst case, best case, and most likely case. Focus on the most likely.";

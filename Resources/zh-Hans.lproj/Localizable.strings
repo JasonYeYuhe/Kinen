@@ -494,6 +494,7 @@
 /* AI Insights */
 "ai.insight.positive" = "这篇日记充满了正能量！记住那些让你快乐的事，帮助你重新创造它们。";
 "ai.insight.negative" = "难过的感受是正常的。把它们写下来本身就是健康的一步。对自己温柔一点。";
+"ai.insight.cbt.pattern" = "发现了 **%1$@**：%2$@。%3$@";
 
 /* AI CBT Experiments */
 "ai.cbt.catastrophizing.1" = "试试这个：写下最坏情况、最好情况和最可能的情况，专注于最可能发生的。";
