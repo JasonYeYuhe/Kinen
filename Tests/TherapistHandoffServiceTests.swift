@@ -365,4 +365,33 @@ final class TherapistHandoffServiceTests: XCTestCase {
                        "A single entry has no gap to measure — longestSilence should be 0")
         XCTAssertEqual(overview.totalEntries, 1)
     }
+
+    // MARK: - renderMarkdown: longestSilence > 1 bullet
+
+    func testMarkdownIncludesLongestSilenceLine() {
+        // Entries 1 and 10 days ago → 9-day silence > 1 → bullet appears in Overview
+        let entries = [
+            entry(days: 1, mood: .good),
+            entry(days: 10, mood: .neutral)
+        ]
+        let report = TherapistHandoffService.buildReport(from: entries, range: range(daysBack: 30))
+        let md = TherapistHandoffService.renderMarkdown(report)
+        XCTAssertTrue(md.contains("Longest silence:"),
+                      "renderMarkdown should include 'Longest silence' bullet when gap > 1 day")
+        XCTAssertTrue(md.contains("days between entries"),
+                      "renderMarkdown should include 'days between entries' in the silence line")
+    }
+
+    // MARK: - buildCrisisFlags: moderate severity
+
+    func testCrisisModerateSeverityDetected() {
+        // Two moderate-severity patterns trigger a moderate alert
+        let moderate = entry(days: 1, content: "I feel completely hopeless and there is no point anymore.")
+        let safe = entry(days: 2, content: "Went for a walk, feeling calm.")
+
+        let flags = TherapistHandoffService.buildCrisisFlags([moderate, safe])
+        XCTAssertEqual(flags.count, 1, "One entry triggers moderate crisis flag")
+        XCTAssertEqual(flags.first?.severity, "moderate",
+                       "buildCrisisFlags should map CrisisAlert.Severity.moderate to string 'moderate'")
+    }
 }
