@@ -292,4 +292,77 @@ final class TherapistHandoffServiceTests: XCTestCase {
         // But mood data should still be present
         XCTAssertEqual(report.moodTrend.count, 1)
     }
+
+    // MARK: - Markdown: crisis section
+
+    func testMarkdownIncludesCrisisSection() {
+        let crisis = entry(days: 1, content: "I want to end my life. There is no reason to keep going.")
+        let report = TherapistHandoffService.buildReport(
+            from: [crisis],
+            range: range(daysBack: 7)
+        )
+        let md = TherapistHandoffService.renderMarkdown(report)
+        XCTAssertTrue(md.contains("Concerning passages"), "Crisis entry should produce the '⚠️ Concerning passages' section")
+        XCTAssertTrue(md.contains("high"), "High-severity crisis should appear in markdown")
+    }
+
+    // MARK: - Markdown: cognitive distortions with example sentence
+
+    func testMarkdownIncludesCognitivePatternsWithExample() {
+        let catastrophic = entry(days: 1, content: "Everything is ruined. This is the worst disaster of my entire life.")
+        let report = TherapistHandoffService.buildReport(
+            from: [catastrophic],
+            range: range(daysBack: 7)
+        )
+        let md = TherapistHandoffService.renderMarkdown(report)
+        XCTAssertTrue(md.contains("Cognitive patterns"), "Distortion in entry should produce the cognitive patterns section")
+        // renderMarkdown formats example sentences with "> " (blockquote)
+        XCTAssertTrue(md.contains(">"), "Distortion example should be rendered as a blockquote")
+    }
+
+    // MARK: - Markdown: selected entries section
+
+    func testMarkdownIncludesSelectedEntriesSection() {
+        let entries = [
+            entry(days: 1, mood: .great, content: "Best morning run."),
+            entry(days: 3, mood: .terrible, content: "Exhausting work meeting."),
+        ]
+        let report = TherapistHandoffService.buildReport(
+            from: entries,
+            range: range(daysBack: 7)
+        )
+        let md = TherapistHandoffService.renderMarkdown(report)
+        XCTAssertTrue(md.contains("Selected entries"), "Report with mood entries should render '## Selected entries' section")
+    }
+
+    // MARK: - buildHighlights: largestDeviation from sentiment-only entries
+
+    func testHighlightsLargestDeviationFromSentimentOnlyEntries() {
+        // 3 entries with sentiment scores, no mood, not pinned
+        // avg = (0.9 + 0.1 + 0.5) / 3 = 0.5
+        // deviations: |0.9−0.5|=0.4, |0.1−0.5|=0.4, |0.5−0.5|=0.0
+        // top-2 by deviation are the 0.9 and 0.1 entries
+        let high = entry(days: 1, mood: nil, content: "Wonderful joyful day")
+        high.sentimentScore = 0.9
+        let low = entry(days: 2, mood: nil, content: "Terrible sad afternoon")
+        low.sentimentScore = 0.1
+        let mid = entry(days: 3, mood: nil, content: "Ordinary Tuesday")
+        mid.sentimentScore = 0.5
+
+        let highlights = TherapistHandoffService.buildHighlights([high, low, mid])
+        XCTAssertFalse(highlights.isEmpty, "Entries with sentiment scores should produce highlights via largestDeviation")
+        XCTAssertTrue(highlights.allSatisfy { $0.reason == .largestDeviation },
+                      "All highlights should have .largestDeviation reason when entries have no mood and are not pinned")
+        XCTAssertEqual(highlights.count, 2, "Top-2 deviation entries should be returned")
+    }
+
+    // MARK: - buildOverview: longestSilence for single entry
+
+    func testOverviewLongestSilenceZeroForSingleEntry() {
+        let sole = entry(days: 5)
+        let overview = TherapistHandoffService.buildOverview([sole])
+        XCTAssertEqual(overview.longestSilence, 0,
+                       "A single entry has no gap to measure — longestSilence should be 0")
+        XCTAssertEqual(overview.totalEntries, 1)
+    }
 }
