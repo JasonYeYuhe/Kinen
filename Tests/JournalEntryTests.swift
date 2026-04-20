@@ -106,6 +106,17 @@ final class JournalEntryTests: XCTestCase {
         XCTAssertEqual(entry.safeInsights.count, 1)
     }
 
+    func testAddInsightToExistingArray() {
+        let entry = JournalEntry(content: "test")
+        let insight1 = EntryInsight(type: .sentiment, content: "Positive vibes")
+        let insight2 = EntryInsight(type: .suggestion, content: "Try journaling more")
+        entry.addInsight(insight1)
+        entry.addInsight(insight2)
+        XCTAssertEqual(entry.safeInsights.count, 2)
+        XCTAssertEqual(entry.safeInsights[0].content, "Positive vibes")
+        XCTAssertEqual(entry.safeInsights[1].content, "Try journaling more")
+    }
+
     // MARK: - Snapshot / Undo
 
     func testSnapshotForUndo() {
