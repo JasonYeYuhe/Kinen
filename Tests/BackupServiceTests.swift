@@ -283,4 +283,52 @@ final class BackupServiceTests: XCTestCase {
         let allTags = try restoreContext.fetch(FetchDescriptor<Tag>())
         XCTAssertEqual(allTags.count, 1, "Should not create a duplicate tag that already exists in context")
     }
+
+    // MARK: - writingDuration Round-Trip
+
+    func testWritingDurationRoundTrip() throws {
+        let entry = JournalEntry(content: "Long writing session")
+        entry.writingDuration = 420.5  // 7 minutes 0.5 seconds
+        context.insert(entry)
+        try context.save()
+
+        let entries = try context.fetch(FetchDescriptor<JournalEntry>())
+        let encrypted = try BackupService.createBackup(entries: entries, tags: [], password: "duration-pass")
+
+        let restoreConfig = ModelConfiguration(schema: container.schema, isStoredInMemoryOnly: true)
+        let restoreContainer = try ModelContainer(for: container.schema, configurations: [restoreConfig])
+        let restoreContext = ModelContext(restoreContainer)
+
+        _ = try BackupService.restoreBackup(data: encrypted, password: "duration-pass", context: restoreContext)
+        try restoreContext.save()
+
+        let restored = try restoreContext.fetch(FetchDescriptor<JournalEntry>())
+        XCTAssertEqual(restored.count, 1)
+        XCTAssertEqual(restored[0].writingDuration, 420.5,
+                       "writingDuration should be preserved through backup/restore cycle")
+    }
+
+    // MARK: - Photo Data Round-Trip
+
+    func testPhotoDataRoundTrip() throws {
+        let entry = JournalEntry(content: "Entry with photo")
+        entry.photoData = Data([0xFF, 0xD8, 0xFF, 0xE0, 0x01, 0x02])  // fake JPEG header bytes
+        context.insert(entry)
+        try context.save()
+
+        let entries = try context.fetch(FetchDescriptor<JournalEntry>())
+        let encrypted = try BackupService.createBackup(entries: entries, tags: [], password: "photo-pass")
+
+        let restoreConfig = ModelConfiguration(schema: container.schema, isStoredInMemoryOnly: true)
+        let restoreContainer = try ModelContainer(for: container.schema, configurations: [restoreConfig])
+        let restoreContext = ModelContext(restoreContainer)
+
+        _ = try BackupService.restoreBackup(data: encrypted, password: "photo-pass", context: restoreContext)
+        try restoreContext.save()
+
+        let restored = try restoreContext.fetch(FetchDescriptor<JournalEntry>())
+        XCTAssertEqual(restored.count, 1)
+        XCTAssertEqual(restored[0].photoData, Data([0xFF, 0xD8, 0xFF, 0xE0, 0x01, 0x02]),
+                       "photoData should be preserved through backup/restore cycle via Base64 encoding")
+    }
 }
