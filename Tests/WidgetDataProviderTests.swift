@@ -70,4 +70,66 @@ final class WidgetDataProviderTests: XCTestCase {
         let avg = moods.isEmpty ? 0.0 : Double(moods.reduce(0, +)) / Double(moods.count)
         XCTAssertEqual(avg, 0.0, "Empty moods should give 0")
     }
+
+    // MARK: - updateWidgetData + loadData Round-Trip
+
+    private static let suite = "group.com.jasonye.kinen"
+
+    private func clearWidgetDefaults() {
+        let defaults = UserDefaults(suiteName: Self.suite)
+        defaults?.removeObject(forKey: "widget.streak")
+        defaults?.removeObject(forKey: "widget.totalEntries")
+        defaults?.removeObject(forKey: "widget.averageMoodEmoji")
+        defaults?.removeObject(forKey: "widget.recentMoods")
+    }
+
+    func testUpdateAndLoadRoundTrip() {
+        clearWidgetDefaults()
+        WidgetDataProvider.updateWidgetData(streak: 17, totalEntries: 83, averageMoodEmoji: "😊", recentMoods: [])
+        let data = WidgetDataProvider.loadData()
+        XCTAssertEqual(data.streak, 17)
+        XCTAssertEqual(data.totalEntries, 83)
+        XCTAssertEqual(data.averageMoodEmoji, "😊")
+        XCTAssertTrue(data.recentMoods.isEmpty)
+    }
+
+    func testLoadDataDefaultsWhenNothingStored() {
+        clearWidgetDefaults()
+        let data = WidgetDataProvider.loadData()
+        XCTAssertEqual(data.streak, 0, "Unset streak should default to 0")
+        XCTAssertEqual(data.totalEntries, 0, "Unset totalEntries should default to 0")
+        XCTAssertEqual(data.averageMoodEmoji, "😐", "Unset emoji should default to 😐")
+        XCTAssertTrue(data.recentMoods.isEmpty, "Unset recentMoods should default to empty")
+    }
+
+    func testRecentMoodsEncodeDecodeRoundTrip() {
+        clearWidgetDefaults()
+        let now = Date()
+        let moods: [(date: Date, value: Double)] = [
+            (date: now.addingTimeInterval(-3600), value: 0.8),
+            (date: now.addingTimeInterval(-7200), value: 0.2),
+        ]
+        WidgetDataProvider.updateWidgetData(streak: 0, totalEntries: 0, averageMoodEmoji: "😐", recentMoods: moods)
+        let data = WidgetDataProvider.loadData()
+        XCTAssertEqual(data.recentMoods.count, 2)
+        XCTAssertEqual(data.recentMoods[0].value, 0.8, accuracy: 0.001)
+        XCTAssertEqual(data.recentMoods[1].value, 0.2, accuracy: 0.001)
+    }
+
+    func testCorruptRecentMoodsHandledGracefully() {
+        clearWidgetDefaults()
+        let defaults = UserDefaults(suiteName: Self.suite)
+        defaults?.set(Data([0xFF, 0xFE, 0x00, 0x01]), forKey: "widget.recentMoods")
+        let data = WidgetDataProvider.loadData()
+        XCTAssertTrue(data.recentMoods.isEmpty, "Corrupt recentMoods should be ignored, not crash")
+    }
+
+    func testStreakAndEntriesStoredIndependently() {
+        clearWidgetDefaults()
+        WidgetDataProvider.updateWidgetData(streak: 5, totalEntries: 0, averageMoodEmoji: "😐", recentMoods: [])
+        WidgetDataProvider.updateWidgetData(streak: 5, totalEntries: 42, averageMoodEmoji: "😐", recentMoods: [])
+        let data = WidgetDataProvider.loadData()
+        XCTAssertEqual(data.streak, 5)
+        XCTAssertEqual(data.totalEntries, 42)
+    }
 }
