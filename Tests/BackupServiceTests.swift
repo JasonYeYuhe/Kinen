@@ -235,6 +235,24 @@ final class BackupServiceTests: XCTestCase {
         XCTAssertEqual(preview.entryCount, 3)
     }
 
+    // MARK: - BackupError.errorDescription
+
+    func testEncryptionFailedErrorDescription() {
+        XCTAssertEqual(BackupError.encryptionFailed.errorDescription, "Failed to encrypt backup data")
+    }
+
+    func testDecryptionFailedErrorDescription() {
+        XCTAssertEqual(BackupError.decryptionFailed.errorDescription, "Failed to decrypt backup. Check your password.")
+    }
+
+    func testInvalidPasswordErrorDescription() {
+        XCTAssertEqual(BackupError.invalidPassword.errorDescription, "Incorrect password")
+    }
+
+    func testCorruptedDataErrorDescription() {
+        XCTAssertEqual(BackupError.corruptedData.errorDescription, "Backup file is corrupted or invalid")
+    }
+
     // MARK: - Tag Deduplication
 
     func testTagDeduplicationOnRestore() throws {

@@ -178,4 +178,16 @@ final class StreakCalculatorTests: XCTestCase {
         let parsed = StreakCalculator.parseMilestones(serialized)
         XCTAssertEqual(parsed, original)
     }
+
+    func testParseMilestonesDeduplicates() {
+        // Duplicate values in string collapse into a single-element Set
+        let result = StreakCalculator.parseMilestones("7,7,7")
+        XCTAssertEqual(result, [7])
+    }
+
+    func testNewMilestoneAt365WhenLowerMilestonesAchieved() {
+        // current=365, [7,30,100] already achieved → first unachieved milestone ≥ current is 365
+        let milestone = StreakCalculator.newMilestone(current: 365, achieved: [7, 30, 100])
+        XCTAssertEqual(milestone, 365)
+    }
 }
