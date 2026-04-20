@@ -71,4 +71,27 @@ final class ReminderServiceTests: XCTestCase {
         XCTAssertEqual(ReminderService.shared.reminderMinute, 30,
                        "reminderTime setter should store extracted minute")
     }
+
+    // MARK: - Setters write through to UserDefaults
+
+    func testReminderHourSetterStoresInUserDefaults() {
+        defaults.set(false, forKey: "reminderEnabled")
+        ReminderService.shared.reminderHour = 14
+        XCTAssertEqual(defaults.object(forKey: "reminderHour") as? Int, 14,
+                       "reminderHour setter should persist value to UserDefaults")
+    }
+
+    func testReminderMinuteSetterStoresInUserDefaults() {
+        defaults.set(false, forKey: "reminderEnabled")
+        ReminderService.shared.reminderMinute = 45
+        XCTAssertEqual(defaults.object(forKey: "reminderMinute") as? Int, 45,
+                       "reminderMinute setter should persist value to UserDefaults")
+    }
+
+    func testIsEnabledSetterFalseStoresInUserDefaults() {
+        defaults.set(true, forKey: "reminderEnabled")
+        ReminderService.shared.isEnabled = false
+        XCTAssertFalse(defaults.bool(forKey: "reminderEnabled"),
+                       "isEnabled setter should persist false to UserDefaults")
+    }
 }
