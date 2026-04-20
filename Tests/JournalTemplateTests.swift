@@ -92,4 +92,48 @@ final class JournalTemplateTests: XCTestCase {
             }
         }
     }
+
+    // MARK: - name
+
+    func testAllNamesNonEmpty() {
+        for template in JournalTemplate.allCases {
+            XCTAssertFalse(template.name.isEmpty, "\(template.rawValue) name should not be empty")
+        }
+    }
+
+    func testNamesAreDistinct() {
+        let names = JournalTemplate.allCases.map(\.name)
+        XCTAssertEqual(Set(names).count, names.count, "Each template should have a unique name")
+    }
+
+    // MARK: - description
+
+    func testAllDescriptionsNonEmpty() {
+        for template in JournalTemplate.allCases {
+            XCTAssertFalse(template.description.isEmpty,
+                           "\(template.rawValue) description should not be empty")
+        }
+    }
+
+    // MARK: - prompt title optionality
+
+    func testFreeWriteAndMorningPagesHaveNilTitlePrompt() {
+        XCTAssertNil(JournalTemplate.freeWrite.prompts[0].title,
+                     "freeWrite single prompt should have nil title (unstructured writing)")
+        XCTAssertNil(JournalTemplate.morningPages.prompts[0].title,
+                     "morningPages single prompt should have nil title (stream-of-consciousness)")
+    }
+
+    func testStructuredTemplatesPromptsHaveNonNilTitles() {
+        let structured: [JournalTemplate] = [
+            .dailyReview, .gratitude, .cbtThreeColumn,
+            .dreamJournal, .goalReflection, .weeklyReview
+        ]
+        for template in structured {
+            for prompt in template.prompts {
+                XCTAssertNotNil(prompt.title,
+                                "\(template.rawValue) prompt '\(prompt.id)' should have a non-nil title")
+            }
+        }
+    }
 }
