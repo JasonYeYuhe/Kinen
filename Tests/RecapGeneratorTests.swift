@@ -292,4 +292,85 @@ final class RecapGeneratorTests: XCTestCase {
         XCTAssertTrue(recap.topThemes.isEmpty, "no-tag entries should have empty topThemes")
         XCTAssertFalse(recap.actionItem.isEmpty, "default action path should still produce a non-empty string")
     }
+
+    // MARK: - GrowthNote: improving / declining / insufficient / empty branches
+
+    func testGrowthNoteImproving() {
+        // First half negative, second half positive → .improving trend
+        let entries = [
+            makeEntry(sentimentScore: -0.5, createdAt: thisWeekDate(dayOffset: 0)),
+            makeEntry(sentimentScore: -0.4, createdAt: thisWeekDate(dayOffset: 1)),
+            makeEntry(sentimentScore: -0.3, createdAt: thisWeekDate(dayOffset: 2)),
+            makeEntry(sentimentScore:  0.5, createdAt: thisWeekDate(dayOffset: 3)),
+            makeEntry(sentimentScore:  0.6, createdAt: thisWeekDate(dayOffset: 4)),
+            makeEntry(sentimentScore:  0.7, createdAt: thisWeekDate(dayOffset: 5)),
+        ]
+        let recap = RecapGenerator.weeklyRecap(entries: entries, weekOf: Date())
+        XCTAssertEqual(recap.moodTrend, .improving)
+        XCTAssertFalse(recap.growthNote.isEmpty, "improving trend should produce a non-empty growthNote")
+
+        // Must differ from the stablePositive path
+        let stableRecap = RecapGenerator.weeklyRecap(
+            entries: (0..<5).map { i in makeEntry(mood: .great, sentimentScore: 0.05, createdAt: thisWeekDate(dayOffset: i)) },
+            weekOf: Date()
+        )
+        XCTAssertNotEqual(recap.growthNote, stableRecap.growthNote, "improving growthNote should differ from stable")
+    }
+
+    func testGrowthNoteDeclining() {
+        // First half positive, second half negative → .declining trend
+        let entries = [
+            makeEntry(sentimentScore:  0.6, createdAt: thisWeekDate(dayOffset: 0)),
+            makeEntry(sentimentScore:  0.5, createdAt: thisWeekDate(dayOffset: 1)),
+            makeEntry(sentimentScore:  0.4, createdAt: thisWeekDate(dayOffset: 2)),
+            makeEntry(sentimentScore: -0.5, createdAt: thisWeekDate(dayOffset: 3)),
+            makeEntry(sentimentScore: -0.6, createdAt: thisWeekDate(dayOffset: 4)),
+            makeEntry(sentimentScore: -0.7, createdAt: thisWeekDate(dayOffset: 5)),
+        ]
+        let recap = RecapGenerator.weeklyRecap(entries: entries, weekOf: Date())
+        XCTAssertEqual(recap.moodTrend, .declining)
+        XCTAssertFalse(recap.growthNote.isEmpty, "declining trend should produce a non-empty growthNote")
+
+        let improvingEntries = [
+            makeEntry(sentimentScore: -0.5, createdAt: thisWeekDate(dayOffset: 0)),
+            makeEntry(sentimentScore: -0.4, createdAt: thisWeekDate(dayOffset: 1)),
+            makeEntry(sentimentScore: -0.3, createdAt: thisWeekDate(dayOffset: 2)),
+            makeEntry(sentimentScore:  0.5, createdAt: thisWeekDate(dayOffset: 3)),
+            makeEntry(sentimentScore:  0.6, createdAt: thisWeekDate(dayOffset: 4)),
+            makeEntry(sentimentScore:  0.7, createdAt: thisWeekDate(dayOffset: 5)),
+        ]
+        let improvingRecap = RecapGenerator.weeklyRecap(entries: improvingEntries, weekOf: Date())
+        XCTAssertNotEqual(recap.growthNote, improvingRecap.growthNote, "declining growthNote should differ from improving")
+    }
+
+    func testGrowthNoteInsufficientData() {
+        // 2 entries with no sentimentScore → trend = .insufficient (< 3 sentiments)
+        let entries = [
+            makeEntry(content: "entry one", createdAt: thisWeekDate(dayOffset: 0)),
+            makeEntry(content: "entry two", createdAt: thisWeekDate(dayOffset: 1)),
+        ]
+        let recap = RecapGenerator.weeklyRecap(entries: entries, weekOf: Date())
+        XCTAssertEqual(recap.moodTrend, .insufficient, "2 entries without sentimentScore should give insufficient trend")
+        XCTAssertFalse(recap.growthNote.isEmpty, "insufficient trend should produce a non-empty growthNote")
+    }
+
+    func testGrowthNoteEmptyEntries() {
+        let recap = RecapGenerator.weeklyRecap(entries: [], weekOf: Date())
+        XCTAssertEqual(recap.entryCount, 0)
+        XCTAssertFalse(recap.growthNote.isEmpty, "entryCount == 0 should produce a non-empty growthNote (empty branch)")
+    }
+
+    // MARK: - MoodTrend enum properties
+
+    func testMoodTrendEmojiNonEmpty() {
+        for trend in [RecapGenerator.MoodTrend.improving, .declining, .stable, .insufficient] {
+            XCTAssertFalse(trend.emoji.isEmpty, "\(trend.rawValue) emoji should be non-empty")
+        }
+    }
+
+    func testMoodTrendDisplayNameNonEmpty() {
+        for trend in [RecapGenerator.MoodTrend.improving, .declining, .stable, .insufficient] {
+            XCTAssertFalse(trend.displayName.isEmpty, "\(trend.rawValue) displayName should be non-empty")
+        }
+    }
 }
