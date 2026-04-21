@@ -191,6 +191,30 @@ final class StreakCalculatorTests: XCTestCase {
         XCTAssertEqual(milestone, 365)
     }
 
+    func testNewMilestoneNilWhenCurrentBetweenMilestones() {
+        // current=15: above 7 (already achieved) but below 30 → no unachieved milestone ≥ 15
+        let milestone = StreakCalculator.newMilestone(current: 15, achieved: [7])
+        XCTAssertNil(milestone, "current=15 is between the 7-day and 30-day milestones — no milestone fires")
+    }
+
+    func testNewMilestoneNilWhenBelowFirstThreshold() {
+        // current=0: below every milestone threshold — nothing fires regardless of achieved set
+        let milestone = StreakCalculator.newMilestone(current: 0, achieved: [])
+        XCTAssertNil(milestone, "current=0 is below the 7-day minimum milestone — no milestone fires")
+    }
+
+    func testParseMilestonesFiltersNonNumericStrings() {
+        // compactMap { Int($0) } silently drops tokens that are not integers
+        let result = StreakCalculator.parseMilestones("abc,7,xyz")
+        XCTAssertEqual(result, [7], "Non-numeric tokens should be silently dropped by parseMilestones")
+    }
+
+    func testParseMilestonesHandlesTrailingComma() {
+        // split(separator:) omits empty subsequences — trailing comma produces no extra element
+        let result = StreakCalculator.parseMilestones("7,")
+        XCTAssertEqual(result, [7], "Trailing comma should not produce an extra element")
+    }
+
     // MARK: - calculate() — freezeDays=2
 
     func testTwoFreezeDaysCanBridgeTwoGaps() {
