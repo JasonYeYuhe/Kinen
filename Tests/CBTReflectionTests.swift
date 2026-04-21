@@ -131,4 +131,25 @@ final class CBTReflectionTests: XCTestCase {
         )
         XCTAssertFalse(result.isEmpty, "generateThreeColumnAnalysis should return non-empty string even for healthy text")
     }
+
+    // MARK: - Overgeneralization (no dedicated detection test until now)
+
+    func testOvergeneralization() {
+        // "always happens" and "every time" are both overgeneralization triggers
+        let result = CBTReflection.analyze("This always happens to me every time I try something new.")
+        XCTAssertTrue(result.contains { $0.type == .overgeneralization },
+                      "Should detect overgeneralization when 'always happens' / 'every time' patterns are present")
+    }
+
+    // MARK: - triggerText nil when no sentence is long enough
+
+    func testTriggerTextNilForShortSentences() {
+        // "i never." → overgeneralization trigger matches, but the only sentence
+        // is 7 chars which fails the >10 filter → triggerText should be nil
+        let results = CBTReflection.analyze("i never.")
+        let match = results.first { $0.type == .overgeneralization }
+        XCTAssertNotNil(match, "Overgeneralization should still be detected from 'i never'")
+        XCTAssertNil(match?.triggerText,
+                     "triggerText must be nil when no sentence exceeds 10 characters")
+    }
 }
