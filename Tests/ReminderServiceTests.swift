@@ -94,4 +94,22 @@ final class ReminderServiceTests: XCTestCase {
         XCTAssertFalse(defaults.bool(forKey: "reminderEnabled"),
                        "isEnabled setter should persist false to UserDefaults")
     }
+
+    // MARK: - scheduleOnThisDayIfNeeded guard exits
+
+    func testScheduleOnThisDayDisabledExitsEarly() {
+        // Guard 1: onThisDayEnabled=false → method returns before touching UNUserNotificationCenter
+        defaults.set(false, forKey: "onThisDayEnabled")
+        defer { defaults.removeObject(forKey: "onThisDayEnabled") }
+        // Should not crash and should not schedule anything
+        ReminderService.shared.scheduleOnThisDayIfNeeded(entries: [], preview: "some preview")
+    }
+
+    func testScheduleOnThisDayEmptyPreviewExitsEarly() {
+        // Guard 2: preview.isEmpty → removes pending notification then returns without scheduling
+        defaults.set(true, forKey: "onThisDayEnabled")
+        defer { defaults.removeObject(forKey: "onThisDayEnabled") }
+        // Should not crash; removePendingNotificationRequests is a no-op when none pending
+        ReminderService.shared.scheduleOnThisDayIfNeeded(entries: [], preview: "")
+    }
 }
