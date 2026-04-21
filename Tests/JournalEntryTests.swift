@@ -38,6 +38,32 @@ final class JournalEntryTests: XCTestCase {
         XCTAssertEqual(entry.wordCount, 0)
     }
 
+    func testWordCountWhitespaceOnlyIsZero() {
+        // split(separator:) omits empty subsequences → "   " returns [] → count 0
+        let entry = JournalEntry(content: "   ")
+        XCTAssertEqual(entry.wordCount, 0, "Whitespace-only content should have 0 word count")
+    }
+
+    func testWordCountConsecutiveSpacesBetweenWords() {
+        // split(separator: " ") collapses consecutive spaces — "hello  world" → ["hello", "world"]
+        let entry = JournalEntry(content: "hello  world")
+        XCTAssertEqual(entry.wordCount, 2, "Multiple spaces between words should still count as 2 words")
+    }
+
+    func testWordCountCJKTextNoSpaces() {
+        // CJK text without spaces is split as one token by split(separator: " ")
+        let entry = JournalEntry(content: "今天是个好日子")
+        XCTAssertEqual(entry.wordCount, 1, "CJK text with no spaces is counted as 1 word token")
+    }
+
+    func testWordCountIsStoredAtInit() {
+        // wordCount is set once in init — changing content afterwards does NOT update it
+        let entry = JournalEntry(content: "one two three")
+        XCTAssertEqual(entry.wordCount, 3)
+        entry.content = "one two three four five six"
+        XCTAssertEqual(entry.wordCount, 3, "wordCount is a stored property frozen at init, not a computed live value")
+    }
+
     // MARK: - Display Title
 
     func testDisplayTitleFallsBackToDate() {
