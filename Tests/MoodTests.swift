@@ -80,4 +80,17 @@ final class MoodTests: XCTestCase {
             XCTAssertEqual(mood.id, mood.rawValue)
         }
     }
+
+    // MARK: - label
+
+    func testAllLabelsNonEmpty() {
+        for mood in Mood.allCases {
+            XCTAssertFalse(mood.label.isEmpty, "\(mood) label should not be empty")
+        }
+    }
+
+    func testAllLabelsDistinct() {
+        let labels = Mood.allCases.map(\.label)
+        XCTAssertEqual(Set(labels).count, labels.count, "Each mood should have a unique label")
+    }
 }
