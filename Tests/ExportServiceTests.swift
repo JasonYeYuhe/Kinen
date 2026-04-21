@@ -236,6 +236,33 @@ final class ExportServiceTests: XCTestCase {
         XCTAssertNotNil(first["moodValue"], "Should include raw mood integer value")
     }
 
+    // MARK: - ExportFormat enum
+
+    func testExportFormatAllCasesCount() {
+        XCTAssertEqual(ExportService.ExportFormat.allCases.count, 3)
+    }
+
+    func testExportFormatRawValues() {
+        XCTAssertEqual(ExportService.ExportFormat.markdown.rawValue, "Markdown")
+        XCTAssertEqual(ExportService.ExportFormat.json.rawValue, "JSON")
+        XCTAssertEqual(ExportService.ExportFormat.plainText.rawValue, "Plain Text")
+    }
+
+    func testSafeFilenamePreservesCJKCharacters() {
+        // safeFilename regex allows \u4e00-\u9fff — CJK chars should appear in the output filename
+        let entry = makeEntry(title: "今天日记")
+        guard let url = ExportService.exportAll(entries: [entry], format: .markdown) else {
+            XCTFail("Export returned nil"); return
+        }
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let files = (try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)) ?? []
+        XCTAssertEqual(files.count, 1, "Should produce one markdown file")
+        if let filename = files.first?.lastPathComponent {
+            XCTAssertTrue(filename.contains("今天"), "CJK characters in title should be preserved in filename")
+        }
+    }
+
     // MARK: - Plain text: entry without mood
 
     func testPlainTextNoMoodLine() {
