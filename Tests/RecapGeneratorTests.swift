@@ -376,6 +376,47 @@ final class RecapGeneratorTests: XCTestCase {
         XCTAssertEqual(recap.streakDays, 0, "No entries should produce streakDays == 0")
     }
 
+    // MARK: - calculateStreak edge cases
+
+    func testWeeklyRecapStreakSingleEntry() {
+        let entry = makeEntry(content: "one entry", createdAt: thisWeekDate(dayOffset: 0))
+        let recap = RecapGenerator.weeklyRecap(entries: [entry], weekOf: Date())
+        XCTAssertEqual(recap.streakDays, 1, "Single entry should produce streakDays == 1")
+    }
+
+    func testWeeklyRecapStreakWithGap() {
+        // Entries at days 0, 1, 3, 4 — day 2 missing.
+        // calculateStreak counts backward from max (day 4): day4→1, day3→2, day2 missing → stop.
+        let entries = [0, 1, 3, 4].map { i in
+            makeEntry(content: "entry \(i)", createdAt: thisWeekDate(dayOffset: i))
+        }
+        let recap = RecapGenerator.weeklyRecap(entries: entries, weekOf: Date())
+        XCTAssertEqual(recap.streakDays, 2, "Gap at day 2 should stop streak at 2 counting back from day 4")
+    }
+
+    func testMoodTrendExactlyThreeEntriesNotInsufficient() {
+        // guard sentiments.count >= 3 — exactly 3 should NOT return .insufficient
+        let entries = [
+            makeEntry(sentimentScore: -0.5, createdAt: thisWeekDate(dayOffset: 0)),
+            makeEntry(sentimentScore:  0.0, createdAt: thisWeekDate(dayOffset: 1)),
+            makeEntry(sentimentScore:  0.8, createdAt: thisWeekDate(dayOffset: 2)),
+        ]
+        let recap = RecapGenerator.weeklyRecap(entries: entries, weekOf: Date())
+        XCTAssertNotEqual(recap.moodTrend, .insufficient,
+                          "Exactly 3 sentiment values satisfies count >= 3 and should not be .insufficient")
+    }
+
+    func testWeeklyRecapTopEmotionsReflectsFrequency() {
+        // 3 .great entries + 1 .neutral + 1 .bad → topEmotions[0] should be Mood.great.label
+        let greatEntries = (0..<3).map { i in makeEntry(mood: .great, createdAt: thisWeekDate(dayOffset: i)) }
+        let mixed = [makeEntry(mood: .neutral, createdAt: thisWeekDate(dayOffset: 3)),
+                     makeEntry(mood: .bad,     createdAt: thisWeekDate(dayOffset: 4))]
+        let recap = RecapGenerator.weeklyRecap(entries: greatEntries + mixed, weekOf: Date())
+        XCTAssertFalse(recap.topEmotions.isEmpty, "Entries with mood should produce topEmotions")
+        XCTAssertEqual(recap.topEmotions.first, Mood.great.label,
+                       "Most frequent mood (great ×3) should be first in topEmotions")
+    }
+
     // MARK: - MoodTrend enum properties
 
     func testMoodTrendEmojiNonEmpty() {
