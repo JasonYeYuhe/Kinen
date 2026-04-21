@@ -161,4 +161,23 @@ final class DateExtensionsTests: XCTestCase {
         XCTAssertNotEqual(desc, Date().relativeDescription,
                           "Relative descriptions for different dates should differ")
     }
+
+    // MARK: - consecutiveDays — additional edge cases
+
+    func testConsecutiveDaysStartDateNotInSet() {
+        // today is NOT in the dates set → while loop exits immediately → 0
+        let calendar = Calendar.current
+        let today = Date().startOfDay
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+        let dates: Set<Date> = [yesterday]
+        XCTAssertEqual(today.consecutiveDays(in: dates), 0,
+                       "consecutiveDays should return 0 when the start date is not in the set")
+    }
+
+    func testConsecutiveDaysSingleDate() {
+        let today = Date().startOfDay
+        let dates: Set<Date> = [today]
+        XCTAssertEqual(today.consecutiveDays(in: dates), 1,
+                       "A single date equal to self should give a streak of 1")
+    }
 }
