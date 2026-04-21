@@ -190,4 +190,21 @@ final class StreakCalculatorTests: XCTestCase {
         let milestone = StreakCalculator.newMilestone(current: 365, achieved: [7, 30, 100])
         XCTAssertEqual(milestone, 365)
     }
+
+    // MARK: - calculate() — freezeDays=2
+
+    func testTwoFreezeDaysCanBridgeTwoGaps() {
+        // days 1 and 2 are missing; with freezeDays=2 both are consumed and the streak bridges to day 3
+        let dates: Set<Date> = [daysAgo(0), daysAgo(3)]
+        let result = StreakCalculator.calculate(from: dates, freezeDays: 2)
+        XCTAssertEqual(result.current, 2, "Two freeze days should bridge a 2-day gap between active entries")
+        XCTAssertTrue(result.hasFreezeToday, "Freeze days were consumed to bridge the gap")
+    }
+
+    func testTwoFreezeDaysCannotBridgeThreeConsecutiveGaps() {
+        // 3 missing days (1, 2, 3) require 3 freeze days to bridge — 2 freeze days are not enough
+        let dates: Set<Date> = [daysAgo(0), daysAgo(4)]
+        let result = StreakCalculator.calculate(from: dates, freezeDays: 2)
+        XCTAssertEqual(result.current, 1, "Two freeze days cannot bridge a 3-day gap — only today counts")
+    }
 }
