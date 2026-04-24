@@ -208,6 +208,13 @@ final class TherapistHandoffServiceTests: XCTestCase {
         XCTAssertEqual(highlights.count, 1)
     }
 
+    func testHighlightsSingleMoodEntryAppearsOnce() {
+        let entryWithMood = entry(days: 1, mood: .neutral) // Single entry is both highest and lowest mood
+        let highlights = TherapistHandoffService.buildHighlights([entryWithMood])
+        XCTAssertEqual(highlights.count, 1, "A single entry with mood should appear only once in highlights, even if it's both highest and lowest mood.")
+        XCTAssertEqual(highlights.first?.reason, .highestMood, "The first reason chosen should be highestMood as per current implementation order.")
+    }
+
     // MARK: - Crisis
 
     func testCrisisFlagsAreDetected() {
@@ -364,6 +371,28 @@ final class TherapistHandoffServiceTests: XCTestCase {
         XCTAssertEqual(overview.longestSilence, 0,
                        "A single entry has no gap to measure — longestSilence should be 0")
         XCTAssertEqual(overview.totalEntries, 1)
+    }
+
+    // MARK: - DateRange dayCount tests
+
+    func testDateRangeDayCountSameDayIsOne() {
+        let sameDay = Date()
+        let range = HandoffReport.DateRange(start: sameDay, end: sameDay)
+        XCTAssertEqual(range.dayCount, 1, "DateRange dayCount for same start and end date should be 1")
+    }
+
+    func testDateRangeDayCountSevenDays() {
+        let start = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+        let end = Date()
+        let range = HandoffReport.DateRange(start: start, end: end)
+        XCTAssertEqual(range.dayCount, 7, "DateRange dayCount for a 7-day range should be 7")
+    }
+
+    func testDateRangeDayCountInvertedRangeClampedToOne() {
+        let start = Date()
+        let end = Calendar.current.date(byAdding: .day, value: -5, to: Date())! // End is before start
+        let range = HandoffReport.DateRange(start: start, end: end)
+        XCTAssertEqual(range.dayCount, 1, "DateRange dayCount for an inverted range should be clamped to 1")
     }
 
     // MARK: - renderMarkdown: longestSilence > 1 bullet
