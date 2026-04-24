@@ -1,5 +1,9 @@
 import XCTest
+import SwiftUI
 @testable import Kinen
+#if os(macOS)
+import AppKit
+#endif
 
 final class TagTests: XCTestCase {
 
@@ -128,5 +132,81 @@ final class EntryInsightTests: XCTestCase {
             let insight = EntryInsight(type: t, content: "x")
             XCTAssertEqual(insight.type, t)
         }
+    }
+}
+
+// MARK: -
+
+/// Tests for the Color(hex:) extension defined in Tag.swift.
+/// Uses NSColor on macOS to extract sRGB components for assertion.
+final class ColorHexExtensionTests: XCTestCase {
+
+#if os(macOS)
+    private func sRGB(_ color: Color) -> (r: Double, g: Double, b: Double) {
+        guard let srgb = NSColor(color).usingColorSpace(.sRGB) else {
+            return (0, 0, 0)
+        }
+        return (Double(srgb.redComponent), Double(srgb.greenComponent), Double(srgb.blueComponent))
+    }
+#endif
+
+    func testValidRedHexParsedCorrectly() {
+#if os(macOS)
+        let c = sRGB(Color(hex: "FF0000"))
+        XCTAssertEqual(c.r, 1.0, accuracy: 0.005)
+        XCTAssertEqual(c.g, 0.0, accuracy: 0.005)
+        XCTAssertEqual(c.b, 0.0, accuracy: 0.005)
+#endif
+    }
+
+    func testValidGreenHexParsedCorrectly() {
+#if os(macOS)
+        let c = sRGB(Color(hex: "00FF00"))
+        XCTAssertEqual(c.r, 0.0, accuracy: 0.005)
+        XCTAssertEqual(c.g, 1.0, accuracy: 0.005)
+        XCTAssertEqual(c.b, 0.0, accuracy: 0.005)
+#endif
+    }
+
+    func testHashPrefixIsStripped() {
+        // "#FF0000" and "FF0000" should produce identical colors
+#if os(macOS)
+        let withHash = sRGB(Color(hex: "#FF0000"))
+        let plain    = sRGB(Color(hex: "FF0000"))
+        XCTAssertEqual(withHash.r, plain.r, accuracy: 0.005)
+        XCTAssertEqual(withHash.g, plain.g, accuracy: 0.005)
+        XCTAssertEqual(withHash.b, plain.b, accuracy: 0.005)
+#endif
+    }
+
+    func testShortHexFallsBackToPurple() {
+        // 3-char hex triggers the default branch → (139, 92, 246) purple
+#if os(macOS)
+        let c = sRGB(Color(hex: "FFF"))
+        XCTAssertEqual(c.r, 139.0 / 255.0, accuracy: 0.005, "Short hex should fall back to purple red component")
+        XCTAssertEqual(c.g,  92.0 / 255.0, accuracy: 0.005, "Short hex should fall back to purple green component")
+        XCTAssertEqual(c.b, 246.0 / 255.0, accuracy: 0.005, "Short hex should fall back to purple blue component")
+#endif
+    }
+
+    func testEmptyHexFallsBackToPurple() {
+        // Empty string → count 0 → default branch → purple
+#if os(macOS)
+        let c = sRGB(Color(hex: ""))
+        XCTAssertEqual(c.r, 139.0 / 255.0, accuracy: 0.005)
+        XCTAssertEqual(c.g,  92.0 / 255.0, accuracy: 0.005)
+        XCTAssertEqual(c.b, 246.0 / 255.0, accuracy: 0.005)
+#endif
+    }
+
+    func testDefaultTagColorHexMatchesFallbackColor() {
+        // "8B5CF6" (Tag's default) should produce the same values as the hardcoded fallback
+#if os(macOS)
+        let explicit = sRGB(Color(hex: "8B5CF6"))
+        let fallback = sRGB(Color(hex: ""))
+        XCTAssertEqual(explicit.r, fallback.r, accuracy: 0.005)
+        XCTAssertEqual(explicit.g, fallback.g, accuracy: 0.005)
+        XCTAssertEqual(explicit.b, fallback.b, accuracy: 0.005)
+#endif
     }
 }
