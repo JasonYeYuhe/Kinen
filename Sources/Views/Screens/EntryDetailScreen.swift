@@ -1,4 +1,7 @@
 import SwiftUI
+#if canImport(WeatherKit)
+import WeatherKit
+#endif
 
 struct EntryDetailScreen: View {
     @Environment(\.modelContext) private var modelContext
@@ -47,6 +50,18 @@ struct EntryDetailScreen: View {
                     if let weather = entry.weather {
                         MetadataBadge(icon: "cloud.sun.fill", text: weather, color: .orange)
                     }
+                }
+
+                // WeatherKit attribution — REQUIRED by App Store 5.2.5 whenever
+                // Apple Weather data is displayed. Uses Apple's official
+                // WeatherAttribution logo + legal URL when available, falls back
+                // to the documented legal URL otherwise.
+                if entry.weather != nil {
+                    #if canImport(WeatherKit)
+                    WeatherAttributionView(attribution: LocationWeatherService.shared.weatherAttribution)
+                    #else
+                    WeatherAttributionView()
+                    #endif
                 }
 
                 Divider()

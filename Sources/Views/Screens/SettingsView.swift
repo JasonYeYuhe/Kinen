@@ -2,6 +2,9 @@ import SwiftUI
 import SwiftData
 import StoreKit
 import UniformTypeIdentifiers
+#if canImport(WeatherKit)
+import WeatherKit
+#endif
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -503,6 +506,17 @@ struct SettingsView: View {
                 .font(.caption)
                 .buttonStyle(.bordered)
                 .disabled(isFetchingLocation)
+            }
+
+            // WeatherKit attribution — REQUIRED by App Store 5.2.5 whenever
+            // Apple Weather data is displayed. Shown only when weather data
+            // is actually present in the status row.
+            if locationWeather.currentWeather != nil {
+                #if canImport(WeatherKit)
+                WeatherAttributionView(attribution: locationWeather.weatherAttribution)
+                #else
+                WeatherAttributionView()
+                #endif
             }
         }
     }

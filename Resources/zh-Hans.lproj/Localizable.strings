@@ -665,6 +665,9 @@
 "voice.error.noInputRoute" = "没有可用的音频输入通道。";
 "voice.error.noInput" = "没有可用的音频输入。";
 
+/* Weather attribution (Apple WeatherKit) */
+"weather.attribution.hint" = "打开 Apple 天气法律归属页面";
+
 /* Therapist Handoff PDF — header / footer */
 "handoff.pdf.generated.%@" = "由 Kinen 于 %@ 生成 — 所有数据保留在设备上。";
 "handoff.pdf.disclaimer" = "本报告由设备上的日记数据生成。这不是临床诊断。Kinen 不能替代专业的心理健康护理。";

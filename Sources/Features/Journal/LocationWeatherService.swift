@@ -16,6 +16,13 @@ final class LocationWeatherService: NSObject {
     var isLoading = false
     var authorizationStatus: CLAuthorizationStatus = .notDetermined
 
+    #if canImport(WeatherKit)
+    /// Apple WeatherKit attribution (trademark logo + legal page URL).
+    /// REQUIRED by App Store guideline 5.2.5 wherever WeatherKit data is shown.
+    /// Populated after a successful weather fetch; nil before the first fetch.
+    private(set) var weatherAttribution: WeatherAttribution?
+    #endif
+
     private let locationManager = CLLocationManager()
     private let geocoder = CLGeocoder()
     private let logger = Logger(subsystem: "com.jasonye.kinen", category: "LocationWeather")
@@ -86,6 +93,14 @@ final class LocationWeatherService: NSObject {
             let condition = weather.currentWeather.condition.description
             let tempStr = temp.formatted(.measurement(width: .abbreviated))
             currentWeather = "\(condition), \(tempStr)"
+
+            // Fetch Apple's official attribution metadata (trademark logo URL
+            // + legal page URL). Required for App Store 5.2.5 compliance.
+            do {
+                weatherAttribution = try await WeatherService.shared.attribution
+            } catch {
+                logger.error("Weather attribution fetch failed: \(error)")
+            }
         } catch {
             logger.error("Weather fetch failed: \(error)")
         }

@@ -85,6 +85,38 @@ final class SpeechRecorder: ObservableObject {
             showPermissionAlert = true
             return
         }
+        #elseif os(macOS)
+        // macOS: use AVCaptureDevice for microphone permission. Even though the
+        // sandbox + NSMicrophoneUsageDescription + entitlement are all set, we
+        // still must explicitly request audio capture access before touching
+        // AVAudioEngine.inputNode. Skipping this check (as build 8 did) meant
+        // the first-time permission grant path proceeded into AVAudioEngine
+        // before TCC finalized the grant, causing a sandbox SIGKILL with no
+        // crashlog — exactly the symptom Apple reported on macOS 26.4.
+        let audioAuthStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+        switch audioAuthStatus {
+        case .authorized:
+            break
+        case .notDetermined:
+            let granted = await AVCaptureDevice.requestAccess(for: .audio)
+            guard granted else {
+                showPermissionAlert = true
+                return
+            }
+        case .denied, .restricted:
+            showPermissionAlert = true
+            return
+        @unknown default:
+            showPermissionAlert = true
+            return
+        }
+        // Pre-flight: confirm an audio input device actually exists before
+        // touching AVAudioEngine. On Macs with no built-in mic + no external
+        // device, inputNode raises an uncatchable NSException.
+        guard AVCaptureDevice.default(for: .audio) != nil else {
+            errorMessage = String(localized: "voice.error.noInputDevice")
+            return
+        }
         #endif
 
         // 2. Speech recognition permission
