@@ -736,3 +736,15 @@
 "cbt.analysis.pattern" = "我发现了**%@**的思维模式——%@。";
 "cbt.analysis.reframe" = "试着这样重构：%@";
 "cbt.analysis.balanced" = "你的思维看起来很平衡。如果仍感到不对劲，试着问问自己：「如果是朋友遇到这种情况，我会怎么跟他说？」";
+
+/* Recap export (formatForExport — therapist sharing) */
+"recap.export.title" = "Kinen 日记回顾：%@";
+"recap.export.overview" = "概览";
+"recap.export.entries" = "- 日记数：%lld";
+"recap.export.words" = "- 总字数：%lld";
+"recap.export.moodTrend" = "- 情绪趋势：%1$@ %2$@";
+"recap.export.streak" = "- 连续写作：%lld 天";
+"recap.export.averageMood" = "- 平均情绪：%.1f/5";
+"recap.export.topThemes" = "主要主题";
+"recap.export.action" = "建议行动";
+"recap.export.footer" = "由 Kinen 生成——所有分析在设备本地完成";
