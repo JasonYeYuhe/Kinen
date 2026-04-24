@@ -245,6 +245,7 @@
 "onboarding.sync.note" = "AI analysis always runs 100% on your device. iCloud only syncs the data you choose.";
 "onboarding.disclaimer" = "Important Note";
 "onboarding.disclaimer.text" = "Kinen is a self-reflection and journaling tool.\n\nIt is not a substitute for professional mental health care, therapy, or crisis intervention.\n\nIf you're experiencing a mental health crisis, please reach out to a professional or call your local crisis line.";
+"onboarding.crisis.line" = "988 Suicide & Crisis Lifeline (US): Call or text **988**";
 "onboarding.start" = "I Understand — Start Journaling";
 
 /* Pro */

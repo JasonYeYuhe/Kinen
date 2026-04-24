@@ -245,6 +245,7 @@
 "onboarding.sync.note" = "AI 分析始终 100% 在设备本地运行。iCloud 只同步你选择的数据。";
 "onboarding.disclaimer" = "重要提示";
 "onboarding.disclaimer.text" = "Kinen 是一款自我反思和日记工具。\n\n它不能替代专业的心理健康服务、治疗或危机干预。\n\n如果你正在经历心理健康危机，请联系专业人士或拨打当地的心理援助热线。";
+"onboarding.crisis.line" = "心理援助热线：全国 400-161-9995，北京 010-82951332";
 "onboarding.start" = "我已了解——开始写日记";
 
 /* Pro */
