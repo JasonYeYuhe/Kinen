@@ -123,7 +123,7 @@ struct OnboardingView: View {
             HStack(spacing: 8) {
                 Image(systemName: "phone.fill")
                     .foregroundStyle(.green)
-                Text("988 Suicide & Crisis Lifeline (US): Call or text **988**")
+                Text(String(localized: "onboarding.crisis.line"))
                     .font(.callout)
             }
             .padding()
