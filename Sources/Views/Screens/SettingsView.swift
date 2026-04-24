@@ -17,8 +17,10 @@ struct SettingsView: View {
     @AppStorage("dailyWordGoal") private var dailyWordGoal = 0
     @AppStorage("onThisDayEnabled") private var onThisDayEnabled = false
     @State private var healthKit = HealthKitService.shared
+    @State private var locationWeather = LocationWeatherService.shared
     @State private var appLock = AppLockService.shared
     @State private var reminder = ReminderService.shared
+    @State private var isFetchingLocation = false
     @State private var showExportPicker = false
     @State private var showTagManagement = false
     @State private var showJournalManagement = false
@@ -98,6 +100,10 @@ struct SettingsView: View {
                 Text(String(localized: "settings.journal.location.desc"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                if enableLocationWeather {
+                    locationStatusRow
+                }
                 if healthKit.isAvailable {
                     Toggle(String(localized: "settings.journal.healthkit"), isOn: Binding(
                         get: { enableHealthKit },
@@ -469,5 +475,58 @@ struct SettingsView: View {
         } catch {
             backupMessage = String(format: String(localized: "settings.backup.failed"), error.localizedDescription)
         }
+    }
+
+    // MARK: - Location status
+
+    @ViewBuilder
+    private var locationStatusRow: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                Image(systemName: "location.fill")
+                    .foregroundStyle(.secondary)
+                    .font(.caption)
+                Text(locationStatusText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+                Spacer()
+                Button {
+                    Task { await fetchLocationNow() }
+                } label: {
+                    if isFetchingLocation {
+                        ProgressView().controlSize(.small)
+                    } else {
+                        Text(String(localized: "settings.journal.location.fetchNow"))
+                    }
+                }
+                .font(.caption)
+                .buttonStyle(.bordered)
+                .disabled(isFetchingLocation)
+            }
+        }
+    }
+
+    private var locationStatusText: String {
+        if let loc = locationWeather.currentLocation {
+            if let weather = locationWeather.currentWeather {
+                return "\(loc) · \(weather)"
+            }
+            return loc
+        }
+        switch locationWeather.authorizationStatus {
+        case .denied, .restricted:
+            return String(localized: "settings.journal.location.denied")
+        case .notDetermined:
+            return String(localized: "settings.journal.location.notRequested")
+        default:
+            return String(localized: "settings.journal.location.noData")
+        }
+    }
+
+    private func fetchLocationNow() async {
+        isFetchingLocation = true
+        defer { isFetchingLocation = false }
+        _ = await locationWeather.fetchLocationAndWeather()
     }
 }

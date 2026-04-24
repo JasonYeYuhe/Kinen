@@ -192,6 +192,10 @@
 "settings.journal.tags" = "Manage Tags";
 "settings.journal.location" = "Auto-record location & weather";
 "settings.journal.location.desc" = "Automatically tag entries with your location and weather. All data stays on your device.";
+"settings.journal.location.fetchNow" = "Fetch now";
+"settings.journal.location.denied" = "Location permission denied. Open System Settings → Privacy & Security → Location Services.";
+"settings.journal.location.notRequested" = "Permission not yet requested. Tap 'Fetch now' to begin.";
+"settings.journal.location.noData" = "No location captured yet. Tap 'Fetch now' to test.";
 "settings.journal.healthkit" = "HealthKit integration";
 "settings.journal.healthkit.desc" = "Correlate sleep, steps, and heart rate with your mood. All data stays on your device.";
 "settings.security" = "Security";

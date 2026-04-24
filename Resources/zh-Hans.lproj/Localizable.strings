@@ -192,6 +192,10 @@
 "settings.journal.tags" = "管理标签";
 "settings.journal.location" = "自动记录位置和天气";
 "settings.journal.location.desc" = "自动为日记添加位置和天气信息。所有数据保留在本设备。";
+"settings.journal.location.fetchNow" = "立即获取";
+"settings.journal.location.denied" = "位置权限被拒绝。请前往「系统设置 → 隐私与安全 → 定位服务」开启。";
+"settings.journal.location.notRequested" = "尚未请求权限。点击「立即获取」开始。";
+"settings.journal.location.noData" = "尚未获取位置。点击「立即获取」测试。";
 "settings.journal.healthkit" = "HealthKit 整合";
 "settings.journal.healthkit.desc" = "关联睡眠、步数和心率数据与情绪。所有数据保留在本设备。";
 "settings.security" = "安全";

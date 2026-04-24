@@ -67,7 +67,7 @@
         <p>Kinen reads three HealthKit data points <strong>only if you explicitly grant permission in Settings → HealthKit Integration</strong>. The data is used to correlate your physical state with daily mood entries you write in Kinen. Kinen never writes to HealthKit, and HealthKit data is <strong>never transmitted off your device</strong> — it is read on-demand and discarded after each insight is generated. HealthKit data is not synced to iCloud, never sent to any server, and never shared with third parties or advertisers.</p>
 
         <h3>3. Location and weather (optional)</h3>
-        <p>If you enable “Auto-record location & weather” in Settings, Kinen uses CoreLocation to fetch your current city name and a one-line weather summary, attached only to journal entries you create while the option is enabled. This data is stored locally with the entry. If iCloud sync is enabled, it is included in the entry payload Apple syncs.</p>
+        <p>If you enable “Auto-record location & weather” in Settings, Kinen uses CoreLocation to fetch your current city name and WeatherKit to fetch a one-line weather summary, attached only to journal entries you create while the option is enabled. This data is stored locally with the entry. If iCloud sync is enabled, it is included in the entry payload Apple syncs.</p>
 
         <h3>4. Sentiment analysis, theme detection, CBT distortion analysis</h3>
         <p>Performed entirely on-device using Apple’s NaturalLanguage framework. The text of your entries is processed locally; the inferred mood scores and tags are stored alongside the entry. <strong>No journal text or AI inference output is sent to any server, OpenAI, Anthropic, or any other third-party AI service.</strong></p>

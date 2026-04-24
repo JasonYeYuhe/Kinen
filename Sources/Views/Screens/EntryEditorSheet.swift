@@ -319,10 +319,20 @@ struct EntryEditorSheet: View {
     }
 
     private func generateNewPrompt() {
+        guard !showingTemplatePicker else { return }
         aiPromptSuggestion = PromptGenerator.generatePrompt(
             currentMood: mood,
             recentEntries: []
         )
+    }
+
+    /// Cancels in-flight AI tasks before opening the template picker.
+    /// Without this, a debounced mood-suggestion Task can resume mid-presentation
+    /// and trigger a SwiftUI layout race that crashes silently on macOS.
+    private func presentTemplatePicker() {
+        moodSuggestionTask?.cancel()
+        moodSuggestionTask = nil
+        showingTemplatePicker = true
     }
 
     // MARK: - Template Banner
@@ -342,10 +352,10 @@ struct EntryEditorSheet: View {
                 .background(template.color.opacity(0.1))
                 .clipShape(Capsule())
 
-                Button(String(localized: "editor.template.change")) { showingTemplatePicker = true }
+                Button(String(localized: "editor.template.change")) { presentTemplatePicker() }
                     .font(.caption)
             } else if entry == nil {
-                Button(action: { showingTemplatePicker = true }) {
+                Button(action: { presentTemplatePicker() }) {
                     Label(String(localized: "editor.template.use"), systemImage: "doc.text")
                         .font(.subheadline)
                 }
