@@ -1,9 +1,12 @@
 import SwiftUI
+import SwiftData
 
 struct OnboardingView: View {
+    @Environment(\.modelContext) private var modelContext
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = false
     @State private var currentPage = 0
+    @State private var samplesLoaded = false
 
     var body: some View {
         TabView(selection: $currentPage) {
@@ -12,6 +15,7 @@ struct OnboardingView: View {
             aiPage.tag(2)
             syncPage.tag(3)
             disclaimerPage.tag(4)
+            samplePage.tag(5)
         }
         .tabViewStyle(.automatic)
         #if os(macOS)
@@ -41,7 +45,7 @@ struct OnboardingView: View {
             iconColor: .green,
             title: String(localized: "onboarding.privacy"),
             subtitle: String(localized: "onboarding.privacy.subtitle"),
-            description: String(localized: "onboarding.privacy.description"),
+            description: String(localized: "onboarding.privacy.description.v2"),
             buttonTitle: String(localized: "general.next"),
             action: { withAnimation { currentPage = 2 } }
         )
@@ -132,10 +136,8 @@ struct OnboardingView: View {
 
             Spacer()
 
-            Button(action: {
-                hasSeenOnboarding = true
-            }) {
-                Text(String(localized: "onboarding.start"))
+            Button(action: { withAnimation { currentPage = 5 } }) {
+                Text(String(localized: "general.next"))
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
@@ -146,6 +148,64 @@ struct OnboardingView: View {
 
             Spacer().frame(height: 20)
         }
+    }
+
+    private var samplePage: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            Image(systemName: "books.vertical.fill")
+                .font(.system(size: 48))
+                .foregroundStyle(.purple)
+
+            Text(String(localized: "onboarding.sample.title"))
+                .font(.title)
+                .fontWeight(.bold)
+
+            Text(String(localized: "onboarding.sample.description"))
+                .font(.body)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 24)
+
+            Text(String(localized: "onboarding.sample.note"))
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+
+            Spacer()
+
+            VStack(spacing: 10) {
+                Button(action: loadSamplesAndFinish) {
+                    Text(String(localized: "onboarding.sample.startWithSample"))
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.purple)
+
+                Button(action: { hasSeenOnboarding = true }) {
+                    Text(String(localized: "onboarding.sample.startEmpty"))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                }
+                .buttonStyle(.bordered)
+                .tint(.purple)
+            }
+            .padding(.horizontal, 32)
+
+            Spacer().frame(height: 20)
+        }
+    }
+
+    private func loadSamplesAndFinish() {
+        if !samplesLoaded {
+            _ = SampleDataLoader.loadSampleEntries(into: modelContext)
+            samplesLoaded = true
+        }
+        hasSeenOnboarding = true
     }
 }
 

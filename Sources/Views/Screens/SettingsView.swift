@@ -46,6 +46,19 @@ struct SettingsView: View {
     @State private var showRestoreConfirmation = false
     @Query(sort: \Tag.name) private var allTags: [Tag]
 
+    // Sample Journal state
+    @State private var sampleEntryCount: Int = 0
+    @State private var sampleMessage: String?
+
+    // Test Apple WeatherKit state
+    @State private var isTestingWeatherKit = false
+    @State private var weatherKitTestResult: WeatherKitTestResult?
+
+    enum WeatherKitTestResult: Equatable {
+        case success(city: String, weather: String)
+        case failure(message: String)
+    }
+
     var body: some View {
         Form {
             Section(String(localized: "settings.appearance")) {
@@ -106,6 +119,7 @@ struct SettingsView: View {
 
                 if enableLocationWeather {
                     locationStatusRow
+                    weatherKitTestRow
                 }
                 if healthKit.isAvailable {
                     Toggle(String(localized: "settings.journal.healthkit"), isOn: Binding(
@@ -271,17 +285,51 @@ struct SettingsView: View {
             }
 
             Section(String(localized: "settings.privacy")) {
-                HStack {
-                    Image(systemName: "lock.shield")
-                        .foregroundStyle(.green)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(String(localized: "settings.privacy.title"))
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                        Text(String(localized: "settings.privacy.description"))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                NavigationLink {
+                    PrivacyInspectorScreen()
+                } label: {
+                    HStack {
+                        Image(systemName: "lock.shield")
+                            .foregroundStyle(.green)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(String(localized: "settings.privacy.title"))
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            Text(String(localized: "settings.privacy.description"))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                     }
+                }
+            }
+
+            Section(String(localized: "settings.sample.section")) {
+                if sampleEntryCount > 0 {
+                    HStack(spacing: 8) {
+                        Image(systemName: "books.vertical")
+                            .foregroundStyle(.purple)
+                        Text(String(format: String(localized: "settings.sample.loaded"), sampleEntryCount))
+                            .font(.subheadline)
+                    }
+                    Button(role: .destructive) {
+                        clearSampleJournal()
+                    } label: {
+                        Label(String(localized: "settings.sample.clear"), systemImage: "trash")
+                    }
+                } else {
+                    Button {
+                        loadSampleJournal()
+                    } label: {
+                        Label(String(format: String(localized: "settings.sample.load"), SampleDataLoader.entryCount), systemImage: "books.vertical")
+                    }
+                    Text(String(localized: "settings.sample.note"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                if let msg = sampleMessage {
+                    Text(msg)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -306,6 +354,7 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .navigationTitle(String(localized: "settings.title"))
+        .onAppear { refreshSampleCount() }
         .sheet(isPresented: $showTagManagement) {
             TagManagementSheet()
         }
@@ -542,5 +591,143 @@ struct SettingsView: View {
         isFetchingLocation = true
         defer { isFetchingLocation = false }
         _ = await locationWeather.fetchLocationAndWeather()
+    }
+
+    // MARK: - Sample Journal
+
+    private func refreshSampleCount() {
+        sampleEntryCount = SampleDataLoader.sampleEntryCount(in: modelContext)
+    }
+
+    private func loadSampleJournal() {
+        let inserted = SampleDataLoader.loadSampleEntries(into: modelContext)
+        if inserted > 0 {
+            sampleMessage = String(format: String(localized: "settings.sample.loadedToast"), inserted)
+        } else {
+            sampleMessage = String(localized: "settings.sample.alreadyLoaded")
+        }
+        refreshSampleCount()
+    }
+
+    private func clearSampleJournal() {
+        let removed = SampleDataLoader.clearSampleEntries(from: modelContext)
+        sampleMessage = String(format: String(localized: "settings.sample.clearedToast"), removed)
+        refreshSampleCount()
+    }
+
+    // MARK: - Test Apple WeatherKit (separate from sample journal)
+
+    @ViewBuilder
+    private var weatherKitTestRow: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Button {
+                    Task { await testAppleWeatherKit() }
+                } label: {
+                    if isTestingWeatherKit {
+                        HStack(spacing: 6) {
+                            ProgressView().controlSize(.small)
+                            Text(String(localized: "settings.weatherkit.testing"))
+                        }
+                    } else {
+                        Label(String(localized: "settings.weatherkit.test"), systemImage: "cloud.sun")
+                    }
+                }
+                .disabled(isTestingWeatherKit)
+                Spacer()
+            }
+
+            if let result = weatherKitTestResult {
+                switch result {
+                case .success(let city, let weather):
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "checkmark.seal.fill").foregroundStyle(.green)
+                            Text(String(localized: "settings.weatherkit.success"))
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                        }
+                        Text("\(city) · \(weather)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        #if canImport(WeatherKit)
+                        WeatherAttributionView(attribution: locationWeather.weatherAttribution)
+                        #else
+                        WeatherAttributionView()
+                        #endif
+                        Button {
+                            saveWeatherKitTestAsEntry(city: city, weather: weather)
+                        } label: {
+                            Label(String(localized: "settings.weatherkit.saveAsEntry"), systemImage: "square.and.pencil")
+                                .font(.caption)
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                    .padding(.vertical, 4)
+                case .failure(let message):
+                    HStack(alignment: .top, spacing: 6) {
+                        Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                        Text(message)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            } else {
+                Text(String(localized: "settings.weatherkit.test.note"))
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+        }
+    }
+
+    private func testAppleWeatherKit() async {
+        isTestingWeatherKit = true
+        weatherKitTestResult = nil
+        defer { isTestingWeatherKit = false }
+
+        // Step 1: gate on permission
+        let status = locationWeather.authorizationStatus
+        if status == .notDetermined {
+            locationWeather.requestPermission()
+            // Give the system a moment to update; we don't poll aggressively.
+            try? await Task.sleep(nanoseconds: 800_000_000)
+        }
+
+        switch locationWeather.authorizationStatus {
+        case .denied, .restricted:
+            weatherKitTestResult = .failure(message: String(localized: "settings.weatherkit.error.permission"))
+            return
+        case .notDetermined:
+            weatherKitTestResult = .failure(message: String(localized: "settings.weatherkit.error.notDetermined"))
+            return
+        default:
+            break
+        }
+
+        // Step 2: live fetch
+        let result = await locationWeather.fetchLocationAndWeather()
+        if let city = result.location, let weather = result.weather {
+            weatherKitTestResult = .success(city: city, weather: weather)
+        } else {
+            weatherKitTestResult = .failure(message: String(localized: "settings.weatherkit.error.fetchFailed"))
+        }
+    }
+
+    private func saveWeatherKitTestAsEntry(city: String, weather: String) {
+        let entry = JournalEntry(
+            content: String(localized: "settings.weatherkit.testEntry.content"),
+            title: String(localized: "settings.weatherkit.testEntry.title"),
+            mood: nil,
+            template: .freeWrite,
+            createdAt: Date()
+        )
+        entry.location = city
+        entry.weather = weather
+        entry.latitude = locationWeather.currentLatitude
+        entry.longitude = locationWeather.currentLongitude
+        entry.isSampleData = false
+        modelContext.insert(entry)
+        try? modelContext.save()
+        sampleMessage = String(localized: "settings.weatherkit.testEntry.saved")
     }
 }

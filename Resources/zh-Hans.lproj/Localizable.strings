@@ -665,6 +665,7 @@
 "voice.error.noInputDevice" = "此设备没有可用的音频输入。";
 "voice.error.noInputRoute" = "没有可用的音频输入通道。";
 "voice.error.noInput" = "没有可用的音频输入。";
+"voice.error.permissionPending" = "麦克风权限正在处理中，请稍后再次点击麦克风按钮。";
 
 /* Weather attribution (Apple WeatherKit) */
 "weather.attribution.hint" = "打开 Apple 天气法律归属页面";
@@ -749,3 +750,58 @@
 "recap.export.topThemes" = "主要主题";
 "recap.export.action" = "建议行动";
 "recap.export.footer" = "由 Kinen 生成——所有分析在设备本地完成";
+
+/* Onboarding — 样本日志页（Build 12） */
+"onboarding.privacy.description.v2" = "你的日记只留在这台设备上。\n\n• AI 全部在设备本地运行（Apple NaturalLanguage 框架）。不使用任何第三方 AI 服务。\n• 不做分析统计、不做行为追踪、没有广告。\n• iCloud 同步可选，由 Apple 端到端加密。\n• 可随时在「设置 → 隐私」查看每一字节去向。";
+"onboarding.sample.title" = "要不要先看看示例日记？";
+"onboarding.sample.description" = "想看 Kinen 在写了几周后是什么样子？我们可以加载 30 篇示例日记，方便你探索「洞察」、日历热力图、地图和回顾页。";
+"onboarding.sample.note" = "随时可在「设置 → 示例日记」中清除。你的真实日记不会被影响。";
+"onboarding.sample.startWithSample" = "加载示例日记开始";
+"onboarding.sample.startEmpty" = "从空白开始";
+
+/* Settings — 示例日记 */
+"settings.sample.section" = "示例日记";
+"settings.sample.load" = "加载示例日记（%lld 篇）";
+"settings.sample.loaded" = "已加载 %lld 篇示例日记";
+"settings.sample.clear" = "清除示例日记";
+"settings.sample.note" = "加载示例条目以便探索 Kinen 的功能。你的真实日记完全独立，可随时清除示例数据。";
+"settings.sample.loadedToast" = "已加载 %lld 篇示例日记。";
+"settings.sample.alreadyLoaded" = "示例日记已加载。";
+"settings.sample.clearedToast" = "已清除 %lld 篇示例日记。";
+
+/* Settings — 测试 Apple WeatherKit */
+"settings.weatherkit.test" = "测试 Apple WeatherKit";
+"settings.weatherkit.testing" = "测试中…";
+"settings.weatherkit.test.note" = "一键发起一次真实 Apple WeatherKit 调用，成功后会显示 Apple Weather 归属。";
+"settings.weatherkit.success" = "WeatherKit 实时返回";
+"settings.weatherkit.saveAsEntry" = "保存为新日记";
+"settings.weatherkit.error.permission" = "定位服务已关闭或被拒绝。请前往「系统设置 → 隐私与安全 → 定位服务」启用后重试。";
+"settings.weatherkit.error.notDetermined" = "尚未授予定位权限。请再次点击并在弹窗中允许。";
+"settings.weatherkit.error.fetchFailed" = "WeatherKit 调用失败。请确认定位服务已开启、设备已联网后再试。";
+"settings.weatherkit.testEntry.title" = "Apple WeatherKit 测试";
+"settings.weatherkit.testEntry.content" = "本条日记由「设置 → 测试 Apple WeatherKit」面板创建。下方位置和天气数据均由 Apple WeatherKit 与 Apple 反向地理编码服务实时返回。";
+"settings.weatherkit.testEntry.saved" = "已将测试日记保存到你的日记本。";
+
+/* 隐私查看器 */
+"privacy.inspector.title" = "隐私查看器";
+"privacy.inspector.heading" = "你的数据去了哪里";
+"privacy.inspector.subheading" = "应用每一处数据流向的完整清单。";
+"privacy.inspector.journal.title" = "日记内容、心情、标签、洞察";
+"privacy.inspector.journal.body" = "只存储在本设备（Apple SwiftData）。仅当你打开「iCloud 同步」时，会同步到你私人的 Apple iCloud (CloudKit)。不会发送到任何其他服务器。";
+"privacy.inspector.ai.title" = "AI 分析（情感、主题、CBT、主题归类）";
+"privacy.inspector.ai.body" = "100% 在设备本地运行，使用 Apple NaturalLanguage 框架（NLTagger 与 NLEmbedding）。零网络请求，零模型下载。不使用任何第三方 AI 服务（无 OpenAI、无 Anthropic、无 Google Gemini、无 Hugging Face、无 Cohere、无其他厂商）。";
+"privacy.inspector.location.title" = "位置";
+"privacy.inspector.location.body" = "仅当你开启「自动记录位置与天气」时使用。Apple CoreLocation 在设备上获取 GPS 坐标，Apple 反向地理编码将其转为城市名（向 Apple 发起一次网络请求）。结果与日记一同保存在本地。";
+"privacy.inspector.weather.title" = "天气";
+"privacy.inspector.weather.body" = "仅当你开启「自动记录位置与天气」时使用。使用当前坐标向 Apple WeatherKit 发起一次请求。除 Apple 外不涉及任何第三方。";
+"privacy.inspector.health.title" = "HealthKit";
+"privacy.inspector.health.body" = "仅当你在「设置」中授权后使用。仅在设备本地只读。不会写入，不会发送。";
+"privacy.inspector.purchases.title" = "App Store 内购";
+"privacy.inspector.purchases.body" = "由 StoreKit（Apple）处理。任何支付信息都不会经过我们。";
+"privacy.inspector.never.title" = "我们绝不做的事";
+"privacy.inspector.never.serverText" = "把你的日记内容发送到任何服务器。";
+"privacy.inspector.never.thirdPartyAI" = "使用任何第三方 AI 服务（OpenAI、Anthropic、Gemini 等）。";
+"privacy.inspector.never.ads" = "展示广告。";
+"privacy.inspector.never.analytics" = "运行任何分析 SDK（无 Firebase、无 Sentry、无 Mixpanel）。";
+"privacy.inspector.never.tracking" = "在其他 App 或网站间追踪你。";
+"privacy.inspector.fullPolicy" = "阅读完整隐私政策";

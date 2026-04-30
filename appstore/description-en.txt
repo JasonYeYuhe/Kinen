@@ -1,18 +1,18 @@
-Kinen — Your Private AI Journal
+Kinen — Private Journal with On-Device AI
 
-Write freely. Discover patterns. Grow.
+Your thoughts stay on your device. No servers. No third-party AI.
 
-Kinen is a privacy-first journaling app with on-device AI that analyzes your mood, detects thought patterns, and helps you reflect deeper — all without sending a single byte to the cloud.
+Kinen is a privacy-first journaling app with on-device AI that analyzes your mood, detects thought patterns, and helps you reflect deeper — without sending a single byte to any server.
 
 PRIVATE BY DESIGN
-Every word you write stays on your device. No accounts. No servers. No tracking. No data collection. Your thoughts belong to you alone. All AI analysis runs locally using Apple's NaturalLanguage framework.
+Every word you write stays on your device. No accounts. No servers. No tracking. No data collection. Your thoughts belong to you alone. All AI analysis runs locally using Apple's NaturalLanguage framework. Kinen does not use OpenAI, Anthropic, Gemini, or any third-party AI service — verify in-app any time at Settings → Privacy → Privacy Inspector.
 
-AI THAT UNDERSTANDS YOU
-- Automatic mood and sentiment analysis
-- CBT-based cognitive distortion detection (8 patterns)
+ON-DEVICE AI THAT UNDERSTANDS YOU
+- Automatic mood and sentiment analysis (Apple NaturalLanguage)
+- CBT-based cognitive distortion detection (8 patterns, deterministic, local)
 - Life theme discovery (work, health, relationships & more)
 - Smart writing prompts based on your mood and history
-- Weekly and monthly AI-generated recaps
+- Weekly and monthly recaps generated on-device
 
 8 GUIDED TEMPLATES
 Daily Review, Gratitude Journal, Morning Pages, CBT Three-Column, Dream Journal, Goal Reflection, Weekly Review, and Free Write.
@@ -40,4 +40,4 @@ SECURITY
 Kinen is a self-reflection tool, not a substitute for professional mental health care.
 
 Free: Unlimited entries, basic mood tracking, 7-day insights
-Pro: $19.99/year or $99.99 lifetime — full AI, iCloud sync, exports, all templates
+Pro: $19.99/year or $99.99 lifetime — full on-device AI, iCloud sync, exports, all templates

@@ -49,7 +49,7 @@
     <div class="container">
         <a href="/Kinen/" class="back">&larr; Back to Kinen</a>
         <h1>Privacy Policy</h1>
-        <p class="meta">Last updated: April 17, 2026 · Effective immediately</p>
+        <p class="meta">Last updated: April 30, 2026 · Effective immediately</p>
 
         <div class="summary">
             <p><strong>One-line summary:</strong> Kinen is built so your journal entries, mood data, and HealthKit data never leave your device. The only optional exceptions are iCloud sync (Apple’s end-to-end encrypted CloudKit) and StoreKit purchases.</p>
@@ -69,8 +69,9 @@
         <h3>3. Location and weather (optional)</h3>
         <p>If you enable “Auto-record location & weather” in Settings, Kinen uses CoreLocation to fetch your current city name and WeatherKit to fetch a one-line weather summary, attached only to journal entries you create while the option is enabled. This data is stored locally with the entry. If iCloud sync is enabled, it is included in the entry payload Apple syncs.</p>
 
-        <h3>4. Sentiment analysis, theme detection, CBT distortion analysis</h3>
-        <p>Performed entirely on-device using Apple’s NaturalLanguage framework. The text of your entries is processed locally; the inferred mood scores and tags are stored alongside the entry. <strong>No journal text or AI inference output is sent to any server, OpenAI, Anthropic, or any other third-party AI service.</strong></p>
+        <h3>4. AI processing (on-device only)</h3>
+        <p>Sentiment scoring, topic and entity extraction, semantic similarity (used by in-app search), CBT distortion detection, mood-theme inference, and weekly recap generation are performed entirely on-device using Apple’s NaturalLanguage framework — specifically <code>NLTagger</code> for sentiment and named-entity tagging, and <code>NLEmbedding</code> for word/sentence vector lookups. Both ship with the operating system; no model weights are downloaded by the app. CBT distortion detection and crisis keyword detection use deterministic Swift pattern matching against an in-app dictionary.</p>
+        <p>The text of your entries is processed locally; the inferred mood scores and tags are stored alongside the entry on this device. <strong>Kinen does not integrate with any third-party AI service. We do not use OpenAI, Anthropic, Google Gemini, Hugging Face, Cohere, or any other AI vendor.</strong> The app's network entitlement is used solely for Apple WeatherKit, Apple's reverse-geocoder (CoreLocation), Apple StoreKit purchases, and opening external URLs (this privacy policy, GitHub, crisis helplines) in the system browser.</p>
 
         <h3>5. In-App Purchases</h3>
         <p>Subscription and purchase verification is handled directly between your device and Apple’s StoreKit. The Developer receives anonymized purchase events from Apple solely to grant Pro access on your devices. No payment information ever passes through the Developer.</p>

@@ -23,6 +23,11 @@ final class JournalEntry {
     var isPinned: Bool = false
     var previousContent: String?
 
+    /// True for entries inserted by SampleDataLoader. Default false; lightweight
+    /// SwiftData migration. When CloudKit sync is wired up (post-v1.0), the sync
+    /// predicate will exclude these so a user's real iCloud journal stays separate.
+    var isSampleData: Bool = false
+
     @Attribute(.externalStorage)
     var photoData: Data?
 
@@ -64,6 +69,7 @@ final class JournalEntry {
         self.writingDuration = 0
         self.tags = tags  // Always [] not nil (Gemini safety rule)
         self.insights = []
+        self.isSampleData = false
     }
 
     /// Safe append to optional tags array
