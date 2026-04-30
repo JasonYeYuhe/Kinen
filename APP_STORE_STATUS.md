@@ -1,7 +1,17 @@
 # Kinen App Store 提交状态
 
-> 更新时间：2026-04-10 17:25
-> 状态：Waiting for Review (iOS + macOS)
+> 更新时间：2026-04-30 16:55 JST
+> 状态：Build 12 已上传 + ASC 元数据已更新 + Reviewer Reply 已发送
+> 等待操作：人工在 ASC 选 Build 12 → 点 Resubmit to App Review
+
+## 最近提交记录（按时间倒序）
+
+| 日期 | 平台 | Build | 状态 | 备注 |
+|------|------|-------|------|------|
+| **2026-04-30** | **iOS + macOS** | **1.0 (12)** | **Awaiting Resubmit** | **修复 4/29 Apple 拒绝（2.1(a) + 5.1.1/5.1.2(i)）** |
+| 2026-04-29 | macOS | 1.0 (11) | Rejected | 2.1.0 App Completeness + 5.1.1 Privacy |
+| 2026-04-27 | macOS | 1.0 (11) | Submitted（被 4/29 拒绝）|  |
+| 2026-04-23 | macOS | 1.0 (8) | Rejected → fixed in 1.0(11) | 2.1(a) crash + 2.1 WeatherKit |
 
 ## App Store Connect 信息
 
