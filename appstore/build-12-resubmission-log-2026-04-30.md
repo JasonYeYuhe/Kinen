@@ -44,15 +44,16 @@ Verified locally: macOS BUILD SUCCEEDED, iOS BUILD SUCCEEDED, **524 tests pass**
 | 16:48 | ASC iOS Version 1.0 → set same metadata | Saved (✓) |
 | 16:51 | ASC macOS Resolution Center → reviewer reply (2909 chars) | Reply sent |
 | 16:55 | ASC session expired (Chrome MCP login required for next step) | — |
+| 17:33 | Jason re-login + select Build 12 + click Resubmit (iOS + macOS) | **Waiting for Review** |
 
-## What's left for Jason (manual)
+## Status
 
-1. Already done: re-login to ASC, confirm iOS + macOS Build 12 are visible in their respective Build sections
-2. **For each platform** (iOS Version 1.0 + macOS Version 1.0):
-   a. In the Build section, swap from `1.0 (11)` to `1.0 (12)` if not auto-selected
-   b. Click **Save** if any change made
-   c. Click **Update Review** / **Resubmit to App Review**
-3. Wait for new review (typically 24–48 hours)
+Build 1.0 (12) is now in Apple's review queue for both iOS and macOS.
+Apple's typical first-pass response: 24–48 hours.
+
+When the result comes back:
+- **Approved (best case):** release will auto-publish (Automatically release this version is selected per macOS Version page).
+- **Rejected:** new message will arrive in Resolution Center for `f5b499dd-6398-403b-99db-7617d8d091cf` (macOS) and the iOS submission. Re-engage from `appstore/fix-plan-2026-04-29-rejection.md` workflow.
 
 ## Field values written to ASC (for the record)
 
